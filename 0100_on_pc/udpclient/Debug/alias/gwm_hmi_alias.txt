@@ -1,0 +1,24 @@
+ls=listscreenids
+lhk=listhkevents
+hk=PostHkEvent
+ss=showScreen
+sp=showPopup
+hp=hidePopup
+cs=currentScreens
+
+,=PostHkEvent - HK_CONTROL_COUNTERCLOCKWISE
+.=PostHkEvent - HK_CONTROL_CLOCKWISE
+
+u=PostHkEvent - HK_CONTROL_UP_SP
+d=PostHkEvent - HK_CONTROL_DOWN_SP
+l=PostHkEvent - HK_CONTROL_LEFT_SP
+r=PostHkEvent - HK_CONTROL_RIGHT_SP
+
+ur=PostHkEvent - HK_CONTROL_UPRIGHT_SP
+dr=PostHkEvent - HK_CONTROL_DOWNRIGHT_SP
+ul=PostHkEvent - HK_CONTROL_UPLEFT_SP
+dl=PostHkEvent - HK_CONTROL_DOWNLEFT_SP
+
+1=showScreen - SCN_VIDEO_PLAYING_SCREEN
+2=showScreen - SCN_PHONE_MAIN
+3=showScreen - SCN_SWL_INPROGRESS_MAP_SCREEN
