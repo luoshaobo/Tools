@@ -1,0 +1,9 @@
+\release\install_telnetd_drv_user_mode.bat
+
+drvtool activate Drivers\TestDrives\TELNETD_DRIVER_0
+drvtool activate Drivers\TestDrives\TELNETD_DRIVER_1
+drvtool activate Drivers\TestDrives\TELNETD_DRIVER_2
+drvtool activate Drivers\TestDrives\TELNETD_DRIVER_3
+drvtool deactivate 
+
+\release\StdDrvTest

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<Config>
+    <BgColor>
+        <a>255</a>                      <!-- range: [0,255] -->
+        <r>128</r>                      <!-- range: [0,255] -->
+        <g>128</g>                      <!-- range: [0,255] -->
+        <b>128</b>                      <!-- range: [0,255] -->
+    </BgColor>
+    <GlobalAlpha>255</GlobalAlpha>        <!-- range: [0,255] -->
+    <ScaleFactor>1.0</ScaleFactor>        <!-- float -->
+</Config>

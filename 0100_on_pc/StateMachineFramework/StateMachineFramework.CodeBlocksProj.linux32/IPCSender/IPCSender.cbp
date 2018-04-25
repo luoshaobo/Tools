@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="IPCSender" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="Application/;Framework/;Platform/;" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/IPCSender" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-I../../StateMachineFramework/ -I../../StateMachineFramework/platform/api -I../../IPCSender" />
+					<Add option="-DLINUX32" />
+				</Compiler>
+				<Linker>
+					<Add option="-pthread" />
+					<Add library="rt" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-g" />
+			<Add option="-fexceptions -I../../StateMachineFramework/ -I../../StateMachineFramework/platform/api -I../../IPCSender" />
+			<Add option="-DLINUX32" />
+		</Compiler>
+		<Linker>
+			<Add option="-pthread" />
+			<Add library="rt" />
+		</Linker>
+		<Unit filename="../../IPCSender/main.cpp">
+			<Option virtualFolder="Application/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/IpcDef.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/RpcDef.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseEngine.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseEngine.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseEventHandler.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseEventHandler.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseEventQueue.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseEventQueue.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseMailBox.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseMailBox.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseRpc.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseRpc.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseState.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseState.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseThread.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_BaseThread.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_CyclicBuf.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_CyclicBuf.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_PostOffice.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_PostOffice.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_RpcTunnel.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_RpcTunnel.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_afx.cpp">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/SMF_afx.h">
+			<Option virtualFolder="Framework/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/TK_RefCount.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/TK_Tools.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/TK_Tools.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/TK_sock.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/TK_sock.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/api/SMF_PlatformEvent.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/api/SMF_PlatformLock.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/api/SMF_PlatformMsgQ.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/api/SMF_PlatformSharedMem.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/api/SMF_PlatformThread.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/api/SMF_PlatformTimer.h">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/linux/SMF_PlatformEvent_linux.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/linux/SMF_PlatformLock_linux.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/linux/SMF_PlatformMsgQ_linux.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/linux/SMF_PlatformSharedMem_linux.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/linux/SMF_PlatformThread_linux.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Unit filename="../../StateMachineFramework/platform/linux/SMF_PlatformTimer_linux.cpp">
+			<Option virtualFolder="Platform/" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

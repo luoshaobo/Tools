@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLoadExternalSymbal", "TestLoadExternalSymbal\TestLoadExternalSymbal.vcproj", "{6D6AD0EF-494E-4E37-8053-5514EC7C091F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLoadExternalSymbal_debugee", "TestLoadExternalSymbal_debugee\TestLoadExternalSymbal_debugee.vcproj", "{BB5945D8-63DD-4D47-A3F1-EA6A2172499A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLoadExternalSymbal_DllToInject", "TestLoadExternalSymbal_DllToInject\TestLoadExternalSymbal_DllToInject.vcproj", "{BD2DB330-1034-47F5-BAB5-65D1452E6B5A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HookDllLoader", "HookDllLoader\HookDllLoader.vcproj", "{114797C9-EEC1-49AF-9086-3ABB8CE68408}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D6AD0EF-494E-4E37-8053-5514EC7C091F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6D6AD0EF-494E-4E37-8053-5514EC7C091F}.Debug|Win32.Build.0 = Debug|Win32
+		{6D6AD0EF-494E-4E37-8053-5514EC7C091F}.Release|Win32.ActiveCfg = Release|Win32
+		{6D6AD0EF-494E-4E37-8053-5514EC7C091F}.Release|Win32.Build.0 = Release|Win32
+		{BB5945D8-63DD-4D47-A3F1-EA6A2172499A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB5945D8-63DD-4D47-A3F1-EA6A2172499A}.Debug|Win32.Build.0 = Debug|Win32
+		{BB5945D8-63DD-4D47-A3F1-EA6A2172499A}.Release|Win32.ActiveCfg = Release|Win32
+		{BB5945D8-63DD-4D47-A3F1-EA6A2172499A}.Release|Win32.Build.0 = Release|Win32
+		{BD2DB330-1034-47F5-BAB5-65D1452E6B5A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BD2DB330-1034-47F5-BAB5-65D1452E6B5A}.Debug|Win32.Build.0 = Debug|Win32
+		{BD2DB330-1034-47F5-BAB5-65D1452E6B5A}.Release|Win32.ActiveCfg = Release|Win32
+		{BD2DB330-1034-47F5-BAB5-65D1452E6B5A}.Release|Win32.Build.0 = Release|Win32
+		{114797C9-EEC1-49AF-9086-3ABB8CE68408}.Debug|Win32.ActiveCfg = Debug|Win32
+		{114797C9-EEC1-49AF-9086-3ABB8CE68408}.Debug|Win32.Build.0 = Debug|Win32
+		{114797C9-EEC1-49AF-9086-3ABB8CE68408}.Release|Win32.ActiveCfg = Release|Win32
+		{114797C9-EEC1-49AF-9086-3ABB8CE68408}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

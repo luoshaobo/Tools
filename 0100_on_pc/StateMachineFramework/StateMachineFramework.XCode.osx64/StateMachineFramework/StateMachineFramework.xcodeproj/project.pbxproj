@@ -1,0 +1,415 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9577E23E1934D08F0067B87A /* APP_afx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2321934D08F0067B87A /* APP_afx.cpp */; };
+		9577E23F1934D08F0067B87A /* APP_BaseState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2341934D08F0067B87A /* APP_BaseState.cpp */; };
+		9577E2401934D08F0067B87A /* APP_Engines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2361934D08F0067B87A /* APP_Engines.cpp */; };
+		9577E2411934D08F0067B87A /* APP_EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2381934D08F0067B87A /* APP_EventHandler.cpp */; };
+		9577E2421934D08F0067B87A /* APP_EventHandlerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E23A1934D08F0067B87A /* APP_EventHandlerImpl.cpp */; };
+		9577E2431934D08F0067B87A /* APP_States.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E23C1934D08F0067B87A /* APP_States.cpp */; };
+		9577E2521934D0AF0067B87A /* SMF_PlatformAfx_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E24A1934D0AF0067B87A /* SMF_PlatformAfx_osx64.cpp */; };
+		9577E2531934D0AF0067B87A /* SMF_PlatformEvent_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E24C1934D0AF0067B87A /* SMF_PlatformEvent_osx64.cpp */; };
+		9577E2541934D0AF0067B87A /* SMF_PlatformLock_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E24D1934D0AF0067B87A /* SMF_PlatformLock_osx64.cpp */; };
+		9577E2551934D0AF0067B87A /* SMF_PlatformMsgQ_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E24E1934D0AF0067B87A /* SMF_PlatformMsgQ_osx64.cpp */; };
+		9577E2561934D0AF0067B87A /* SMF_PlatformSharedMem_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E24F1934D0AF0067B87A /* SMF_PlatformSharedMem_osx64.cpp */; };
+		9577E2571934D0AF0067B87A /* SMF_PlatformThread_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2501934D0AF0067B87A /* SMF_PlatformThread_osx64.cpp */; };
+		9577E2581934D0AF0067B87A /* SMF_PlatformTimer_osx64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2511934D0AF0067B87A /* SMF_PlatformTimer_osx64.cpp */; };
+		9577E25D1934D0C40067B87A /* TK_sock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2591934D0C40067B87A /* TK_sock.cpp */; };
+		9577E25E1934D0C40067B87A /* Tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E25B1934D0C40067B87A /* Tools.cpp */; };
+		9577E2711934D0D40067B87A /* SMF_afx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E25F1934D0D40067B87A /* SMF_afx.cpp */; };
+		9577E2721934D0D40067B87A /* SMF_BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2611934D0D40067B87A /* SMF_BaseEngine.cpp */; };
+		9577E2731934D0D40067B87A /* SMF_BaseEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2631934D0D40067B87A /* SMF_BaseEventQueue.cpp */; };
+		9577E2741934D0D40067B87A /* SMF_BaseMailBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2651934D0D40067B87A /* SMF_BaseMailBox.cpp */; };
+		9577E2751934D0D40067B87A /* SMF_BaseRpc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2671934D0D40067B87A /* SMF_BaseRpc.cpp */; };
+		9577E2761934D0D40067B87A /* SMF_BaseState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E2691934D0D40067B87A /* SMF_BaseState.cpp */; };
+		9577E2771934D0D40067B87A /* SMF_BaseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E26B1934D0D40067B87A /* SMF_BaseThread.cpp */; };
+		9577E2781934D0D40067B87A /* SMF_PostOffice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E26D1934D0D40067B87A /* SMF_PostOffice.cpp */; };
+		9577E2791934D0D40067B87A /* SMF_RpcTunnel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E26F1934D0D40067B87A /* SMF_RpcTunnel.cpp */; };
+		9577E2801934D0F00067B87A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E27B1934D0F00067B87A /* main.cpp */; };
+		9577E2811934D0F00067B87A /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9577E27D1934D0F00067B87A /* stdafx.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9577E2201934D0350067B87A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9577E2321934D08F0067B87A /* APP_afx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APP_afx.cpp; path = ../../../StateMachineFramework/APP_afx.cpp; sourceTree = "<group>"; };
+		9577E2331934D08F0067B87A /* APP_afx.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = APP_afx.hpp; path = ../../../StateMachineFramework/APP_afx.hpp; sourceTree = "<group>"; };
+		9577E2341934D08F0067B87A /* APP_BaseState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APP_BaseState.cpp; path = ../../../StateMachineFramework/APP_BaseState.cpp; sourceTree = "<group>"; };
+		9577E2351934D08F0067B87A /* APP_BaseState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = APP_BaseState.hpp; path = ../../../StateMachineFramework/APP_BaseState.hpp; sourceTree = "<group>"; };
+		9577E2361934D08F0067B87A /* APP_Engines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APP_Engines.cpp; path = ../../../StateMachineFramework/APP_Engines.cpp; sourceTree = "<group>"; };
+		9577E2371934D08F0067B87A /* APP_Engines.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = APP_Engines.hpp; path = ../../../StateMachineFramework/APP_Engines.hpp; sourceTree = "<group>"; };
+		9577E2381934D08F0067B87A /* APP_EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APP_EventHandler.cpp; path = ../../../StateMachineFramework/APP_EventHandler.cpp; sourceTree = "<group>"; };
+		9577E2391934D08F0067B87A /* APP_EventHandler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = APP_EventHandler.hpp; path = ../../../StateMachineFramework/APP_EventHandler.hpp; sourceTree = "<group>"; };
+		9577E23A1934D08F0067B87A /* APP_EventHandlerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APP_EventHandlerImpl.cpp; path = ../../../StateMachineFramework/APP_EventHandlerImpl.cpp; sourceTree = "<group>"; };
+		9577E23B1934D08F0067B87A /* APP_EventHandlerImpl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = APP_EventHandlerImpl.hpp; path = ../../../StateMachineFramework/APP_EventHandlerImpl.hpp; sourceTree = "<group>"; };
+		9577E23C1934D08F0067B87A /* APP_States.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APP_States.cpp; path = ../../../StateMachineFramework/APP_States.cpp; sourceTree = "<group>"; };
+		9577E23D1934D08F0067B87A /* APP_States.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = APP_States.hpp; path = ../../../StateMachineFramework/APP_States.hpp; sourceTree = "<group>"; };
+		9577E2441934D0A20067B87A /* SMF_PlatformEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformEvent.h; path = ../../../StateMachineFramework/platform/api/SMF_PlatformEvent.h; sourceTree = "<group>"; };
+		9577E2451934D0A20067B87A /* SMF_PlatformLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformLock.h; path = ../../../StateMachineFramework/platform/api/SMF_PlatformLock.h; sourceTree = "<group>"; };
+		9577E2461934D0A20067B87A /* SMF_PlatformMsgQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformMsgQ.h; path = ../../../StateMachineFramework/platform/api/SMF_PlatformMsgQ.h; sourceTree = "<group>"; };
+		9577E2471934D0A20067B87A /* SMF_PlatformSharedMem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformSharedMem.h; path = ../../../StateMachineFramework/platform/api/SMF_PlatformSharedMem.h; sourceTree = "<group>"; };
+		9577E2481934D0A20067B87A /* SMF_PlatformThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformThread.h; path = ../../../StateMachineFramework/platform/api/SMF_PlatformThread.h; sourceTree = "<group>"; };
+		9577E2491934D0A20067B87A /* SMF_PlatformTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformTimer.h; path = ../../../StateMachineFramework/platform/api/SMF_PlatformTimer.h; sourceTree = "<group>"; };
+		9577E24A1934D0AF0067B87A /* SMF_PlatformAfx_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformAfx_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformAfx_osx64.cpp; sourceTree = "<group>"; };
+		9577E24B1934D0AF0067B87A /* SMF_PlatformAfx_osx64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PlatformAfx_osx64.h; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformAfx_osx64.h; sourceTree = "<group>"; };
+		9577E24C1934D0AF0067B87A /* SMF_PlatformEvent_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformEvent_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformEvent_osx64.cpp; sourceTree = "<group>"; };
+		9577E24D1934D0AF0067B87A /* SMF_PlatformLock_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformLock_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformLock_osx64.cpp; sourceTree = "<group>"; };
+		9577E24E1934D0AF0067B87A /* SMF_PlatformMsgQ_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformMsgQ_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformMsgQ_osx64.cpp; sourceTree = "<group>"; };
+		9577E24F1934D0AF0067B87A /* SMF_PlatformSharedMem_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformSharedMem_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformSharedMem_osx64.cpp; sourceTree = "<group>"; };
+		9577E2501934D0AF0067B87A /* SMF_PlatformThread_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformThread_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformThread_osx64.cpp; sourceTree = "<group>"; };
+		9577E2511934D0AF0067B87A /* SMF_PlatformTimer_osx64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PlatformTimer_osx64.cpp; path = ../../../StateMachineFramework/platform/osx64/SMF_PlatformTimer_osx64.cpp; sourceTree = "<group>"; };
+		9577E2591934D0C40067B87A /* TK_sock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TK_sock.cpp; path = ../../../StateMachineFramework/TK_sock.cpp; sourceTree = "<group>"; };
+		9577E25A1934D0C40067B87A /* TK_sock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TK_sock.h; path = ../../../StateMachineFramework/TK_sock.h; sourceTree = "<group>"; };
+		9577E25B1934D0C40067B87A /* Tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tools.cpp; path = ../../../StateMachineFramework/Tools.cpp; sourceTree = "<group>"; };
+		9577E25C1934D0C40067B87A /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tools.h; path = ../../../StateMachineFramework/Tools.h; sourceTree = "<group>"; };
+		9577E25F1934D0D40067B87A /* SMF_afx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_afx.cpp; path = ../../../StateMachineFramework/SMF_afx.cpp; sourceTree = "<group>"; };
+		9577E2601934D0D40067B87A /* SMF_afx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_afx.h; path = ../../../StateMachineFramework/SMF_afx.h; sourceTree = "<group>"; };
+		9577E2611934D0D40067B87A /* SMF_BaseEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_BaseEngine.cpp; path = ../../../StateMachineFramework/SMF_BaseEngine.cpp; sourceTree = "<group>"; };
+		9577E2621934D0D40067B87A /* SMF_BaseEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_BaseEngine.h; path = ../../../StateMachineFramework/SMF_BaseEngine.h; sourceTree = "<group>"; };
+		9577E2631934D0D40067B87A /* SMF_BaseEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_BaseEventQueue.cpp; path = ../../../StateMachineFramework/SMF_BaseEventQueue.cpp; sourceTree = "<group>"; };
+		9577E2641934D0D40067B87A /* SMF_BaseEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_BaseEventQueue.h; path = ../../../StateMachineFramework/SMF_BaseEventQueue.h; sourceTree = "<group>"; };
+		9577E2651934D0D40067B87A /* SMF_BaseMailBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_BaseMailBox.cpp; path = ../../../StateMachineFramework/SMF_BaseMailBox.cpp; sourceTree = "<group>"; };
+		9577E2661934D0D40067B87A /* SMF_BaseMailBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_BaseMailBox.h; path = ../../../StateMachineFramework/SMF_BaseMailBox.h; sourceTree = "<group>"; };
+		9577E2671934D0D40067B87A /* SMF_BaseRpc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_BaseRpc.cpp; path = ../../../StateMachineFramework/SMF_BaseRpc.cpp; sourceTree = "<group>"; };
+		9577E2681934D0D40067B87A /* SMF_BaseRpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_BaseRpc.h; path = ../../../StateMachineFramework/SMF_BaseRpc.h; sourceTree = "<group>"; };
+		9577E2691934D0D40067B87A /* SMF_BaseState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_BaseState.cpp; path = ../../../StateMachineFramework/SMF_BaseState.cpp; sourceTree = "<group>"; };
+		9577E26A1934D0D40067B87A /* SMF_BaseState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_BaseState.h; path = ../../../StateMachineFramework/SMF_BaseState.h; sourceTree = "<group>"; };
+		9577E26B1934D0D40067B87A /* SMF_BaseThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_BaseThread.cpp; path = ../../../StateMachineFramework/SMF_BaseThread.cpp; sourceTree = "<group>"; };
+		9577E26C1934D0D40067B87A /* SMF_BaseThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_BaseThread.h; path = ../../../StateMachineFramework/SMF_BaseThread.h; sourceTree = "<group>"; };
+		9577E26D1934D0D40067B87A /* SMF_PostOffice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_PostOffice.cpp; path = ../../../StateMachineFramework/SMF_PostOffice.cpp; sourceTree = "<group>"; };
+		9577E26E1934D0D40067B87A /* SMF_PostOffice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_PostOffice.h; path = ../../../StateMachineFramework/SMF_PostOffice.h; sourceTree = "<group>"; };
+		9577E26F1934D0D40067B87A /* SMF_RpcTunnel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SMF_RpcTunnel.cpp; path = ../../../StateMachineFramework/SMF_RpcTunnel.cpp; sourceTree = "<group>"; };
+		9577E2701934D0D40067B87A /* SMF_RpcTunnel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMF_RpcTunnel.h; path = ../../../StateMachineFramework/SMF_RpcTunnel.h; sourceTree = "<group>"; };
+		9577E27A1934D0F00067B87A /* IpcDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IpcDef.h; path = ../../../StateMachineFramework/IpcDef.h; sourceTree = "<group>"; };
+		9577E27B1934D0F00067B87A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../StateMachineFramework/main.cpp; sourceTree = "<group>"; };
+		9577E27C1934D0F00067B87A /* RpcDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RpcDef.h; path = ../../../StateMachineFramework/RpcDef.h; sourceTree = "<group>"; };
+		9577E27D1934D0F00067B87A /* stdafx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stdafx.cpp; path = ../../../StateMachineFramework/stdafx.cpp; sourceTree = "<group>"; };
+		9577E27E1934D0F00067B87A /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = ../../../StateMachineFramework/stdafx.h; sourceTree = "<group>"; };
+		9577E27F1934D0F00067B87A /* targetver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = targetver.h; path = ../../../StateMachineFramework/targetver.h; sourceTree = "<group>"; };
+		9577E2821934D1580067B87A /* StateMachineFramework */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = StateMachineFramework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9577E21F1934D0350067B87A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9577E2191934D0350067B87A = {
+			isa = PBXGroup;
+			children = (
+				9577E2241934D0350067B87A /* StateMachineFramework */,
+				9577E2821934D1580067B87A /* StateMachineFramework */,
+			);
+			sourceTree = "<group>";
+		};
+		9577E2241934D0350067B87A /* StateMachineFramework */ = {
+			isa = PBXGroup;
+			children = (
+				9577E2311934D06E0067B87A /* Generated */,
+				9577E2301934D0670067B87A /* Platform */,
+				9577E22F1934D05C0067B87A /* Framework */,
+				9577E22E1934D0520067B87A /* Application */,
+			);
+			path = StateMachineFramework;
+			sourceTree = "<group>";
+		};
+		9577E22E1934D0520067B87A /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				9577E27A1934D0F00067B87A /* IpcDef.h */,
+				9577E27B1934D0F00067B87A /* main.cpp */,
+				9577E27C1934D0F00067B87A /* RpcDef.h */,
+				9577E27D1934D0F00067B87A /* stdafx.cpp */,
+				9577E27E1934D0F00067B87A /* stdafx.h */,
+				9577E27F1934D0F00067B87A /* targetver.h */,
+			);
+			name = Application;
+			sourceTree = "<group>";
+		};
+		9577E22F1934D05C0067B87A /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				9577E25F1934D0D40067B87A /* SMF_afx.cpp */,
+				9577E2601934D0D40067B87A /* SMF_afx.h */,
+				9577E2611934D0D40067B87A /* SMF_BaseEngine.cpp */,
+				9577E2621934D0D40067B87A /* SMF_BaseEngine.h */,
+				9577E2631934D0D40067B87A /* SMF_BaseEventQueue.cpp */,
+				9577E2641934D0D40067B87A /* SMF_BaseEventQueue.h */,
+				9577E2651934D0D40067B87A /* SMF_BaseMailBox.cpp */,
+				9577E2661934D0D40067B87A /* SMF_BaseMailBox.h */,
+				9577E2671934D0D40067B87A /* SMF_BaseRpc.cpp */,
+				9577E2681934D0D40067B87A /* SMF_BaseRpc.h */,
+				9577E2691934D0D40067B87A /* SMF_BaseState.cpp */,
+				9577E26A1934D0D40067B87A /* SMF_BaseState.h */,
+				9577E26B1934D0D40067B87A /* SMF_BaseThread.cpp */,
+				9577E26C1934D0D40067B87A /* SMF_BaseThread.h */,
+				9577E26D1934D0D40067B87A /* SMF_PostOffice.cpp */,
+				9577E26E1934D0D40067B87A /* SMF_PostOffice.h */,
+				9577E26F1934D0D40067B87A /* SMF_RpcTunnel.cpp */,
+				9577E2701934D0D40067B87A /* SMF_RpcTunnel.h */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		9577E2301934D0670067B87A /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				9577E2591934D0C40067B87A /* TK_sock.cpp */,
+				9577E25A1934D0C40067B87A /* TK_sock.h */,
+				9577E25B1934D0C40067B87A /* Tools.cpp */,
+				9577E25C1934D0C40067B87A /* Tools.h */,
+				9577E24A1934D0AF0067B87A /* SMF_PlatformAfx_osx64.cpp */,
+				9577E24B1934D0AF0067B87A /* SMF_PlatformAfx_osx64.h */,
+				9577E24C1934D0AF0067B87A /* SMF_PlatformEvent_osx64.cpp */,
+				9577E24D1934D0AF0067B87A /* SMF_PlatformLock_osx64.cpp */,
+				9577E24E1934D0AF0067B87A /* SMF_PlatformMsgQ_osx64.cpp */,
+				9577E24F1934D0AF0067B87A /* SMF_PlatformSharedMem_osx64.cpp */,
+				9577E2501934D0AF0067B87A /* SMF_PlatformThread_osx64.cpp */,
+				9577E2511934D0AF0067B87A /* SMF_PlatformTimer_osx64.cpp */,
+				9577E2441934D0A20067B87A /* SMF_PlatformEvent.h */,
+				9577E2451934D0A20067B87A /* SMF_PlatformLock.h */,
+				9577E2461934D0A20067B87A /* SMF_PlatformMsgQ.h */,
+				9577E2471934D0A20067B87A /* SMF_PlatformSharedMem.h */,
+				9577E2481934D0A20067B87A /* SMF_PlatformThread.h */,
+				9577E2491934D0A20067B87A /* SMF_PlatformTimer.h */,
+			);
+			name = Platform;
+			sourceTree = "<group>";
+		};
+		9577E2311934D06E0067B87A /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				9577E2321934D08F0067B87A /* APP_afx.cpp */,
+				9577E2331934D08F0067B87A /* APP_afx.hpp */,
+				9577E2341934D08F0067B87A /* APP_BaseState.cpp */,
+				9577E2351934D08F0067B87A /* APP_BaseState.hpp */,
+				9577E2361934D08F0067B87A /* APP_Engines.cpp */,
+				9577E2371934D08F0067B87A /* APP_Engines.hpp */,
+				9577E2381934D08F0067B87A /* APP_EventHandler.cpp */,
+				9577E2391934D08F0067B87A /* APP_EventHandler.hpp */,
+				9577E23A1934D08F0067B87A /* APP_EventHandlerImpl.cpp */,
+				9577E23B1934D08F0067B87A /* APP_EventHandlerImpl.hpp */,
+				9577E23C1934D08F0067B87A /* APP_States.cpp */,
+				9577E23D1934D08F0067B87A /* APP_States.hpp */,
+			);
+			name = Generated;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9577E2211934D0350067B87A /* StateMachineFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9577E22B1934D0350067B87A /* Build configuration list for PBXNativeTarget "StateMachineFramework" */;
+			buildPhases = (
+				9577E21E1934D0350067B87A /* Sources */,
+				9577E21F1934D0350067B87A /* Frameworks */,
+				9577E2201934D0350067B87A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StateMachineFramework;
+			productName = StateMachineFramework;
+			productReference = 9577E2821934D1580067B87A /* StateMachineFramework */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9577E21A1934D0350067B87A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = iecoo;
+			};
+			buildConfigurationList = 9577E21D1934D0350067B87A /* Build configuration list for PBXProject "StateMachineFramework" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9577E2191934D0350067B87A;
+			productRefGroup = 9577E2191934D0350067B87A;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9577E2211934D0350067B87A /* StateMachineFramework */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9577E21E1934D0350067B87A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9577E2711934D0D40067B87A /* SMF_afx.cpp in Sources */,
+				9577E23F1934D08F0067B87A /* APP_BaseState.cpp in Sources */,
+				9577E2431934D08F0067B87A /* APP_States.cpp in Sources */,
+				9577E2521934D0AF0067B87A /* SMF_PlatformAfx_osx64.cpp in Sources */,
+				9577E2741934D0D40067B87A /* SMF_BaseMailBox.cpp in Sources */,
+				9577E2771934D0D40067B87A /* SMF_BaseThread.cpp in Sources */,
+				9577E2531934D0AF0067B87A /* SMF_PlatformEvent_osx64.cpp in Sources */,
+				9577E2561934D0AF0067B87A /* SMF_PlatformSharedMem_osx64.cpp in Sources */,
+				9577E2411934D08F0067B87A /* APP_EventHandler.cpp in Sources */,
+				9577E2811934D0F00067B87A /* stdafx.cpp in Sources */,
+				9577E25E1934D0C40067B87A /* Tools.cpp in Sources */,
+				9577E2761934D0D40067B87A /* SMF_BaseState.cpp in Sources */,
+				9577E2781934D0D40067B87A /* SMF_PostOffice.cpp in Sources */,
+				9577E2751934D0D40067B87A /* SMF_BaseRpc.cpp in Sources */,
+				9577E2581934D0AF0067B87A /* SMF_PlatformTimer_osx64.cpp in Sources */,
+				9577E2401934D08F0067B87A /* APP_Engines.cpp in Sources */,
+				9577E2731934D0D40067B87A /* SMF_BaseEventQueue.cpp in Sources */,
+				9577E25D1934D0C40067B87A /* TK_sock.cpp in Sources */,
+				9577E2551934D0AF0067B87A /* SMF_PlatformMsgQ_osx64.cpp in Sources */,
+				9577E2801934D0F00067B87A /* main.cpp in Sources */,
+				9577E2791934D0D40067B87A /* SMF_RpcTunnel.cpp in Sources */,
+				9577E2421934D08F0067B87A /* APP_EventHandlerImpl.cpp in Sources */,
+				9577E23E1934D08F0067B87A /* APP_afx.cpp in Sources */,
+				9577E2721934D0D40067B87A /* SMF_BaseEngine.cpp in Sources */,
+				9577E2571934D0AF0067B87A /* SMF_PlatformThread_osx64.cpp in Sources */,
+				9577E2541934D0AF0067B87A /* SMF_PlatformLock_osx64.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9577E2291934D0350067B87A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9577E22A1934D0350067B87A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9577E22C1934D0350067B87A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					OSX64,
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9577E22D1934D0350067B87A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9577E21D1934D0350067B87A /* Build configuration list for PBXProject "StateMachineFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9577E2291934D0350067B87A /* Debug */,
+				9577E22A1934D0350067B87A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9577E22B1934D0350067B87A /* Build configuration list for PBXNativeTarget "StateMachineFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9577E22C1934D0350067B87A /* Debug */,
+				9577E22D1934D0350067B87A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9577E21A1934D0350067B87A /* Project object */;
+}

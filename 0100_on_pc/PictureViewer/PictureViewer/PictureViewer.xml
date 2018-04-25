@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<Config>
+    <BgColor>
+        <a>0</a>                                      <!-- range: [0,255] -->
+        <r>0</r>                                      <!-- range: [0,255] -->
+        <g>0</g>                                      <!-- range: [0,255] -->
+        <b>0</b>                                      <!-- range: [0,255] -->
+    </BgColor>
+    <GlobalAlpha>255</GlobalAlpha>                      <!-- range: [0,255] -->
+    <ScaleFactor>1.0</ScaleFactor>                      <!-- float -->
+    <ExportedBmpFileColorMasks>
+        <BottomUp>0</BottomUp>                          <!-- 0 or 1 -->
+        <ColorOrder>bgra</ColorOrder>                   <!-- color order: default: bgra -->
+    </ExportedBmpFileColorMasks>
+</Config>

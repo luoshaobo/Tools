@@ -1,0 +1,5 @@
+DIRS=\	
+    HookDllLoader \
+    TestLoadExternalSymbal \	
+	TestLoadExternalSymbal_debugee \
+	TestLoadExternalSymbal_DllToInject \

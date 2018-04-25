@@ -1,0 +1,44 @@
+[KKEY_LOCAL_MACHINE\Drivers\TestDrives\TELNETD_DRIVER_0]
+"Dll" = "telnetd_drv.dll"
+"Prefix" = "TLD"
+"Index" = dword:0
+"Order" = dword:10000000
+"FriendlyName" = "Telnetd Driver"
+"Ioctl" = dword:0
+"Flags" = dword:12
+"UserProcGroup" = dword:220
+
+[KKEY_LOCAL_MACHINE\Drivers\TestDrives\TELNETD_DRIVER_1]
+"Dll" = "telnetd_drv.dll"
+"Prefix" = "TLD"
+"Index" = dword:1
+"Order" = dword:10000000
+"FriendlyName" = "Telnetd Driver"
+"Ioctl" = dword:0
+"Flags" = dword:12
+"UserProcGroup" = dword:221
+
+[KKEY_LOCAL_MACHINE\Drivers\TestDrives\TELNETD_DRIVER_2]
+"Dll" = "telnetd_drv.dll"
+"Prefix" = "TLD"
+"Index" = dword:2
+"Order" = dword:10000000
+"FriendlyName" = "Telnetd Driver"
+"Ioctl" = dword:0
+"Flags" = dword:12
+"UserProcGroup" = dword:222
+
+[KKEY_LOCAL_MACHINE\Drivers\TestDrives\TELNETD_DRIVER_3]
+"Dll" = "telnetd_drv.dll"
+"Prefix" = "TLD"
+"Index" = dword:3
+"Order" = dword:10000000
+"FriendlyName" = "Telnetd Driver"
+"Ioctl" = dword:0
+"Flags" = dword:12
+"UserProcGroup" = dword:223
+
+[HKEY_LOCAL_MACHINE\Drivers\ProcGroup_0223]
+"ProcName" = "udevice.exe"
+"ProcVolPrefix" = "$udevice"
+
