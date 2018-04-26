@@ -1,0 +1,25 @@
+#!/bin/bash
+
+UMOUNT_A=Y
+UMOUNT_B=N
+
+if [ $# -ge 1 ]; then
+    if [ "$1" = "a" ]; then
+        UMOUNT_A=Y
+        UMOUNT_B=N
+    elif [ "$1" = "b" ]; then
+        UMOUNT_A=N
+        UMOUNT_B=Y
+    elif [ "$1" = "all" ]; then
+        UMOUNT_A=Y
+        #UMOUNT_B=Y
+    fi
+fi
+
+if [ "$UMOUNT_A" = "Y" ]; then
+    vmmount /d /f r:
+fi
+
+if [ "$UMOUNT_B" = "Y" ]; then
+    vmmount /d /f s:
+fi

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+PATH="/cygdrive/c/Program Files (x86)/VMware/VMware Virtual Disk Development Kit/bin":$PATH
+
+vmware-mount $*

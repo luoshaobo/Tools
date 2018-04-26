@@ -1,0 +1,1 @@
+\\wetp004a\did65001\cm_syn\tools\stop_sessions.bat V7.1L.shaz051x

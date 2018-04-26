@@ -1,0 +1,285 @@
+#!/bin/bash
+
+HMI_ROOT_DIR="D:\\casdev\\WinCE\\public\\MMP_PROD\\_HS"
+TXT_FILE_READER_PATHNAME="C:\\Program Files (x86)\\Notepad++\\notepad++.exe"
+CACHE_FILEPATH="D:\\lsb_bin\\~open_file.cache"
+NOT_USE_CACHE=0
+
+KNOWN_FILES=`cat <<EOF
+LocalizedTextTable.vtbl
+DefColors.vctb
+EvtID.vtyp
+ScreenID.vtyp
+UShortImage.vtyp
+hmiImageTable.h
+hmiImageTable.cpp
+EOF
+`
+
+SEARCH_PATHS=`cat <<EOF
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI2\Controls
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI2\Formats
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI2\GUI
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI2\Infrastructure
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI2\Widgets
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Controls
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\GUI
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Infrastructure
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Tables\Attributes
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Tables\Font
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Tables\Localization
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Toolbox_DPCA
+D:\casdev\WinCE\public\MMP_PROD\_HS\HMI\Widgets
+EOF
+`
+
+usage()
+{
+    echo "Usage:"
+    echo "  `basename $0` [--fast-search|-f] [--not-use-cache|-n] <file_name>"
+    echo "  `basename $0` --remove-cache|-r"
+    echo ""
+    echo "NOTE:"
+    echo "  1) regular expression can be used on the file name."
+}
+
+is_file_last_modified_before_today()
+{
+    local RET
+    local FILEPATH
+    local NOW_YEAR
+    local NOW_DAY_IN_YEAR
+    local FILE_YEAR
+    local FILE_DAY_IN_YEAR
+    
+    RET=1
+    FILEPATH="$1"
+    
+    if [ ! -f "$FILEPATH" ]; then
+        return 0
+    fi
+        
+    NOW_YEAR=$(date "+%-Y")
+    NOW_DAY_IN_YEAR=$(date "+%-j")
+    
+    FILE_YEAR=$(date "+%-Y" -r "$FILEPATH")
+    FILE_DAY_IN_YEAR=$(date "+%-j" -r "$FILEPATH")
+    
+    if [ $NOW_YEAR -gt $FILE_YEAR -o $NOW_DAY_IN_YEAR -gt $FILE_DAY_IN_YEAR ]; then
+        RET=0
+    fi
+    
+    return $RET
+}
+
+create_cache()
+{
+    local LINEBUF
+    
+    > "$CACHE_FILEPATH"
+    
+    for LINEBUF in $SEARCH_PATHS; do
+        if [ -z "$LINEBUF" ]; then
+            continue;
+        fi
+        
+        find $LINEBUF | tr '/' '\\' >> "$CACHE_FILEPATH"
+    done
+    
+    chmod -x "$CACHE_FILEPATH"
+}
+
+remove_cache()
+{
+    rm -f "$CACHE_FILEPATH"
+}
+    
+GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES=""
+get_full_file_name()
+{
+    local FILE_NAME_PATTERN
+    
+    FILE_NAME_PATTERN="$1"
+    
+    GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES=""
+    
+    LINES=`echo "$KNOWN_FILES" | grep -v -E -e "^[ \t]*#" | grep -i -e "$FILE_NAME_PATTERN"`
+    GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES="$LINES"
+    
+    return 0
+}
+
+convert_unix_path_to_win_path()
+{
+    local UNIX_PATH
+
+    UNIX_PATH="$1"
+    
+    echo "$UNIX_PATH" | sed -e 's/\//\\/g'
+}
+
+convert_win_path_to_unix_path()
+{
+    local UNIX_PATH
+
+    UNIX_PATH="$1"
+    
+    echo "$UNIX_PATH" | sed -e 's/\\/\//g'
+}
+
+FIND_FILE_RET_FILE_PATHS=""
+find_file_without_cache()
+{
+    local FILENAME
+    local LINEBUF
+    local FILE_PATHS
+    local FILE_PATHS_UNIX
+    
+    FIND_FILE_RET_FILE_PATHS=""
+    
+    FILENAME="$1"
+    
+    for LINEBUF in $SEARCH_PATHS; do
+        FILE_PATHS=`find -L "$LINEBUF" -iname "$FILENAME" | grep -i -e "$FILENAME" | grep -v ".001" | grep -v ".old" | grep -v " - Copy" 2>/dev/null`
+        
+        if [ ! -z "$FILE_PATHS" ]; then
+            FILE_PATHS_UNIX=`convert_win_path_to_unix_path "$FILE_PATHS"`
+            if [ ! -z "$FIND_FILE_RET_FILE_PATHS" ] ; then
+                FIND_FILE_RET_FILE_PATHS="$FIND_FILE_RET_FILE_PATHS\n$FILE_PATHS_UNIX"
+            else
+                FIND_FILE_RET_FILE_PATHS="$FILE_PATHS_UNIX"
+            fi
+        fi
+    done
+
+    return 0
+}
+
+find_file_with_cache()
+{
+    local FILENAME
+    local LINEBUF
+    local FILE_PATHS
+    local FILE_PATHS_UNIX
+    
+    FIND_FILE_RET_FILE_PATHS=""
+    
+    FILENAME="$1"
+    
+    FILE_PATHS=`cat "$CACHE_FILEPATH" | grep -i -e "$FILENAME" | grep -v ".001" | grep -v ".old" | grep -v " - Copy" 2>/dev/null`
+    
+    if [ ! -z "$FILE_PATHS" ]; then
+        FILE_PATHS_UNIX=`convert_win_path_to_unix_path "$FILE_PATHS"`
+        if [ ! -z "$FIND_FILE_RET_FILE_PATHS" ] ; then
+            FIND_FILE_RET_FILE_PATHS="$FIND_FILE_RET_FILE_PATHS\n$FILE_PATHS_UNIX"
+        else
+            FIND_FILE_RET_FILE_PATHS="$FILE_PATHS_UNIX"
+        fi
+    fi
+
+    return 0
+}
+
+find_file()
+{
+    if [ $NOT_USE_CACHE -eq 0 -a -f "$CACHE_FILEPATH" ]; then
+        find_file_with_cache $*
+    else
+        find_file_without_cache $*
+    fi
+}
+
+open_txt_file()
+{
+    local FILEPATH
+    local FILEPATH_WIN
+    
+    FILEPATH="$1"
+    FILEPATH_WIN=`convert_unix_path_to_win_path "$FILEPATH"`
+    
+    echo "cmd /c \"$TXT_FILE_READER_PATHNAME\" \"$FILEPATH_WIN\""
+    cmd /c "$TXT_FILE_READER_PATHNAME" "$FILEPATH_WIN" &
+}
+
+FILE_NAME_PATTERNS=""
+USE_FAST_SEARCH=0
+
+if [ ! -f "$CACHE_FILEPATH" ]; then
+    create_cache
+fi
+
+while [ 1 -eq 1 ]; do
+    if [ $# -ge 1 ]; then
+        if [ "$1" == "--help" -o "$1" == "-help" -o "$1" == "-h" -o "$1" == "-H" ]; then
+            usage
+            exit 0
+        elif [ "$1" == "--fast-search" -o "$1" == "-f" ]; then
+            USE_FAST_SEARCH=1
+            shift
+        elif [ "$1" == "--remove-cache" -o "$1" == "-r" ]; then
+            remove_cache
+            exit 0
+        elif [ "$1" == "--not-use-cache" -o "$1" == "-n" ]; then
+            NOT_USE_CACHE=1
+            shift
+        else
+            FILE_NAME_PATTERNS="$*"
+            break
+        fi
+    else
+        usage
+        exit 0
+    fi
+done
+
+if is_file_last_modified_before_today "$CACHE_FILEPATH"; then
+    echo "*** Old cache file removed!"
+    rm -f "$CACHE_FILEPATH"
+fi
+
+if [ ! -f "$CACHE_FILEPATH" ]; then
+    create_cache
+fi
+
+for FILE_NAME_PATTERN in $FILE_NAME_PATTERNS; do   
+    if [ -z "$FILE_NAME_PATTERN" ]; then
+        continue
+    fi
+
+    FILE_NAME="$FILE_NAME_PATTERN"
+    
+    if [ $USE_FAST_SEARCH -eq 1 ]; then
+        get_full_file_name "$FILE_NAME_PATTERN"
+        if [ ! -z "$GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES" ]; then
+            LINE_COUNT=`echo "$GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES" | wc -l`
+            if [ $LINE_COUNT -eq 0 ]; then
+                :
+            elif [ $LINE_COUNT -gt 1 ]; then
+                echo "*** Multiple files are matched for \"$FILE_NAME_PATTERN\"!" >&2
+                echo "$GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES" >&2
+                exit 1
+            else
+                FILE_NAME="$GET_FULL_FILE_NAME_RET_FULL_FILE_NAMES"
+            fi
+        fi
+    fi
+    
+    echo "### $FILE_NAME is used as the regular expression partten of the target file name."
+    
+    find_file "$FILE_NAME"
+    
+    TMP_STR=`echo -e "$FIND_FILE_RET_FILE_PATHS"`
+    FIND_FILE_RET_FILE_PATHS="$TMP_STR"
+    
+    convert_unix_path_to_win_path "$FIND_FILE_RET_FILE_PATHS"   # only for output
+    
+    echo "-----------------------------------------------------------------------------------------"
+    COUNT=`echo "$FIND_FILE_RET_FILE_PATHS" | wc -l`
+    if [ $COUNT -le 4 ]; then
+        for FILEPATH in $FIND_FILE_RET_FILE_PATHS; do
+            open_txt_file "$FILEPATH"
+        done
+    else
+        echo "*** Too many paths found!" >&2
+    fi
+done

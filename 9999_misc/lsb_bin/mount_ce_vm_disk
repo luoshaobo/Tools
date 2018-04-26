@@ -1,0 +1,26 @@
+#!/bin/bash
+
+MOUNT_A=Y
+MOUNT_B=N
+
+if [ $# -ge 1 ]; then
+    if [ "$1" = "a" ]; then
+        MOUNT_A=Y
+        MOUNT_B=N
+    elif [ "$1" = "b" ]; then
+        MOUNT_A=N
+        MOUNT_B=Y
+    elif [ "$1" = "all" ]; then
+        MOUNT_A=Y
+        #MOUNT_B=Y
+    fi
+fi
+
+if [ "$MOUNT_A" = "Y" ]; then
+    vmmount r: 'G:\vm_disk\win7_conti_wince_build_a\win7_conti_wince_build.vmdk' /v:1 /m:w
+fi
+
+if [ "$MOUNT_B" = "Y" ]; then
+    vmmount s: 'G:\vm_disk\win7_conti_wince_build_b\win7_conti_wince_build.vmdk' /v:1 /m:w
+fi
+
