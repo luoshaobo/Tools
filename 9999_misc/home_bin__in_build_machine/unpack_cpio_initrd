@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gzip -dvc ../initrd.img | cpio -div --no-absolute-filenames
+

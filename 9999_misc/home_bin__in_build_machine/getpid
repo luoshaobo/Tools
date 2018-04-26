@@ -1,0 +1,17 @@
+#!/bin/sh
+
+usage()
+{
+    echo "Usage: "
+    echo "    `basename $0` <proc_exec_name>"
+    echo
+}
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
+EXEC_NAME="$1"
+
+ps aux | grep "$EXEC_NAME" | grep -v "grep" | grep -v "getpid" | awk '{print $2}'
