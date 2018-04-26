@@ -121,7 +121,10 @@ void CChildView::OnFileExport()
         m_sLastSavedFileName,
         0,
         _T(   "Bitmap Files (32 Bits) (*.bmp)|*.bmp")
-          _T("|Raw Files (32 Bits) (*.data)|*.data")
+          _T("|Raw Files (32 Bits ARGB) (*.argb32)|*.argb32")
+          _T("|Raw Files (16 Bits RGB) (*.rgb16)|*.rgb16")
+          _T("|Raw Files (16 Bits YUV) (*.yuv16)|*.yuv16")
+          _T("|Raw Files (12 Bits YUV) (*.yuv12)|*.yuv12")
           _T("|JPEG Files (*.jpg)|*.jpg")
           _T("|GIF Files (*.gif)|*.gif")
           _T("|TIFF Files (*.tiff)|*.tiff")
@@ -146,9 +149,24 @@ void CChildView::OnFileExport()
             MessageBox(_T("Failed to save as a BMP file!"), _T("Error"), MB_OK | MB_ICONERROR);
             return;
         }
-    } else if (TK_Tools::LowerCase(sExtFilename) == "data") {
-        if (!CWorker::GetInstance().SaveAsRawFile(strImageFilePath)) {
-            MessageBox(_T("Failed to save as a RAW file!"), _T("Error"), MB_OK | MB_ICONERROR);
+    } else if (TK_Tools::LowerCase(sExtFilename) == "argb32") {
+        if (!CWorker::GetInstance().SaveAsRawFileArgb32(strImageFilePath)) {
+            MessageBox(_T("Failed to save as a RAW file (32 bits ARGB)!"), _T("Error"), MB_OK | MB_ICONERROR);
+            return;
+        }
+    } else if (TK_Tools::LowerCase(sExtFilename) == "rgb16") {
+        if (!CWorker::GetInstance().SaveAsRawFileRgb16(strImageFilePath)) {
+            MessageBox(_T("Failed to save as a RAW file (16 bits RGB)!"), _T("Error"), MB_OK | MB_ICONERROR);
+            return;
+        }
+    } else if (TK_Tools::LowerCase(sExtFilename) == "yuv16") {
+        if (!CWorker::GetInstance().SaveAsRawFileYuv16(strImageFilePath)) {
+            MessageBox(_T("Failed to save as a RAW file (16 bits YUV)!"), _T("Error"), MB_OK | MB_ICONERROR);
+            return;
+        }
+    } else if (TK_Tools::LowerCase(sExtFilename) == "yuv12") {
+        if (!CWorker::GetInstance().SaveAsRawFileYuv12(strImageFilePath)) {
+            MessageBox(_T("Failed to save as a RAW file (12 bits YUV)!"), _T("Error"), MB_OK | MB_ICONERROR);
             return;
         }
     
@@ -468,6 +486,9 @@ int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CChildView::OnFileCloseFile()
 {
     // TODO: Add your command handler code here
+    CString strTitle;
     CWorker::GetInstance().CloseCurrentFile();
     Invalidate();
+    strTitle.Format(_T("PictureViewer"));
+    GetParent()->SetWindowText(strTitle);
 }

@@ -13,6 +13,7 @@
 static const char *g_strConfigFilePath = "PictureViewer.xml";
 
 #define MIN(x,y)                                ((x) < (y) ? (x) : (y))
+#define CLAMP(n,min,max)                        (((n) < (min)) ? (min) : ((n) > (max)) ? (max) : (n)) 
 
 CWorker::CWorker(void)
 {
@@ -149,7 +150,7 @@ BOOL CWorker::SaveAsBmpFileWithColor(const CString &sSavedBmpFilePath)
     return bRet;
 }
 
-BOOL CWorker::SaveAsRawFile(const CString &sSavedBmpFilePath)
+BOOL CWorker::SaveAsRawFileArgb32(const CString &sSavedBmpFilePath)
 {
     BOOL bRet = FALSE;
     unsigned long nWidth = MIN(m_nImageWidth, INTERNAL_BMP_WIDTH);
@@ -174,6 +175,97 @@ BOOL CWorker::SaveAsRawFile(const CString &sSavedBmpFilePath)
             m_bExportedBmpBottomUp,
             "bgra",
             TK_Tools::wstr2str((const wchar_t *)m_sExportedBmpFileColorOrder).c_str()
+        );
+    }
+
+    return bRet;
+}
+
+BOOL CWorker::SaveAsRawFileRgb16(const CString &sSavedBmpFilePath)
+{
+    BOOL bRet = FALSE;
+    unsigned long nWidth = MIN(m_nImageWidth, INTERNAL_BMP_WIDTH);
+    unsigned long nHeight = MIN(m_nImageHeight, INTERNAL_BMP_HEIGHT);
+    unsigned long nPitch = INTERNAL_BMP_PITCH;
+
+    if (m_nImageWidth == 0 || m_nImageHeight == 0) {
+        return FALSE;
+    }
+
+    if (m_pImage == NULL) {
+        return FALSE;
+    }
+
+    if (m_pInternalBmpBits != NULL) {
+        bRet = SaveBmpToRawFile_RGBA16(
+            TK_Tools::wstr2str((const wchar_t *)sSavedBmpFilePath).c_str(),
+            m_pInternalBmpBits,
+            nWidth,
+            nHeight,
+            nPitch,
+            m_bExportedBmpBottomUp,
+            "bgra",
+            TK_Tools::wstr2str((const wchar_t *)m_sExportedBmpFileColorOrder).c_str()
+        );
+    }
+
+    return bRet;
+}
+
+BOOL CWorker::SaveAsRawFileYuv16(const CString &sSavedBmpFilePath)
+{
+    BOOL bRet = FALSE;
+    unsigned long nWidth = MIN(m_nImageWidth, INTERNAL_BMP_WIDTH);
+    unsigned long nHeight = MIN(m_nImageHeight, INTERNAL_BMP_HEIGHT);
+    unsigned long nPitch = INTERNAL_BMP_PITCH;
+
+    if (m_nImageWidth == 0 || m_nImageHeight == 0) {
+        return FALSE;
+    }
+
+    if (m_pImage == NULL) {
+        return FALSE;
+    }
+
+    if (m_pInternalBmpBits != NULL) {
+        bRet = SaveBmpToRawFile_YUV16(
+            TK_Tools::wstr2str((const wchar_t *)sSavedBmpFilePath).c_str(),
+            m_pInternalBmpBits,
+            nWidth,
+            nHeight,
+            nPitch,
+            m_bExportedBmpBottomUp,
+            "bgra"
+        );
+    }
+
+    return bRet;
+}
+
+BOOL CWorker::SaveAsRawFileYuv12(const CString &sSavedBmpFilePath)
+{
+    BOOL bRet = FALSE;
+    unsigned long nWidth = MIN(m_nImageWidth, INTERNAL_BMP_WIDTH);
+    unsigned long nHeight = MIN(m_nImageHeight, INTERNAL_BMP_HEIGHT);
+    unsigned long nPitch = INTERNAL_BMP_PITCH;
+
+    if (m_nImageWidth == 0 || m_nImageHeight == 0) {
+        return FALSE;
+    }
+
+    if (m_pImage == NULL) {
+        return FALSE;
+    }
+
+    if (m_pInternalBmpBits != NULL) {
+        bRet = SaveBmpToRawFile_YUV12(
+            TK_Tools::wstr2str((const wchar_t *)sSavedBmpFilePath).c_str(),
+            m_pInternalBmpBits,
+            nWidth,
+            nHeight,
+            nPitch,
+            m_bExportedBmpBottomUp,
+            "bgra"
         );
     }
 
@@ -242,12 +334,12 @@ BOOL CWorker::SaveAsImageFile(const CString &sMimeType, const CString &sSavedBmp
     return TRUE;
 }
 
-BOOL CWorker::ParseColor32Offset(const char *pColorOrder, int *nRedOffset, int *nGreenInputOffset, int *nBlueOffset, int *nAlphaOffset)
+BOOL CWorker::ParseColorRGBAOffset(const char *pColorOrder, int *nRedOffset, int *nGreenOffset, int *nBlueOffset, int *nAlphaOffset)
 {
     const char *pCh;
 
     ASSERT(nRedOffset != NULL);
-    ASSERT(nGreenInputOffset != NULL);
+    ASSERT(nGreenOffset != NULL);
     ASSERT(nBlueOffset != NULL);
     ASSERT(nAlphaOffset != NULL);
 
@@ -268,8 +360,8 @@ BOOL CWorker::ParseColor32Offset(const char *pColorOrder, int *nRedOffset, int *
     if (pCh == NULL) {
         goto FAILED;
     }
-    *nGreenInputOffset = pCh - pColorOrder;
-    if (*nGreenInputOffset >= 4) {
+    *nGreenOffset = pCh - pColorOrder;
+    if (*nGreenOffset >= 4) {
         goto FAILED;
     }
 
@@ -295,9 +387,57 @@ BOOL CWorker::ParseColor32Offset(const char *pColorOrder, int *nRedOffset, int *
 
 FAILED:
     *nRedOffset = 2;
-    *nGreenInputOffset = 1;
+    *nGreenOffset = 1;
     *nBlueOffset = 0;
     *nAlphaOffset = 3;
+    return FALSE;
+}
+
+BOOL CWorker::ParseColorRGBOffset(const char *pColorOrder, int *nRedOffset, int *nGreenOffset, int *nBlueOffset)
+{
+    const char *pCh;
+
+    ASSERT(nRedOffset != NULL);
+    ASSERT(nGreenOffset != NULL);
+    ASSERT(nBlueOffset != NULL);
+
+    if (pColorOrder == NULL) {
+        pColorOrder = "bgr";
+    }
+
+    pCh = strchr(pColorOrder, 'r');
+    if (pCh == NULL) {
+        goto FAILED;
+    }
+    *nRedOffset = pCh - pColorOrder;
+    if (*nRedOffset >= 3) {
+        goto FAILED;
+    }
+
+    pCh = strchr(pColorOrder, 'g');
+    if (pCh == NULL) {
+        goto FAILED;
+    }
+    *nGreenOffset = pCh - pColorOrder;
+    if (*nGreenOffset >= 3) {
+        goto FAILED;
+    }
+
+    pCh = strchr(pColorOrder, 'b');
+    if (pCh == NULL) {
+        goto FAILED;
+    }
+    *nBlueOffset = pCh - pColorOrder;
+    if (*nBlueOffset >= 3) {
+        goto FAILED;
+    }
+
+    return TRUE;
+
+FAILED:
+    *nRedOffset = 2;
+    *nGreenOffset = 1;
+    *nBlueOffset = 0;
     return FALSE;
 }
 
@@ -348,16 +488,16 @@ BOOL CWorker::SaveBmpToFile_RGBA32(
     ASSERT(pFilePath != NULL);
     ASSERT(pBmpBits != NULL);
 
-    bSuc = ParseColor32Offset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
+    bSuc = ParseColorRGBAOffset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
     if (!bSuc) {
-        LOG("*** ERROR: %s(): ParseColor32Offset(pInputColorOrder) is failed!\n", __FUNCTION__);
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pInputColorOrder) is failed!\n", __FUNCTION__);
         bRet = FALSE;
         goto FAILED;
     }
 
-    bSuc = ParseColor32Offset(pOutputColorOrder, &nOutputOffsetR, &nOutputOffsetG, &nOutputOffsetB, &nOutputOffsetA);
+    bSuc = ParseColorRGBAOffset(pOutputColorOrder, &nOutputOffsetR, &nOutputOffsetG, &nOutputOffsetB, &nOutputOffsetA);
     if (!bSuc) {
-        LOG("*** ERROR: %s(): ParseColor32Offset(pOutputColorOrder) is failed!\n", __FUNCTION__);
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pOutputColorOrder) is failed!\n", __FUNCTION__);
         bRet = FALSE;
         goto FAILED;
     }
@@ -489,11 +629,6 @@ BOOL CWorker::SaveBmpToRawFile_RGBA32(
     BOOL bSuc = FALSE;
     int nInputOffsetR, nInputOffsetG, nInputOffsetB, nInputOffsetA;
     int nOutputOffsetR, nOutputOffsetG, nOutputOffsetB, nOutputOffsetA;
-    BITMAPFILEHEADER *pbmfh = NULL;
-    unsigned long nBmfh;
-    unsigned char *pFileHeaderInfo = NULL;
-    unsigned long nFileHeaderInfo;
-    BITMAPINFOHEADER *pbmih = NULL;
     DWORD *pBitsFields = NULL;
     unsigned char *pLineBuf = NULL;
     FILE *pFile = NULL;
@@ -507,61 +642,19 @@ BOOL CWorker::SaveBmpToRawFile_RGBA32(
     ASSERT(pFilePath != NULL);
     ASSERT(pBmpBits != NULL);
 
-    bSuc = ParseColor32Offset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
+    bSuc = ParseColorRGBAOffset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
     if (!bSuc) {
-        LOG("*** ERROR: %s(): ParseColor32Offset(pInputColorOrder) is failed!\n", __FUNCTION__);
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pInputColorOrder) is failed!\n", __FUNCTION__);
         bRet = FALSE;
         goto FAILED;
     }
 
-    bSuc = ParseColor32Offset(pOutputColorOrder, &nOutputOffsetR, &nOutputOffsetG, &nOutputOffsetB, &nOutputOffsetA);
+    bSuc = ParseColorRGBAOffset(pOutputColorOrder, &nOutputOffsetR, &nOutputOffsetG, &nOutputOffsetB, &nOutputOffsetA);
     if (!bSuc) {
-        LOG("*** ERROR: %s(): ParseColor32Offset(pOutputColorOrder) is failed!\n", __FUNCTION__);
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pOutputColorOrder) is failed!\n", __FUNCTION__);
         bRet = FALSE;
         goto FAILED;
     }
-
-    nFileHeaderInfo = sizeof(BITMAPINFOHEADER) + sizeof(DWORD) * 3;
-    pFileHeaderInfo = (unsigned char *)malloc(nFileHeaderInfo);
-    ASSERT((unsigned long)pFileHeaderInfo % 4 == 0);
-    if (pFileHeaderInfo == NULL) {
-        LOG("*** ERROR: %s(): malloc(nFileHeaderInfo) is failed!\n", __FUNCTION__);
-        bRet = FALSE;
-        goto FAILED;
-    }
-    pbmih = (BITMAPINFOHEADER *)pFileHeaderInfo;
-    memset(pbmih, 0, sizeof(BITMAPINFOHEADER));
-    pbmih->biSize = sizeof(BITMAPINFOHEADER);
-    pbmih->biWidth = nBmpWidth;
-    pbmih->biHeight = bBottomUp ? nBmpHeight : (0 - nBmpHeight);
-    pbmih->biPlanes = 1;
-    pbmih->biBitCount = 32;
-    pbmih->biCompression = BI_BITFIELDS;
-    pbmih->biSizeImage = nBmpFileBitsSize;
-    pbmih->biXPelsPerMeter = 0;
-    pbmih->biYPelsPerMeter = 0;
-    pbmih->biClrUsed = 0;
-    pbmih->biClrImportant = 0;
-    pBitsFields = (DWORD *)(pbmih + 1);
-    memset(pBitsFields, 0, sizeof(DWORD) * 3);
-    pBitsFields[0] = 0xFF << (nOutputOffsetR * 8);               // r
-    pBitsFields[1] = 0xFF << (nOutputOffsetG * 8);               // g
-    pBitsFields[2] = 0xFF << (nOutputOffsetB * 8);               // b
-
-    nBmfh = sizeof(BITMAPFILEHEADER);
-    pbmfh = (BITMAPFILEHEADER *)malloc(nBmfh);
-    ASSERT((unsigned long)pbmfh % 4 == 0);
-    if (pbmfh == NULL) {
-        LOG("*** ERROR: %s(): malloc(nBmfh) is failed!\n", __FUNCTION__);
-        bRet = FALSE;
-        goto FAILED;
-    }
-    memset(pbmfh, 0, nBmfh);
-    pbmfh->bfType = 'B' | ('M' << 8);
-    pbmfh->bfSize = nBmfh + nFileHeaderInfo + nBmpFileBitsSize;
-    pbmfh->bfReserved1 = 0;
-    pbmfh->bfReserved2 = 0;
-    pbmfh->bfOffBits = nBmfh + nFileHeaderInfo;
 
     pLineBuf = (unsigned char *)malloc(nBmpFileBitsPitch);
     ASSERT((unsigned long)pLineBuf % 4 == 0);
@@ -607,13 +700,443 @@ FAILED:
         free(pLineBuf);
         pLineBuf = NULL;
     }
-    if (pFileHeaderInfo != NULL) {
-        free(pFileHeaderInfo);
-        pFileHeaderInfo = NULL;
+
+    return bRet;
+}
+
+BOOL CWorker::SaveBmpToRawFile_RGBA16(
+    const char *pFilePath,
+    const void *pBmpBits,
+    unsigned long nBmpWidth,
+    unsigned long nBmpHeight,
+    unsigned long nBmpPitch,
+    BOOL bBottomUp,
+    const char *pInputColorOrder,
+    const char *pOutputColorOrder
+)
+{
+    static struct {
+        unsigned int shift_right_from_32bits;
+        unsigned int mask;
+        unsigned int shift_left_in_16bits;
+    } aColor565Def[] = {
+        { 3, 0x1F, 0 },
+        { 2, 0x3F, 5 },
+        { 3, 0x1F, 11 },
+    };
+    BOOL bRet = FALSE;
+    BOOL bSuc = FALSE;
+    int nInputOffsetR, nInputOffsetG, nInputOffsetB, nInputOffsetA;
+    int nOutputOffsetR, nOutputOffsetG, nOutputOffsetB;
+    DWORD *pBitsFields = NULL;
+    unsigned char *pLineBuf = NULL;
+    FILE *pFile = NULL;
+    size_t nWritten;
+    unsigned long nBmpFileBitsPitch = nBmpWidth * 2;
+    unsigned long nBmpFileBitsSize = nBmpFileBitsPitch * nBmpHeight;
+    unsigned long i, j;
+    unsigned short *pDstPixel;
+    unsigned char *pSrcPixel;
+
+    ASSERT(pFilePath != NULL);
+    ASSERT(pBmpBits != NULL);
+
+    bSuc = ParseColorRGBAOffset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
+    if (!bSuc) {
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pInputColorOrder) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
     }
-    if (pbmfh != NULL) {
-        free(pbmfh);
-        pbmfh = NULL;
+
+    bSuc = ParseColorRGBOffset(pOutputColorOrder, &nOutputOffsetR, &nOutputOffsetG, &nOutputOffsetB);
+    if (!bSuc) {
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pOutputColorOrder) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    pLineBuf = (unsigned char *)malloc(nBmpFileBitsPitch);
+    ASSERT((unsigned long)pLineBuf % 2 == 0);
+    if (pLineBuf == NULL) {
+        LOG("*** ERROR: %s(): malloc(nBmpFileBitsPitch) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    pFile = fopen(pFilePath, "w+b");
+    if (pFile == NULL) {
+        LOG("*** ERROR: %s(): fopen(pFilePath, \"w+b\") is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    for (i = 0; i < nBmpHeight; i++) {
+        for (j = 0; j < nBmpWidth; j++) {
+            pDstPixel = (unsigned short *)((unsigned char *)pLineBuf + j * 2);
+            pSrcPixel = (unsigned char *)((unsigned char *)pBmpBits + nBmpPitch * i + j * 4);
+
+            *pDstPixel = 0;
+            *pDstPixel |= (((pSrcPixel[nInputOffsetR] >> aColor565Def[nOutputOffsetR].shift_right_from_32bits) & aColor565Def[nOutputOffsetR].mask) << aColor565Def[nOutputOffsetR].shift_left_in_16bits);
+            *pDstPixel |= (((pSrcPixel[nInputOffsetG] >> aColor565Def[nOutputOffsetG].shift_right_from_32bits) & aColor565Def[nOutputOffsetG].mask) << aColor565Def[nOutputOffsetG].shift_left_in_16bits);
+            *pDstPixel |= (((pSrcPixel[nInputOffsetB] >> aColor565Def[nOutputOffsetB].shift_right_from_32bits) & aColor565Def[nOutputOffsetB].mask) << aColor565Def[nOutputOffsetB].shift_left_in_16bits);
+        }
+        nWritten = fwrite(pLineBuf, 1, nBmpFileBitsPitch, pFile);
+        if (nWritten < nBmpFileBitsPitch) {
+            LOG("*** ERROR: %s(): fwrite(pLineBuf, 1, nBmpFileBitsPitch, pFile) is failed!\n", __FUNCTION__);
+            bRet = FALSE;
+            goto FAILED;
+        }
+    }
+
+    bRet = TRUE;
+
+FAILED:
+    if (pFile != NULL) {
+        fclose(pFile);
+        pFile = NULL;
+    }
+    if (pLineBuf != NULL) {
+        free(pLineBuf);
+        pLineBuf = NULL;
+    }
+
+    return bRet;
+}
+
+BOOL CWorker::SaveBmpToRawFile_RGBA12(
+    const char *pFilePath,
+    const void *pBmpBits,
+    unsigned long nBmpWidth,
+    unsigned long nBmpHeight,
+    unsigned long nBmpPitch,
+    BOOL bBottomUp,
+    const char *pInputColorOrder,
+    const char *pOutputColorOrder
+)
+{
+    static struct {
+        unsigned int shift_right_from_32bits;
+        unsigned int mask;
+        unsigned int shift_left_in_16bits;
+    } aColor565Def[] = {
+        { 4, 0x0F, 0 },
+        { 4, 0x0F, 4 },
+        { 4, 0x0F, 8 },
+    };
+    BOOL bRet = FALSE;
+    BOOL bSuc = FALSE;
+    int nInputOffsetR, nInputOffsetG, nInputOffsetB, nInputOffsetA;
+    int nOutputOffsetR, nOutputOffsetG, nOutputOffsetB;
+    DWORD *pBitsFields = NULL;
+    unsigned char *pLineBuf = NULL;
+    FILE *pFile = NULL;
+    size_t nWritten;
+    unsigned long nBmpFileBitsPitch = (nBmpWidth + (nBmpWidth % 2)) * 3 / 2;
+    unsigned long nBmpFileBitsSize = nBmpFileBitsPitch * nBmpHeight;
+    unsigned long i, j;
+    unsigned long *pDstPixel;
+    unsigned char *pSrcPixel;
+
+    ASSERT(pFilePath != NULL);
+    ASSERT(pBmpBits != NULL);
+
+    bSuc = ParseColorRGBAOffset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
+    if (!bSuc) {
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pInputColorOrder) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    bSuc = ParseColorRGBOffset(pOutputColorOrder, &nOutputOffsetR, &nOutputOffsetG, &nOutputOffsetB);
+    if (!bSuc) {
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pOutputColorOrder) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    pLineBuf = (unsigned char *)malloc(nBmpFileBitsPitch);
+    ASSERT((unsigned long)pLineBuf % 2 == 0);
+    if (pLineBuf == NULL) {
+        LOG("*** ERROR: %s(): malloc(nBmpFileBitsPitch) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    pFile = fopen(pFilePath, "w+b");
+    if (pFile == NULL) {
+        LOG("*** ERROR: %s(): fopen(pFilePath, \"w+b\") is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    for (i = 0; i < nBmpHeight; i++) {
+        memset(pLineBuf, 0, nBmpFileBitsPitch);
+        for (j = 0; j < nBmpWidth; j++) {
+            pDstPixel = (unsigned long *)((unsigned char *)pLineBuf + j * 3 / 2);
+            pSrcPixel = (unsigned char *)((unsigned char *)pBmpBits + nBmpPitch * i + j * 4);
+
+            unsigned long dspPixelTmp = 0;
+            dspPixelTmp |= (((pSrcPixel[nInputOffsetR] >> aColor565Def[nOutputOffsetR].shift_right_from_32bits) & aColor565Def[nOutputOffsetR].mask) << aColor565Def[nOutputOffsetR].shift_left_in_16bits);
+            dspPixelTmp |= (((pSrcPixel[nInputOffsetG] >> aColor565Def[nOutputOffsetG].shift_right_from_32bits) & aColor565Def[nOutputOffsetG].mask) << aColor565Def[nOutputOffsetG].shift_left_in_16bits);
+            dspPixelTmp |= (((pSrcPixel[nInputOffsetB] >> aColor565Def[nOutputOffsetB].shift_right_from_32bits) & aColor565Def[nOutputOffsetB].mask) << aColor565Def[nOutputOffsetB].shift_left_in_16bits);
+
+            if ((j % 2) == 0) {
+                *pDstPixel |= dspPixelTmp;
+            } else {
+                *pDstPixel |= (dspPixelTmp << 4);
+            }
+        }
+        nWritten = fwrite(pLineBuf, 1, nBmpFileBitsPitch, pFile);
+        if (nWritten < nBmpFileBitsPitch) {
+            LOG("*** ERROR: %s(): fwrite(pLineBuf, 1, nBmpFileBitsPitch, pFile) is failed!\n", __FUNCTION__);
+            bRet = FALSE;
+            goto FAILED;
+        }
+    }
+
+    bRet = TRUE;
+
+FAILED:
+    if (pFile != NULL) {
+        fclose(pFile);
+        pFile = NULL;
+    }
+    if (pLineBuf != NULL) {
+        free(pLineBuf);
+        pLineBuf = NULL;
+    }
+
+    return bRet;
+}
+
+BOOL CWorker::SaveBmpToRawFile_YUV16(
+    const char *pFilePath,
+    const void *pBmpBits,
+    unsigned long nBmpWidth,
+    unsigned long nBmpHeight,
+    unsigned long nBmpPitch,
+    BOOL bBottomUp,
+    const char *pInputColorOrder
+)
+{
+    BOOL bRet = FALSE;
+    BOOL bSuc = FALSE;
+    int nInputOffsetR, nInputOffsetG, nInputOffsetB, nInputOffsetA;
+    DWORD *pBitsFields = NULL;
+    unsigned char *pOutputPixelBuf = NULL;
+    FILE *pFile = NULL;
+    size_t nWritten;
+    unsigned long nBmpFileBitsPitch = nBmpWidth + (nBmpWidth % 2);
+    unsigned long nBmpFileBitsSize = nBmpFileBitsPitch * nBmpHeight * 2;
+    unsigned long i, j;
+    unsigned char *pDstPixelY, *pDstPixelU, *pDstPixelV;
+    unsigned char *pSrcPixel;
+
+    ASSERT(pFilePath != NULL);
+    ASSERT(pBmpBits != NULL);
+
+    bSuc = ParseColorRGBAOffset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
+    if (!bSuc) {
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pInputColorOrder) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    pOutputPixelBuf = (unsigned char *)malloc(nBmpFileBitsSize);
+    ASSERT((unsigned long)pOutputPixelBuf % 2 == 0);
+    if (pOutputPixelBuf == NULL) {
+        LOG("*** ERROR: %s(): malloc(nBmpFileBitsPitch) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+    memset(pOutputPixelBuf, 0, nBmpFileBitsSize);
+
+    pFile = fopen(pFilePath, "w+b");
+    if (pFile == NULL) {
+        LOG("*** ERROR: %s(): fopen(pFilePath, \"w+b\") is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    for (i = 0; i < nBmpHeight; i++) {
+        for (j = 0; j < nBmpWidth; j++) {
+            pDstPixelY = (unsigned char *)((unsigned char *)pOutputPixelBuf + nBmpFileBitsPitch * i * 2 + j * 2 + 1);
+            if ((j % 2) == 0) {
+                pDstPixelU = (unsigned char *)pDstPixelY - 1;
+                pDstPixelV = NULL;
+            } else {
+                pDstPixelU = NULL;
+                pDstPixelV = (unsigned char *)pDstPixelY - 1;;
+            }
+            pSrcPixel = (unsigned char *)((unsigned char *)pBmpBits + nBmpPitch * i + j * 4);
+
+            double lyuvY = 77 * pSrcPixel[nInputOffsetR] + 150 * pSrcPixel[nInputOffsetG] + 29 * pSrcPixel[nInputOffsetB];
+            double lyuvU = -43 * pSrcPixel[nInputOffsetR] - 84 * pSrcPixel[nInputOffsetG] + 127 * pSrcPixel[nInputOffsetB];
+            double lyuvV = 127 * pSrcPixel[nInputOffsetR] - 106 * pSrcPixel[nInputOffsetG] - 21 * pSrcPixel[nInputOffsetB];
+
+            lyuvY = (lyuvY + 128) / 256;
+            lyuvU = (lyuvU + 128) / 256;
+            lyuvV = (lyuvV + 128) / 256;
+
+            lyuvY = lyuvY;
+            lyuvU += 128;
+            lyuvV += 128;
+
+            unsigned char yuvY, yuvU, yuvV;
+            yuvY = (unsigned char)CLAMP(lyuvY, 0, 255);
+            yuvU = (unsigned char)CLAMP(lyuvU, 0, 255);
+            yuvV = (unsigned char)CLAMP(lyuvV, 0, 255);
+
+            *pDstPixelY = yuvY;
+            if (pDstPixelU != NULL) {
+                *pDstPixelU = yuvU;
+            }
+            if (pDstPixelV != NULL) {
+                *pDstPixelV = yuvV;
+            }
+        }
+    }
+    nWritten = fwrite(pOutputPixelBuf, 1, nBmpFileBitsSize, pFile);
+    if (nWritten < nBmpFileBitsPitch) {
+        LOG("*** ERROR: %s(): fwrite(pOutputPixelBuf, 1, nBmpFileBitsSize, pFile) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    //
+    // Note:
+    // 1) For there are two buffers for /dev/fb1, so it is necessary to write the content again. 
+    //
+    {
+        nWritten = fwrite(pOutputPixelBuf, 1, nBmpFileBitsSize, pFile);
+        if (nWritten < nBmpFileBitsPitch) {
+            LOG("*** ERROR: %s(): fwrite(pOutputPixelBuf, 1, nBmpFileBitsSize, pFile) is failed!\n", __FUNCTION__);
+            bRet = FALSE;
+            goto FAILED;
+        }
+    }
+
+    bRet = TRUE;
+
+FAILED:
+    if (pFile != NULL) {
+        fclose(pFile);
+        pFile = NULL;
+    }
+    if (pOutputPixelBuf != NULL) {
+        free(pOutputPixelBuf);
+        pOutputPixelBuf = NULL;
+    }
+
+    return bRet;
+}
+
+BOOL CWorker::SaveBmpToRawFile_YUV12(
+    const char *pFilePath,
+    const void *pBmpBits,
+    unsigned long nBmpWidth,
+    unsigned long nBmpHeight,
+    unsigned long nBmpPitch,
+    BOOL bBottomUp,
+    const char *pInputColorOrder
+)
+{
+    BOOL bRet = FALSE;
+    BOOL bSuc = FALSE;
+    int nInputOffsetR, nInputOffsetG, nInputOffsetB, nInputOffsetA;
+    DWORD *pBitsFields = NULL;
+    unsigned char *pOutputPixelBuf = NULL;
+    FILE *pFile = NULL;
+    size_t nWritten;
+    unsigned long nBmpFileBitsPitch = nBmpWidth + (nBmpWidth % 2);
+    unsigned long nBmpFileBitsSize = nBmpFileBitsPitch * nBmpHeight * 3 / 2;
+    unsigned long i, j;
+    unsigned char *pDstPixelY, *pDstPixelUV;
+    unsigned char *pSrcPixel;
+
+    ASSERT(pFilePath != NULL);
+    ASSERT(pBmpBits != NULL);
+
+    bSuc = ParseColorRGBAOffset(pInputColorOrder, &nInputOffsetR, &nInputOffsetG, &nInputOffsetB, &nInputOffsetA);
+    if (!bSuc) {
+        LOG("*** ERROR: %s(): ParseColorRGBAOffset(pInputColorOrder) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    pOutputPixelBuf = (unsigned char *)malloc(nBmpFileBitsSize);
+    ASSERT((unsigned long)pOutputPixelBuf % 2 == 0);
+    if (pOutputPixelBuf == NULL) {
+        LOG("*** ERROR: %s(): malloc(nBmpFileBitsPitch) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+    memset(pOutputPixelBuf, 0, nBmpFileBitsSize);
+
+    pFile = fopen(pFilePath, "w+b");
+    if (pFile == NULL) {
+        LOG("*** ERROR: %s(): fopen(pFilePath, \"w+b\") is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    for (i = 0; i < nBmpHeight; i++) {
+        for (j = 0; j < nBmpWidth; j++) {
+            pDstPixelY = (unsigned char *)((unsigned char *)pOutputPixelBuf + nBmpFileBitsPitch * i + j);
+            pDstPixelUV = (unsigned char *)((unsigned char *)pOutputPixelBuf + nBmpFileBitsPitch * nBmpHeight + nBmpFileBitsPitch * i / 2 + j / 2 * 2);
+            pSrcPixel = (unsigned char *)((unsigned char *)pBmpBits + nBmpPitch * i + j * 4);
+
+            double lyuvY = 77 * pSrcPixel[nInputOffsetR] + 150 * pSrcPixel[nInputOffsetG] + 29 * pSrcPixel[nInputOffsetB];
+            double lyuvU = -43 * pSrcPixel[nInputOffsetR] - 84 * pSrcPixel[nInputOffsetG] + 127 * pSrcPixel[nInputOffsetB];
+            double lyuvV = 127 * pSrcPixel[nInputOffsetR] - 106 * pSrcPixel[nInputOffsetG] - 21 * pSrcPixel[nInputOffsetB];
+
+            lyuvY = (lyuvY + 128) / 256;
+            lyuvU = (lyuvU + 128) / 256;
+            lyuvV = (lyuvV + 128) / 256;
+
+            lyuvY = lyuvY;
+            lyuvU += 128;
+            lyuvV += 128;
+
+            unsigned char yuvY, yuvU, yuvV;
+            yuvY = (unsigned char)CLAMP(lyuvY, 0, 255);
+            yuvU = (unsigned char)CLAMP(lyuvU, 0, 255);
+            yuvV = (unsigned char)CLAMP(lyuvV, 0, 255);
+
+            *pDstPixelY = yuvY;
+            if (0) {
+                if ((j % 2) == 0) {
+                    *pDstPixelUV = 0;
+                    *pDstPixelUV |= (((yuvU >> 4) & 0xFF) << 0);
+                    *pDstPixelUV |= (((yuvV >> 4) & 0xFF) << 4);
+                }
+            } else {
+                if ((i % 2) == 0) {
+                    if ((j % 2) == 0) {
+                        pDstPixelUV[0] = yuvU;
+                        pDstPixelUV[1] = yuvV;
+                    }
+                }
+            }
+        }
+    }
+    nWritten = fwrite(pOutputPixelBuf, 1, nBmpFileBitsSize, pFile);
+    if (nWritten < nBmpFileBitsPitch) {
+        LOG("*** ERROR: %s(): fwrite(pOutputPixelBuf, 1, nBmpFileBitsSize, pFile) is failed!\n", __FUNCTION__);
+        bRet = FALSE;
+        goto FAILED;
+    }
+
+    bRet = TRUE;
+
+FAILED:
+    if (pFile != NULL) {
+        fclose(pFile);
+        pFile = NULL;
+    }
+    if (pOutputPixelBuf != NULL) {
+        free(pOutputPixelBuf);
+        pOutputPixelBuf = NULL;
     }
 
     return bRet;

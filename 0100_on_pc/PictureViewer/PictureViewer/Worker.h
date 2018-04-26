@@ -62,7 +62,10 @@ public:
     BOOL ShowNextPicture();
     BOOL RefreshPictureDir();
     BOOL SaveAsBmpFileWithColor(const CString &sSavedBmpFilePath);
-    BOOL SaveAsRawFile(const CString &sSavedBmpFilePath);
+    BOOL SaveAsRawFileArgb32(const CString &sSavedBmpFilePath);
+    BOOL SaveAsRawFileRgb16(const CString &sSavedBmpFilePath);
+    BOOL SaveAsRawFileYuv16(const CString &sSavedBmpFilePath);
+    BOOL SaveAsRawFileYuv12(const CString &sSavedBmpFilePath);
     BOOL SaveAsImageFile(const CString &sMimeType, const CString &sSavedBmpFilePath);
     BOOL CloseCurrentFile();
 
@@ -78,7 +81,8 @@ private:
     static BOOL IsPictureFile(const CString &strPathName);
     bool IsBmpFileWithAlpha();
 
-    static BOOL ParseColor32Offset(const char *pColorOrder, int *nRedOffset, int *nGreenOffset, int *nBlueOffset, int *nAlphaOffset);
+    static BOOL ParseColorRGBAOffset(const char *pColorOrder, int *nRedOffset, int *nGreenOffset, int *nBlueOffset, int *nAlphaOffset);
+    static BOOL ParseColorRGBOffset(const char *pColorOrder, int *nRedOffset, int *nGreenOffset, int *nBlueOffset);
     static BOOL SaveBmpToFile_RGBA32(
         const char *pFilePath,
         const void *pBmpBits,
@@ -98,6 +102,44 @@ private:
         BOOL bBottomUp,
         const char *pInputColorOrder,
         const char *pOutputColorOrder
+    );
+    static BOOL SaveBmpToRawFile_RGBA16(
+        const char *pFilePath,
+        const void *pBmpBits,
+        unsigned long nBmpWidth,
+        unsigned long nBmpHeight,
+        unsigned long nBmpPitch,
+        BOOL bBottomUp,
+        const char *pInputColorOrder,
+        const char *pOutputColorOrder
+    );
+    static BOOL SaveBmpToRawFile_RGBA12(
+        const char *pFilePath,
+        const void *pBmpBits,
+        unsigned long nBmpWidth,
+        unsigned long nBmpHeight,
+        unsigned long nBmpPitch,
+        BOOL bBottomUp,
+        const char *pInputColorOrder,
+        const char *pOutputColorOrder
+    );
+    static BOOL SaveBmpToRawFile_YUV16(
+        const char *pFilePath,
+        const void *pBmpBits,
+        unsigned long nBmpWidth,
+        unsigned long nBmpHeight,
+        unsigned long nBmpPitch,
+        BOOL bBottomUp,
+        const char *pInputColorOrder
+    );
+    static BOOL SaveBmpToRawFile_YUV12(
+        const char *pFilePath,
+        const void *pBmpBits,
+        unsigned long nBmpWidth,
+        unsigned long nBmpHeight,
+        unsigned long nBmpPitch,
+        BOOL bBottomUp,
+        const char *pInputColorOrder
     );
     static int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
