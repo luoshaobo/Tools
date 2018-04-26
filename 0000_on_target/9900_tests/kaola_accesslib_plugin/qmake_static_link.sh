@@ -1,0 +1,1 @@
+qmake -r ../kaola_accesslib_plugin/sample.pro CONFIG+=use_static_plugin
