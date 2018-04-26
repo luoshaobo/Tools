@@ -1,0 +1,7 @@
+\release\install_std_drv.bat
+\release\install_std_drv_user_mode.bat
+
+drvtool activate Drivers\TestDrives\STD_DRIVER
+drvtool deactivate 
+
+\release\StdDrvTest

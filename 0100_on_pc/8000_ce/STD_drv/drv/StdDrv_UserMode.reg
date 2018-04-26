@@ -1,0 +1,14 @@
+[KKEY_LOCAL_MACHINE\Drivers\TestDrives\STD_DRIVER]
+"Dll" = "STD_DRV.dll"
+"Prefix" = "STD"
+"Index" = dword:1
+"Order" = dword:0
+"FriendlyName" = "Standard Driver"
+"Ioctl" = dword:0
+"Flags" = dword:12
+"UserProcGroup" = dword:222
+
+[HKEY_LOCAL_MACHINE\Drivers\ProcGroup_0222]
+"ProcName" = "STD_DRV.exe"
+"ProcVolPrefix" = "$udevice"
+

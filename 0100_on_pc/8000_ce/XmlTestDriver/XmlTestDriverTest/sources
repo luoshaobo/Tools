@@ -1,0 +1,33 @@
+TARGETNAME=XmlTestDriverTest
+TARGETTYPE=PROGRAM
+EXEENTRY=mainWCRTStartup
+RELEASETYPE=OAK
+
+SOURCES= \
+    XmlTestDriverTest.cpp \
+    stdafx.cpp \
+
+TARGETLIBS= \
+    $(_COREDLL) \
+    $(_WS2) \
+    $(_IPHLPAPI)\
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+
+CDEFINES=$(CDEFINES) \
+    -D_DEBUG \
+    -DUNDER_CE \
+    -DWINCE \
+    -DDEBUG \
+    -D_CONSOLE \
+    -D_UNICODE \
+    -DUNICODE \
+    -D_CRT_SECURE_NO_WARNINGS \
+    
+LDEFINES=$(LDEFINES) \
+    /DEBUG \
+
+INCLUDES= \
+    $(_WINCEROOT)\public\ie7\sdk\inc \
+

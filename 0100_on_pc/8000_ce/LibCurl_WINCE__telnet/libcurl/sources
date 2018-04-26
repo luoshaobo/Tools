@@ -1,0 +1,136 @@
+
+#Name of the output file
+TARGETNAME=libcurl
+
+#--------------------------------------------------------------------------------
+#Specify type of file being built
+TARGETTYPE=DYNLINK
+#TARGETTYPE=PROGRAM
+#TARGETTYPE=LIBRARY
+
+
+#--------------------------------------------------------------------------------
+#By specifying RELEASETYPE=OAK , your output will be stored in FLATRELEASE directory
+RELEASETYPE=OAK
+
+
+#--------------------------------------------------------------------------------
+#To include the library that use in your source code
+# FOR the IMX53 DPCA project
+#$(SG_OUTPUT_ROOT)  D:\CASDEV\WINCE\public\abase_a4low2\cesysgen\imx53_ard_ARMV7
+#$(_PUBLICROOT)     D:\CASDEV\WinCE\public
+#$(_CPUINDPATH)     \ARMV7\debug\
+
+TARGETLIBS= \
+	$(_COREDLL) \
+    $(_WS2) \
+    $(_IPHLPAPI)\
+    $(_WINCEROOT)\public\common\sdk\lib\$(_CPUINDPATH)\ws2.lib \
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+    $(_WINCEROOT)\public\common\sdk\lib\$(_CPUINDPATH)\toolhelp.lib \
+    $(_WINCEROOT)\public\abase_a4low2\cesysgen\imx53_ard_ARMV7\oak\lib\$(_CPUINDPATH)\WCEcompat.lib \
+
+#--------------------------------------------------------------------------------
+#To define the preprocessor
+
+##This condition is to check if the build is for module test or for release
+!IF "$(MMP_SKIP_BUILDING_TEST_MODULES)" == "1"
+##If this is for release build, the following will be defined
+CDEFINES= -DWINCE -DCONTI_NAVI_BUILD
+
+!ELSE
+##Else it will be for module test and the following will be defined
+CDEFINES= -DWINCE -DCONTI_NAVI_BUILD -DNAVTUXTEST -DCLUSTUXTEST \
+    -D_WIN32_WCE=$(CEVER) -DUNDER_CE -DWINCE -D_WINDOWS -D_USRDLL -DBUILDING_LIBCURL -DLIBCURL_EXPORTS -D_UNICODE -DUNICODE \
+    
+    #-DNDEBUG 
+
+!ENDIF
+
+#--------------------------------------------------------------------------------
+#Include path for header files
+#FOR the IMX53 DPCA project
+#$_PUBLICROOT = D:\CASDEV\WinCE\public
+INCLUDES= \
+    ..\WCEcompat\include; \
+	.\include; \
+    .; \
+    $(INCLUDES); \
+    $(_PUBLICROOT)\COMMON\sdk\inc; \
+    
+
+#--------------------------------------------------------------------------------
+#All source files that should be part of the project
+
+##This condition is to check if the build is for module test or for release
+##If this is for release build, the following will be compiled
+SOURCES= \
+	base64.c \
+    connect.c \
+    content_encoding.c \
+    cookie.c \
+    dict.c \
+    easy.c \
+    escape.c \
+    file.c \
+    formdata.c \
+    ftp.c \
+    getenv.c \
+    getinfo.c \
+    gtls.c \
+    hash.c \
+    hostares.c \
+    hostasyn.c \
+    hostip.c \
+    hostip4.c \
+    hostip6.c \
+    hostsyn.c \
+    hostthre.c \
+    http.c \
+    http_chunks.c \
+    http_digest.c \
+    http_negotiate.c \
+    http_ntlm.c \
+    if2ip.c \
+    inet_ntop.c \
+    inet_pton.c \
+    krb4.c \
+    ldap.c \
+    llist.c \
+    md5.c \
+    memdebug.c \
+    mprintf.c \
+    multi.c \
+    netrc.c \
+    parsedate.c \
+    progress.c \
+    security.c \
+    select.c \
+    sendf.c \
+    share.c \
+    socks.c \
+    speedcheck.c \
+    splay.c \
+    ssh.c \
+    sslgen.c \
+    ssluse.c \
+    strdup.c \
+    strequal.c \
+    strerror.c \
+    strtok.c \
+    strtoofft.c \
+    telnet.c \
+    tftp.c \
+    timeval.c \
+    transfer.c \
+    url.c \
+    version.c \
+    wce_mktime.c \
+
+#--------------------------------------------------------------------------------
+# To enable the C++ SEH suppress the warning
+EXCEPTION_CPP=ENABLE_WITH_SEH
+
+

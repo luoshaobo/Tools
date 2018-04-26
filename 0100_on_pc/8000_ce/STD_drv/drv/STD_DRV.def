@@ -1,0 +1,12 @@
+LIBRARY StdDrv
+EXPORTS
+STD_Init
+STD_Deinit
+STD_Open
+STD_Close
+STD_IOControl
+STD_PowerUp
+STD_PowerDown
+STD_Read
+STD_Write
+STD_Seek

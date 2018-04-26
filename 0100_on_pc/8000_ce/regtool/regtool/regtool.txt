@@ -1,0 +1,66 @@
+Usage: regtool.exe [OPTION] ACTION KEY [data...]
+
+View or edit the Win32 registry
+
+Actions:
+
+ add KEY\SUBKEY             add new SUBKEY
+ check KEY                  exit 0 if KEY exists, 1 if not
+ get KEY\VALUE              prints VALUE to stdout
+ list KEY                   list SUBKEYs and VALUEs
+ remove KEY                 remove KEY
+ set KEY\VALUE [data ...]   set VALUE
+ unset KEY\VALUE            removes VALUE from KEY
+ load KEY\SUBKEY PATH       load hive from PATH into new SUBKEY
+ unload KEY\SUBKEY          unload hive and remove SUBKEY
+ save KEY\SUBKEY PATH       save SUBKEY into new hive PATH
+
+Options for 'list' Action:
+
+ -k, --keys           print only KEYs
+ -l, --list           print only VALUEs
+ -p, --postfix        like ls -p, appends '\' postfix to KEY names
+
+Options for 'get' Action:
+
+ -b, --binary         print data as printable hex bytes
+ -n, --none           print data as stream of bytes as stored in registry
+ -x, --hex            print numerical data as hex numbers
+
+Options for 'set' Action:
+
+ -b, --binary         set type to REG_BINARY (hex args or '-')
+ -d, --dword          set type to REG_DWORD
+ -D, --dword-be       set type to REG_DWORD_BIG_ENDIAN
+ -e, --expand-string  set type to REG_EXPAND_SZ
+ -i, --integer        set type to REG_DWORD
+ -m, --multi-string   set type to REG_MULTI_SZ
+ -n, --none           set type to REG_NONE
+ -Q, --qword          set type to REG_QWORD
+ -s, --string         set type to REG_SZ
+
+Options for 'set' and 'unset' Actions:
+
+ -K<c>, --key-separator[=]<c>  set key-value separator to <c> instead of '\'
+
+Other Options:
+
+ -h, --help     output usage information and exit
+ -q, --quiet    no error output, just nonzero return if KEY/VALUE missing
+ -v, --verbose  verbose output, including VALUE contents when applicable
+ -w, --wow64    access 64 bit registry view (ignored on 32 bit Windows)
+ -W, --wow32    access 32 bit registry view (ignored on 32 bit Windows)
+ -V, --version  output version information and exit
+
+KEY is in the format [host]\prefix\KEY\KEY\VALUE, where host is optional
+remote host in either \\hostname or hostname: format and prefix is any of:
+  root     HKCR  HKEY_CLASSES_ROOT (local only)
+  config   HKCC  HKEY_CURRENT_CONFIG (local only)
+  user     HKCU  HKEY_CURRENT_USER (local only)
+  machine  HKLM  HKEY_LOCAL_MACHINE
+  users    HKU   HKEY_USERS
+
+If the keyname starts with a forward slash ('/'), the forward slash is used
+as separator and the backslash can be used as escape character.
+Example:
+regtool.exe list '/machine/SOFTWARE/Classes/MIME/Database/Content Type/audio\/wav'

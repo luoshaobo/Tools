@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChineseStrSort", "ChineseStrSort\ChineseStrSort.vcproj", "{30DF3AE5-FD68-4400-AB74-F2FD6E9F1CE0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhrasePinyinTableData", "PhrasePinyinTableData\PhrasePinyinTableData.vcproj", "{AC9E167A-1038-44AD-8F02-E7BF8511E807}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnicodePinyinTableData", "UnicodePinyinTableData\UnicodePinyinTableData.vcproj", "{F6A629B2-35D8-4A7A-A873-83793AE739A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30DF3AE5-FD68-4400-AB74-F2FD6E9F1CE0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30DF3AE5-FD68-4400-AB74-F2FD6E9F1CE0}.Debug|Win32.Build.0 = Debug|Win32
+		{30DF3AE5-FD68-4400-AB74-F2FD6E9F1CE0}.Release|Win32.ActiveCfg = Release|Win32
+		{30DF3AE5-FD68-4400-AB74-F2FD6E9F1CE0}.Release|Win32.Build.0 = Release|Win32
+		{AC9E167A-1038-44AD-8F02-E7BF8511E807}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AC9E167A-1038-44AD-8F02-E7BF8511E807}.Debug|Win32.Build.0 = Debug|Win32
+		{AC9E167A-1038-44AD-8F02-E7BF8511E807}.Release|Win32.ActiveCfg = Release|Win32
+		{AC9E167A-1038-44AD-8F02-E7BF8511E807}.Release|Win32.Build.0 = Release|Win32
+		{F6A629B2-35D8-4A7A-A873-83793AE739A4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F6A629B2-35D8-4A7A-A873-83793AE739A4}.Debug|Win32.Build.0 = Debug|Win32
+		{F6A629B2-35D8-4A7A-A873-83793AE739A4}.Release|Win32.ActiveCfg = Release|Win32
+		{F6A629B2-35D8-4A7A-A873-83793AE739A4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

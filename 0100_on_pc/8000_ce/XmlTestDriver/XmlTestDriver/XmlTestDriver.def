@@ -1,0 +1,16 @@
+; XmlTestDriver.def : Declares the module parameters for the DLL.
+
+LIBRARY      "XmlTestDriver"
+
+
+EXPORTS
+	XTD_Init
+	XTD_Deinit
+	XTD_Open
+	XTD_Close
+	XTD_Read
+	XTD_Write
+	XTD_Seek
+	XTD_PowerDown
+	XTD_PowerUp
+	XTD_IOControl

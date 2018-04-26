@@ -1,0 +1,64 @@
+TARGETNAME=om
+TARGETTYPE=PROGRAM
+EXEENTRY=mainWCRTStartup
+RELEASETYPE=OAK
+
+SOURCES= \
+    main.cpp \
+    stdafx.cpp \
+    TK_Tools.cpp \
+
+TARGETLIBS= \
+    $(_COREDLL) \
+    $(_WS2) \
+    $(_IPHLPAPI)\
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+    \
+    $(SG_OUTPUT_ROOT)\sdk\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_PUBLICROOT)\COMMON\sdk\lib\$(_CPUINDPATH)\mmtimer.lib \
+    $(_PUBLICROOT)\directx\sdk\lib\$(_TGTCPU)\$(WINCEDEBUG)\ddraw.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\SRC\DRIVERS\GPU\LIB\$(_TGTCPU)\libEGL.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\SRC\DRIVERS\GPU\LIB\$(_TGTCPU)\libOpenVG.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\PREBUILT\LIB\$(_CPUINDPATH)\ILayerManager_AMD.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\PREBUILT\LIB\$(_CPUINDPATH)\ssw_semaphore.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\PREBUILT\LIB\$(_CPUINDPATH)\ssw_thread.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\PREBUILT\LIB\$(_CPUINDPATH)\ssw_times.lib \
+    $(_PLATFORMROOT)\IMX53_ARD\PREBUILT\LIB\$(_CPUINDPATH)\ssw_mem.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_buffers.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_LtProfile.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_TraceClient.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_Dispatcher_AccessLib.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_MostSinkFramework.lib \
+    $(_PUBLICROOT)\MMP\OAK\LIB\$(_CPUINDPATH)\ssw_EmbRegAccLib.lib \
+    $(_PUBLICROOT)\MMP\OAK\LIB\$(_CPUINDPATH)\ssw_ProcessWatchdog.lib \
+    \
+    $(_PUBLICROOT)\MMP_PROD\OAK\lib\$(_CPUINDPATH)\entIHmiTouchScreen.lib \
+
+CDEFINES=$(CDEFINES) \
+    -D_DEBUG \
+    -DUNDER_CE \
+    -DWINCE \
+    -DDEBUG \
+    -D_CONSOLE \
+    -D_UNICODE \
+    -DUNICODE \
+    -D_CRT_SECURE_NO_WARNINGS \
+    /EHsc \
+    
+LDEFINES=$(LDEFINES) \
+    /DEBUG \
+
+INCLUDES= \
+    $(_WINCEROOT)\public\ie7\sdk\inc; \
+    $(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\sdk\inc\; \
+    $(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\ddk\inc\; \
+    $(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\oak\inc\; \
+    $(_PLATFORMROOT)\IMX53_ARD\SRC\INC\; \
+    $(_PLATFORMROOT)\common\SRC\INC\; \
+    $(_PLATFORMROOT)\IMX53_ARD\SOC\MX53_FSL_V3\INC; \
+    $(_PLATFORMROOT)\IMX53_ARD\SOC\COMMON_FSL_V3\INC; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_BSP\; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW; \
+     $(_PUBLICROOT)\MMP_PROD\OAK\INC\_HS; \

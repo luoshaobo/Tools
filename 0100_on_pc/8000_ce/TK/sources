@@ -1,0 +1,90 @@
+
+#Name of the output file 
+TARGETNAME=entNavigation
+
+#--------------------------------------------------------------------------------
+#Specify type of file being built
+#TARGETTYPE=DYNLINK
+#TARGETTYPE=PROGRAM
+TARGETTYPE=LIBRARY
+
+
+#--------------------------------------------------------------------------------
+#By specifying RELEASETYPE=OAK , your output will be stored in FLATRELEASE directory
+RELEASETYPE=OAK
+
+
+#--------------------------------------------------------------------------------
+#To include the library that use in your source code
+# FOR the IMX53 DPCA project
+#$(SG_OUTPUT_ROOT ) D:\CASDEV\WINCE\public\abase_a4low2\cesysgen\imx53_ard_ARMV7
+#$(_PUBLICROOT)     D:\CASDEV\WinCE\public
+
+TARGETLIBS= \
+    $(SG_OUTPUT_ROOT)\sdk\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_LtProfile.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_TraceClient.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_thread.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_times.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUDEPPATH)\ssw_mem.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_Dispatcher_AccessLib.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_MostSinkFramework.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_buffers.lib \
+    $(_PUBLICROOT)\MMP\OAK\lib\$(_CPUINDPATH)\ssw_semaphore.lib \
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+    $(_WINCEROOT)\public\common\sdk\lib\$(_CPUINDPATH)\toolhelp.lib \
+
+
+#--------------------------------------------------------------------------------
+#To define the preprocessor 
+CDEFINES=-DWINCE
+
+
+#--------------------------------------------------------------------------------
+#Include path for header files
+#FOR the IMX53 DPCA project
+#$_PUBLICROOT = D:\CASDEV\WinCE\public
+INCLUDES= \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_BSP\; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_Graphic; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_Graphic\AMD;\
+	$(_PUBLICROOT)\MMP_PROD\_NAV\Main\AccessLib\inc;\
+	$(_PUBLICROOT)\MMP_PROD\_NAV\Main\Application\inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Frameworks\commLayer_inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Frameworks\queue_inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Frameworks;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\SWLoading;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Lifecycle;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\FailureHandler;\
+	$(_PUBLICROOT)\MMP\OAK\INC\_SSW;\
+	$(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\sdk\inc\; \
+	$(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\ddk\inc\; \
+	$(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\oak\inc\; \
+	$(_PLATFORMROOT)\IMX53_ARD\SRC\INC\; \
+	$(_PLATFORMROOT)\common\SRC\INC\; \
+	$(_PLATFORMROOT)\IMX53_ARD\SOC\MX53_FSL_V3\INC; \
+	$(_PLATFORMROOT)\IMX53_ARD\SOC\COMMON_FSL_V3\INC; \
+    $(_PUBLICROOT)\MMP_PROD\OAK\INC\_DICTA;\
+    $(_PUBLICROOT)\MMP_PROD\OAK\INC\_AV;\
+	
+
+		
+
+#--------------------------------------------------------------------------------
+#All source files that should be part of the project
+SOURCES= \
+       entNavigation.cpp \
+       entNavigation_user.cpp \
+       TK_DebugServer.cpp \
+       TK_sock.cpp \
+       TK_Tools.cpp \
+       TK_Bitmap.cpp \
+
+#--------------------------------------------------------------------------------
+# To enable the C++ SEH suppress the warning
+EXCEPTION_CPP=ENABLE_WITH_SEH
+
+

@@ -1,0 +1,12 @@
+[HKEY_LOCAL_MACHINE\Drivers\ProcGroup_0012]
+    "ProcName"="entXmlTest.exe"
+    "ProcVolPrefix"="$udevice"
+
+[HKEY_LOCAL_MACHINE\Drivers\BuiltIn\XTD] 
+    "Dll"="XmlTestDriver.dll" 
+    "Prefix"="XTD" 
+    "Index"=dword:1
+    "Order"=dword:0 
+    "Flags"=dword:10
+    "FriendlyName"="XML Test Driver" 
+    "UserProcGroup"=dword:0012

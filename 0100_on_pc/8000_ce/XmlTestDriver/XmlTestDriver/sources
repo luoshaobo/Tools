@@ -1,0 +1,40 @@
+RELEASETYPE=PLATFORM
+TARGETNAME=XmlTestDriver
+TARGETTYPE=DYNLINK
+DLLENTRY=XTD_DllEntry
+
+ENABLE_OPTIMIZER=0
+
+CDEFINES=$(CDEFINES) \
+    -D_DEBUG \
+    -DUNDER_CE \
+    -DWINCE \
+    -DWIN32 \
+    -DDEBUG \
+    -D_CONSOLE \
+    -D_UNICODE \
+    -DUNICODE \
+    -D_CRT_SECURE_NO_WARNINGS \
+	
+LDEFINES=$(LDEFINES) \
+    /DEBUG \
+
+SOURCES= \
+    XmlTestDriver.cpp \
+    sock.cpp \
+        
+INCLUDES= \
+    $(_WINCEROOT)\public\ie7\sdk\inc \
+    
+    #$(_WINCEROOT)\public\COMMON\sdk\inc \
+
+TARGETLIBS= \
+    $(_COREDLL) \
+    $(_WS2) \
+    $(_IPHLPAPI)\
+    $(_WINCEROOT)\public\common\sdk\lib\$(_CPUINDPATH)\ws2.lib \
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+    
+DEFFILE=XmlTestDriver.def

@@ -1,0 +1,13 @@
+LIBRARY TldDrv
+
+EXPORTS
+    TLD_Init
+    TLD_Deinit
+    TLD_Open
+    TLD_Close
+    TLD_IOControl
+    TLD_PowerUp
+    TLD_PowerDown
+    TLD_Read
+    TLD_Write
+    TLD_Seek

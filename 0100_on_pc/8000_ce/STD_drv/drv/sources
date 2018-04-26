@@ -1,0 +1,95 @@
+
+#Name of the output file
+TARGETNAME=STD_DRV
+
+#--------------------------------------------------------------------------------
+#Specify type of file being built
+TARGETTYPE=DYNLINK
+#TARGETTYPE=PROGRAM
+#TARGETTYPE=LIBRARY
+
+
+#--------------------------------------------------------------------------------
+#By specifying RELEASETYPE=OAK , your output will be stored in FLATRELEASE directory
+RELEASETYPE=OAK
+
+
+#--------------------------------------------------------------------------------
+#To include the library that use in your source code
+# FOR the IMX53 DPCA project
+#$(SG_OUTPUT_ROOT)  D:\CASDEV\WINCE\public\abase_a4low2\cesysgen\imx53_ard_ARMV7
+#$(_PUBLICROOT)     D:\CASDEV\WinCE\public
+#$(_CPUINDPATH)     \ARMV7\debug\
+
+TARGETLIBS= \
+	$(SG_OUTPUT_ROOT)\sdk\lib\$(_CPUINDPATH)\coredll.lib \
+
+#--------------------------------------------------------------------------------
+#To define the preprocessor
+
+##This condition is to check if the build is for module test or for release
+!IF "$(MMP_SKIP_BUILDING_TEST_MODULES)" == "1"
+##If this is for release build, the following will be defined
+CDEFINES= -DWINCE -DCONTI_NAVI_BUILD
+
+!ELSE
+##Else it will be for module test and the following will be defined
+CDEFINES= -DWINCE -DCONTI_NAVI_BUILD -DNAVTUXTEST -DCLUSTUXTEST
+
+!ENDIF
+
+#--------------------------------------------------------------------------------
+#Include path for header files
+#FOR the IMX53 DPCA project
+#$_PUBLICROOT = D:\CASDEV\WinCE\public
+INCLUDES= \
+	$(_PUBLICROOT)\MMP_PROD\_NAV\Main\Application\inc;\
+	$(_PUBLICROOT)\MMP_PROD\_NAV\Main\AccessLib\inc;\
+	$(_PUBLICROOT)\MMP_PROD\_NAV\Main\NavClusterAdaptor\inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_NAV\NavPOS;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_av;\
+	$(_PUBLICROOT)\MMP_PROD\_SYS\Frameworks\MostInterface\MOSTFramework\mmw\inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Frameworks\commLayer_inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Frameworks\queue_inc;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Frameworks;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\main;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\lifecycle;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\SysApplication;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_NAV\NavPos;\
+	$(_PUBLICROOT)\MMP\OAK\INC\_SSW;\
+	$(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\sdk\inc\; \
+	$(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\ddk\inc\; \
+	$(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\oak\inc\; \
+	$(_PLATFORMROOT)\IMX53_ARD\SRC\INC\; \
+	$(_PLATFORMROOT)\common\SRC\INC\; \
+	$(_PLATFORMROOT)\IMX53_ARD\SOC\MX53_FSL_V3\INC; \
+	$(_PLATFORMROOT)\IMX53_ARD\SOC\COMMON_FSL_V3\INC; \
+	$(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_BSP\; \
+	$(_PUBLICROOT)\MMP\OAK\INC\_SSW;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Persistency;\
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Configuration;\
+	$(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_GPIO\; \
+	$(_PUBLICROOT)\MMP_PROD\_NAV\NavMost\Application\inc; \
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\SysCluster;\
+	$(_PUBLICROOT)\MMP\OAK\INC\_GEN\;\
+    $(_PUBLICROOT)\MMP_PROD\OAK\INC\_SYS\Persistency; \
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_TELE\AccessLib\; \
+	$(_PUBLICROOT)\MMP_PROD\OAK\INC\_TELE\Main\; \
+
+
+
+#--------------------------------------------------------------------------------
+#All source files that should be part of the project
+
+##This condition is to check if the build is for module test or for release
+##If this is for release build, the following will be compiled
+SOURCES= \
+	StdDrv.cpp \
+    TK_Tools.cpp \
+
+
+#--------------------------------------------------------------------------------
+# To enable the C++ SEH suppress the warning
+EXCEPTION_CPP=ENABLE_WITH_SEH
+
+

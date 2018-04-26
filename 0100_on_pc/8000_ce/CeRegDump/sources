@@ -1,0 +1,52 @@
+#Name of the output file
+TARGETNAME=CeRegDump
+
+#--------------------------------------------------------------------------------
+#Specify type of file being built
+#TARGETTYPE=DYNLINK
+TARGETTYPE=PROGRAM
+EXEENTRY = mainWCRTStartup 
+#TARGETTYPE=LIBRARY
+
+#--------------------------------------------------------------------------------
+#By specifying RELEASETYPE=OAK , your output will be stored in FLATRELEASE directory
+RELEASETYPE=OAK
+
+#--------------------------------------------------------------------------------
+#To include the library that use in your source code
+# FOR the IMX53 DPCA project
+#$(SG_OUTPUT_ROOT)  D:\CASDEV\WINCE\public\abase_a4low2\cesysgen\imx53_ard_ARMV7
+#$(_PUBLICROOT)     D:\CASDEV\WinCE\public
+
+TARGETLIBS= \
+    $(SG_OUTPUT_ROOT)\sdk\lib\$(_CPUINDPATH)\coredll.lib\
+	
+#--------------------------------------------------------------------------------
+
+	
+#--------------------------------------------------------------------------------
+#To define the preprocessor
+#CDEFINES=-DWINCE
+!IF "$(MMP_SKIP_BUILDING_TEST_MODULES)" == "1"
+CDEFINES=$(CDEFINES) -DHS_INSIDE_MMP
+!ELSE
+CDEFINES=$(CDEFINES) -DHS_INSIDE_MMP -DTUX_AV_DIALOG
+!ENDIF
+
+#--------------------------------------------------------------------------------
+#Include path for header files
+#FOR the IMX53 DPCA project
+#$_PUBLICROOT = D:\CASDEV\WinCE\public
+INCLUDES= \
+
+	
+#--------------------------------------------------------------------------------
+# To enable the C++ SEH suppress the warning
+EXCEPTION_CPP=ENABLE_WITH_SEH
+
+#--------------------------------------------------------------------------------
+#All source files that should be part of the project
+SOURCES= \
+	main.cpp \
+	CeRegDump.cpp \
+

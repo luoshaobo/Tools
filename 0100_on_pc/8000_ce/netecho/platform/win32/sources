@@ -1,0 +1,47 @@
+TARGETNAME=nepdk
+#TARGETTYPE=DYNLINK
+#TARGETTYPE=PROGRAM
+TARGETTYPE=LIBRARY
+#EXEENTRY=mainWCRTStartup
+#RELEASETYPE=OAK
+
+SOURCES= \
+    SMF_PlatformEvent_win32.cpp \
+    SMF_PlatformLock_win32.cpp \
+    SMF_PlatformMsgQ_win32.cpp \
+    SMF_PlatformSharedMem_win32.cpp \
+    SMF_PlatformThread_win32.cpp \
+    SMF_PlatformTimer_win32.cpp \
+
+TARGETLIBS= \
+    $(_COREDLL) \
+    $(_WS2) \
+    $(_IPHLPAPI)\
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+
+CDEFINES=$(CDEFINES) \
+    -D_DEBUG \
+    -DUNDER_CE \
+    -DWINCE \
+    -DDEBUG \
+    -D_CONSOLE \
+    -D_UNICODE \
+    -DUNICODE \
+    -D_CRT_SECURE_NO_WARNINGS \
+    /EHsc \
+    -D_WIN32_WCE=$(CEVER) -DUNDER_CE -DWINCE -D_LIB -D_UNICODE -DUNICODE \
+    
+    #-DNDEBUG 
+    
+LDEFINES=$(LDEFINES) \
+    /DEBUG \
+
+INCLUDES= \
+    ..\api; \
+    ..\..; \
+    $(INCLUDES); \
+    $(_PUBLICROOT)\COMMON\sdk\inc; \
+	
+

@@ -1,0 +1,7 @@
+[KKEY_LOCAL_MACHINE\Drivers\TestDrives\STD_DRIVER]
+"Dll" = "STD_DRV.dll"
+"Prefix" = "STD"
+"Index" = dword:1
+"Order" = dword:0
+"FriendlyName" = "Standard Driver"
+"Ioctl" = dword:0

@@ -1,0 +1,43 @@
+TARGETNAME=StdDrvTest
+TARGETTYPE=PROGRAM
+EXEENTRY=mainWCRTStartup
+RELEASETYPE=OAK
+
+SOURCES= \
+    StdDrvTest.cpp \
+    TK_Tools.cpp \
+
+TARGETLIBS= \
+    $(_COREDLL) \
+    $(_WS2) \
+    $(_IPHLPAPI)\
+    $(_WINCEROOT)\public\common\exp\lib\$(_CPUINDPATH)\coredll.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\ole32.lib \
+    $(_WINCEROOT)\public\dcom\exp\lib\$(_CPUINDPATH)\oleaut32.lib \
+
+CDEFINES=$(CDEFINES) \
+    -D_DEBUG \
+    -DUNDER_CE \
+    -DWINCE \
+    -DDEBUG \
+    -D_CONSOLE \
+    -D_UNICODE \
+    -DUNICODE \
+    -D_CRT_SECURE_NO_WARNINGS \
+    /EHsc \
+    
+LDEFINES=$(LDEFINES) \
+    /DEBUG \
+
+INCLUDES= \
+    $(_WINCEROOT)\public\ie7\sdk\inc; \
+    $(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\sdk\inc\; \
+    $(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\ddk\inc\; \
+    $(_PROJECTROOT)\cesysgen\imx53_ard_ARMV7\oak\inc\; \
+    $(_PLATFORMROOT)\IMX53_ARD\SRC\INC\; \
+    $(_PLATFORMROOT)\common\SRC\INC\; \
+    $(_PLATFORMROOT)\IMX53_ARD\SOC\MX53_FSL_V3\INC; \
+    $(_PLATFORMROOT)\IMX53_ARD\SOC\COMMON_FSL_V3\INC; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW\ssw_BSP\; \
+    $(_PUBLICROOT)\MMP\OAK\INC\_SSW; \
+
