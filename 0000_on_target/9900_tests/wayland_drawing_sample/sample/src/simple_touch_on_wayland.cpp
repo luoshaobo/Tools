@@ -445,10 +445,18 @@ void fill_rect_argb(void *pBuf, int width, int height)
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
             ColorARGB *p = &pPixelBuf[i * width + j];
-            p->a = 0x80;
-            p->r = 0x55;
-            p->g = 0x66;
-            p->b = 0x77;
+            
+            if (i <= height/2) {
+                p->a = 0x80;
+                p->r = 0x55;
+                p->g = 0x66;
+                p->b = 0x77;
+            } else {
+                p->a = 0x80;
+                p->r = 0x10;
+                p->g = 0x10;
+                p->b = 0x10;
+            }
         }
     }
 }
@@ -491,6 +499,7 @@ touch_create(int width, int height)
     LOG_GEN_PRINTF("\n");
 	touch->surface = wl_compositor_create_surface(touch->compositor);
     LOG_GEN_PRINTF("\n");
+    
 	touch->shell_surface = wl_shell_get_shell_surface(touch->shell,
 							  touch->surface);
     LOG_GEN_PRINTF("\n");
@@ -519,6 +528,15 @@ touch_create(int width, int height)
 	wl_surface_damage(touch->surface, 0, 0, width, height);
     LOG_GEN_PRINTF("\n");
 	wl_surface_commit(touch->surface);
+    
+    // {
+        // struct wl_region *region;
+        
+        // region = wl_compositor_create_region(touch->compositor);
+        // wl_region_add(region, 0, 0, width, height/2);
+        
+        // wl_surface_set_input_region(touch->surface, region);
+    // }
 
     LOG_GEN_PRINTF("\n");
 	return touch;
@@ -530,7 +548,7 @@ int simple_touch_main()
 	int ret = 0;
 
     LOG_GEN_PRINTF("\n");
-	touch = touch_create(600, 500);
+	touch = touch_create(1280, 720);
 
     char cmd[1024];
     snprintf(cmd, sizeof(cmd), "ivi-shell -a %s:255 &", TITLE);
