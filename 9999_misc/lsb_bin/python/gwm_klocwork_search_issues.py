@@ -1,4 +1,6 @@
-﻿import urllib, urllib2, json, sys, os.path, getpass, time
+#!/usr/bin/python
+
+import urllib, urllib2, json, sys, os.path, getpass, time
 
 def getToken(host, port, user) :
    ltoken = os.path.normpath(os.path.expanduser("~/.klocwork/ltoken"))
@@ -11,6 +13,10 @@ def getToken(host, port, user) :
    ltokenFile.close()
 
 # {"id":552,"status":"Analyze","severity":"Unexpected","severityCode":4,"state":"Existing","code":"MISRA.DEFINE.NOTGLOBAL","title":"Define not at the global level","message":"Define not at the global level","file":"tmp/staging/armv7a-mv-linux/usr/include/glib-2.0/glib/gthread.h","method":"gthread.h","owner":"unowned","taxonomyName":"MISRA C++ 2008","reference":"16-0-2 (C++ 2008 req.)","dateOriginated":1484055504368,"line":243,"url":"http://hias008x.hi.cn.conti.de:8098/review/insight-review.html#issuedetails_goto:problemid\u003d552,project\u003dGWM_MY18_SOC,searchquery\u003dseverity:1-4","issueIds":[],"trace":[]}        
+# query="module:+'HSSCC-Authentication_Center' status:+Analyze,+Fix Severity:+Critical"
+# query=module:%2BHSSCC-Authentication_Center%20status:%2BAnalyze,%2BFix%20Severity:%2BCritical     # encoded
+# query="severity:1-3 file:/sys_hmi_131/"
+# query="severity:1-3 file:/sys_hmi_131b/"
 
 class Issue(object) :
    def __init__(self, attrs) :
@@ -54,18 +60,19 @@ url = "http://%s:%d/review/api" % (host, port)
 values = {"project": project, "user": user, "action": "search"}
 
 loginToken = getToken(host, port, user)
-#loginToken = "e5393afb3cacba49a0e350559640af6449b5bdf59777667a7330d9aed3e894fc"
 if loginToken is not None :
    values["ltoken"] = loginToken
 
-values["query"] = "severity:1-4"
+values["query"] = "severity:1-3 file:/sys_hmi_131/"
 data = urllib.urlencode(values)
 req = urllib2.Request(url, data)
 response = urllib2.urlopen(req)
 for record in response :
-    #print record
-    try:
-        print json.loads(record, encoding="utf-8", object_hook=from_json)
-    except UnicodeEncodeError:
-        print "*** UnicodeEncodeError: " + record
+    if len(sys.argv) >= 2 and sys.argv[1] == "orignal":
+        print record
+    else:
+        try:
+            print json.loads(record, encoding="utf-8", object_hook=from_json)
+        except UnicodeEncodeError:
+            print "*** UnicodeEncodeError: " + record
 
