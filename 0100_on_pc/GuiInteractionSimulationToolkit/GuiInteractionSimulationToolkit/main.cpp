@@ -809,7 +809,6 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     int nRet = 0;
     std::string imagePath;
     GuiISTk::Rect rect;
-    unsigned int timeout = GuiISTk::INFINITE_TIME;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
@@ -823,13 +822,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        if (arguments.size() >= 4) {
-            timeout = (unsigned int)TK_Tools::StrToUL(arguments[3].str);
-        }
-    }
-
-    if (nRet == 0) {
-        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, timeout)) {
+        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect)) {
             printf("rect=(x=%d,y=%d,w=%u,h=%u)\n", rect.x, rect.y, rect.width, rect.height);
         } else {
             printf("not found!\n");
@@ -845,7 +838,6 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     std::string imagePath;
     GuiISTk::Rect rect;
     GuiISTk::Rect searchRect;
-    unsigned int timeout = GuiISTk::INFINITE_TIME;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -866,13 +858,7 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        if (arguments.size() >= 5) {
-            timeout = (unsigned int)TK_Tools::StrToUL(arguments[4].str);
-        }
-    }
-
-    if (nRet == 0) {
-        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchRect, timeout)) {
+        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchRect)) {
             printf("rect=(x=%d,y=%d,w=%u,h=%u)\n", rect.x, rect.y, rect.width, rect.height);
         } else {
             printf("not found!\n");
@@ -888,7 +874,6 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     std::string imagePath;
     GuiISTk::Rect rect;
     GuiISTk::Point searchBeginningPoint;
-    unsigned int timeout = GuiISTk::INFINITE_TIME;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -909,13 +894,7 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        if (arguments.size() >= 5) {
-            timeout = (unsigned int)TK_Tools::StrToUL(arguments[4].str);
-        }
-    }
-
-    if (nRet == 0) {
-        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchBeginningPoint, timeout)) {
+        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchBeginningPoint)) {
             printf("rect=(x=%d,y=%d,w=%u,h=%u)\n", rect.x, rect.y, rect.width, rect.height);
         } else {
             printf("not found!\n");

@@ -1,9 +1,23 @@
-#include <Windows.h>
+#include "stdafx.h"
 #include "TK_Tools.h"
 #include "WinGuiISTK.h"
 
-
 namespace GuiISTk {
+
+const unsigned int WAIT_IMAGE_SHOWN_INTERVAL = 1000;
+
+void Rect::intersect(const Rect &other)
+{
+    CRect rect1(x, y, x + width, y + height);
+    CRect rect2(other.x, other.y, other.x + other.width, other.y + other.height);
+    CRect resultRect;
+    resultRect.IntersectRect(&rect1, &rect2);
+
+    x = resultRect.left;
+    y = resultRect.top;
+    width = resultRect.Width();
+    height = resultRect.Height();
+}
 
 WinGuiISTK::WinGuiISTK(void)
 {
@@ -240,57 +254,234 @@ void WinGuiISTK::mouseScroll(const Point &point, int steps)
     mouse_event(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
 }
 
-bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::findImageRect(const Image &image, Rect &rect)
 {
     LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), timeout=%u\n", 
+    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u)\n", 
         image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height,
-        timeout
+        rect.x, rect.y, rect.width, rect.height
     );
 
-    return true;
+    return findImageRect_impl(image, rect);
 }
 
-bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect)
 {
+    bool bSuc = true;
+    CBitmap *pDesktopWindowBitmap = NULL;
+    CBitmap *pImageBitmap = NULL;
+    Rect searchRectNormalized;
+    BITMAP wholeBitmapInfo;
+
     LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchRect=(%d,%d,%u,%u), timeout=%u\n", 
+    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u)\n", 
         image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height,
-        searchRect.x, searchRect.y, searchRect.width, searchRect.height,
-        timeout
+        rect.x, rect.y, rect.width, rect.height
     );
 
-    return true;
+    if (bSuc) {
+        pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+        if (pDesktopWindowBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pImageBitmap = loadImageAsBitmap(image.getPath());
+        if (pImageBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!pDesktopWindowBitmap->GetBitmap(&wholeBitmapInfo)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        searchRectNormalized.x = 0;
+        searchRectNormalized.y = 0;
+        searchRectNormalized.width = wholeBitmapInfo.bmWidth;
+        searchRectNormalized.height = wholeBitmapInfo.bmHeight;
+        bSuc = findBitmapInBitmap(rect, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap);
+    }
+
+    if (pImageBitmap != NULL) {
+        delete pImageBitmap;
+        pImageBitmap = NULL;
+    }
+
+    if (pDesktopWindowBitmap != NULL) {
+        delete pDesktopWindowBitmap;
+        pDesktopWindowBitmap = NULL;
+    }
+
+    return bSuc;
 }
 
-bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, const Rect &searchRect)
 {
     LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchBeginningPoint=(%d,%d), timeout=%u\n", 
+    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchRect=(%d,%d,%u,%u)\n", 
         image.getPath().c_str(), 
         rect.x, rect.y, rect.width, rect.height,
-        searchBeginningPoint.x, searchBeginningPoint.y, 
-        timeout
+        searchRect.x, searchRect.y, searchRect.width, searchRect.height
     );
 
-    return true;
+    return findImageRect_impl(image, rect, searchRect);
+}
+
+bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect, const Rect &searchRect)
+{
+    bool bSuc = true;
+    CBitmap *pDesktopWindowBitmap = NULL;
+    CBitmap *pImageBitmap = NULL;
+    BITMAP wholeBitmapInfo;
+    Rect searchRectNormalized = searchRect;
+
+    if (bSuc) {
+        pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+        if (pDesktopWindowBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pImageBitmap = loadImageAsBitmap(image.getPath());
+        if (pImageBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!pDesktopWindowBitmap->GetBitmap(&wholeBitmapInfo)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
+        bSuc = findBitmapInBitmap(rect, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap);
+    }
+
+    if (pImageBitmap != NULL) {
+        delete pImageBitmap;
+        pImageBitmap = NULL;
+    }
+
+    if (pDesktopWindowBitmap != NULL) {
+        delete pDesktopWindowBitmap;
+        pDesktopWindowBitmap = NULL;
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint)
+{
+    LOG_GEN();
+    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchBeginningPoint=(%d,%d)\n", 
+        image.getPath().c_str(), 
+        rect.x, rect.y, rect.width, rect.height,
+        searchBeginningPoint.x, searchBeginningPoint.y
+    );
+
+    return findImageRect_impl(image, rect, searchBeginningPoint);
+}
+
+bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect, const Point &searchBeginningPoint)
+{
+    bool bSuc = true;
+    CBitmap *pDesktopWindowBitmap = NULL;
+    CBitmap *pImageBitmap = NULL;
+    Rect searchRectNormalized;
+    BITMAP wholeBitmapInfo;
+
+    LOG_GEN();
+    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchBeginningPoint=(%d,%d)\n", 
+        image.getPath().c_str(), 
+        rect.x, rect.y, rect.width, rect.height,
+        searchBeginningPoint.x, searchBeginningPoint.y
+    );
+
+    if (bSuc) {
+        pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+        if (pDesktopWindowBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pImageBitmap = loadImageAsBitmap(image.getPath());
+        if (pImageBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!pDesktopWindowBitmap->GetBitmap(&wholeBitmapInfo)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        searchRectNormalized.x = searchBeginningPoint.x;
+        searchRectNormalized.y = searchBeginningPoint.y;
+        searchRectNormalized.width = wholeBitmapInfo.bmWidth;
+        searchRectNormalized.height = wholeBitmapInfo.bmHeight;
+        searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
+        bSuc = findBitmapInBitmap(rect, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap);
+    }
+
+    if (pImageBitmap != NULL) {
+        delete pImageBitmap;
+        pImageBitmap = NULL;
+    }
+
+    if (pDesktopWindowBitmap != NULL) {
+        delete pDesktopWindowBitmap;
+        pDesktopWindowBitmap = NULL;
+    }
+
+    return bSuc;
 }
 
 bool WinGuiISTK::waitImageShown(const Image &image, unsigned int timeout /*= INFINITE_TIME*/)
 {
+    bool bSuc = false;
+    unsigned int elapsedTime = 0;
+    Rect rect;
+
     LOG_GEN();
     LOG_GEN_PRINTF("image.path=\"%s\", timeout=%u\n", 
         image.getPath().c_str(), 
         timeout
     );
 
-    return true;
+    for (;;) {
+        if (timeout != INFINITE_TIME && elapsedTime > timeout) {
+            break;
+        }
+
+        bSuc = findImageRect_impl(image, rect);
+        if (bSuc) {
+            break;
+        }
+
+        elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
+        Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
+    }
+
+    return bSuc;
 }
 
 bool WinGuiISTK::waitImageShown(const Image &image, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
 {
+    bool bSuc = false;
+    unsigned int elapsedTime = 0;
+    Rect rect;
+
     LOG_GEN();
     LOG_GEN_PRINTF("image.path=\"%s\", searchRect=(%d,%d,%u,%u), timeout=%u\n", 
         image.getPath().c_str(), 
@@ -298,11 +489,29 @@ bool WinGuiISTK::waitImageShown(const Image &image, const Rect &searchRect, unsi
         timeout
     );
 
-    return true;
+    for (;;) {
+        if (timeout != INFINITE_TIME && elapsedTime > timeout) {
+            break;
+        }
+
+        bSuc = findImageRect_impl(image, rect, searchRect);
+        if (bSuc) {
+            break;
+        }
+
+        elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
+        Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
+    }
+
+    return bSuc;
 }
 
 bool WinGuiISTK::waitImageShown(const Image &image, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
 {
+    bool bSuc = false;
+    unsigned int elapsedTime = 0;
+    Rect rect;
+
     LOG_GEN();
     LOG_GEN_PRINTF("image.path=\"%s\", searchBeginningPoint=(%d,%d), timeout=%u\n", 
         image.getPath().c_str(), 
@@ -310,7 +519,21 @@ bool WinGuiISTK::waitImageShown(const Image &image, const Point &searchBeginning
         timeout
     );
 
-    return true;
+    for (;;) {
+        if (timeout != INFINITE_TIME && elapsedTime > timeout) {
+            break;
+        }
+
+        bSuc = findImageRect_impl(image, rect, searchBeginningPoint);
+        if (bSuc) {
+            break;
+        }
+
+        elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
+        Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
+    }
+
+    return bSuc;
 }
 
 DWORD WinGuiISTK::sx(DWORD x)
@@ -335,6 +558,261 @@ DWORD WinGuiISTK::sy(DWORD y)
     }
 
     return result;
+}
+
+CBitmap *WinGuiISTK::getDesktopWindowAsBitmap()
+{
+    bool bSuc = true;
+    CBitmap *pBitmap = NULL;
+    CWnd* pDesktopWnd = NULL;
+    CDC *pDesktopDC = NULL;
+    CRect desktopWndRect;
+    CDC bitmapDC;
+    CBitmap* pOldBitmap = NULL;
+
+    if (bSuc) {
+        pDesktopWnd = CWnd::GetDesktopWindow();
+        if (pDesktopWnd == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pDesktopWnd->GetWindowRect(&desktopWndRect);
+    }
+
+    if (bSuc) {
+        pDesktopDC = pDesktopWnd->GetWindowDC();
+        if (pDesktopDC == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pBitmap = new CBitmap();
+        if (pBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!bitmapDC.CreateCompatibleDC(pDesktopDC)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!pBitmap->CreateCompatibleBitmap(&bitmapDC, desktopWndRect.Width(), desktopWndRect.Height())) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pOldBitmap = bitmapDC.SelectObject(pBitmap);
+        if (!bitmapDC.BitBlt(0, 0, desktopWndRect.Width(), desktopWndRect.Height(), pDesktopDC, 0, 0, SRCCOPY)) {
+            bSuc = false;
+        }
+        bitmapDC.SelectObject(pOldBitmap);
+    }
+
+    if (pDesktopWnd != NULL && pDesktopDC != NULL) {
+        pDesktopWnd->ReleaseDC(pDesktopDC);
+        pDesktopDC = NULL;
+    }
+
+    if (!bSuc) {
+        delete pBitmap;
+        pBitmap = NULL;
+    }
+
+    return pBitmap;
+}
+
+CBitmap *WinGuiISTK::loadImageAsBitmap(const std::string &imageFilePath)
+{
+    bool bSuc = true;
+    CBitmap *pBitmap = NULL;
+    Gdiplus::Image *pImage = NULL;
+    CWnd* pDesktopWnd = NULL;
+    CDC *pDesktopDC = NULL;
+    CDC bitmapDC;
+    CBitmap* pOldBitmap = NULL;
+    Graphics *pGraphics = NULL;
+
+    if (bSuc) {
+        pImage = Gdiplus::Image::FromFile(TK_Tools::str2wstr(imageFilePath).c_str(), FALSE);
+        if (pImage == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pDesktopWnd = CWnd::GetDesktopWindow();
+        if (pDesktopWnd == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pDesktopDC = pDesktopWnd->GetWindowDC();
+        if (pDesktopDC == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pBitmap = new CBitmap();
+        if (pBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!bitmapDC.CreateCompatibleDC(pDesktopDC)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!pBitmap->CreateCompatibleBitmap(&bitmapDC, pImage->GetWidth(), pImage->GetHeight())) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pOldBitmap = bitmapDC.SelectObject(pBitmap);
+        pGraphics = new Graphics(bitmapDC.GetSafeHdc());
+        if (pGraphics == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pGraphics->DrawImage(pImage, 0, 0, pImage->GetWidth(), pImage->GetHeight());
+        bitmapDC.SelectObject(pOldBitmap);
+    }
+
+    if (pGraphics != NULL) {
+        delete pGraphics;
+        pGraphics = NULL;
+    }
+
+    if (pDesktopWnd != NULL && pDesktopDC != NULL) {
+        pDesktopWnd->ReleaseDC(pDesktopDC);
+        pDesktopDC = NULL;
+    }
+
+    if (pImage != NULL) {
+        delete pImage;
+        pImage = NULL;
+    }
+
+    if (!bSuc) {
+        delete pBitmap;
+        pBitmap = NULL;
+    }
+
+    return pBitmap;
+}
+
+bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap)
+{
+    bool bSuc = true;
+    BITMAP partBitmapInfo;
+    BITMAP wholeBitmapInfo;
+    Rect searchRectNormalized = searchRect;
+
+    if (bSuc) {
+        if (partBitmap == NULL || wholeBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!partBitmap->GetBitmap(&partBitmapInfo)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!wholeBitmap->GetBitmap(&wholeBitmapInfo)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
+        if (searchRectNormalized.width == 0 || searchRectNormalized.height == 0) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        bSuc = findBitmapInBitmap_unsafe(matchedRect, searchRectNormalized, partBitmapInfo, wholeBitmapInfo);
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo)
+{
+    bool bSuc = true;
+
+    if (bSuc) {
+        if (partBitmapInfo.bmBitsPixel == 32 && wholeBitmapInfo.bmBitsPixel == 32) {
+            bSuc = findBitmapInBitmap_bytes_unsafe<4>(matchedRect, searchRect, partBitmapInfo, wholeBitmapInfo);
+        } else if (partBitmapInfo.bmBitsPixel == 24 && wholeBitmapInfo.bmBitsPixel == 24) {
+            bSuc = findBitmapInBitmap_bytes_unsafe<3>(matchedRect, searchRect, partBitmapInfo, wholeBitmapInfo);
+        } else if (partBitmapInfo.bmBitsPixel == 16 && wholeBitmapInfo.bmBitsPixel == 24) {
+            bSuc = findBitmapInBitmap_bytes_unsafe<2>(matchedRect, searchRect, partBitmapInfo, wholeBitmapInfo);
+        } else {
+            bSuc = false;
+        }
+    }
+
+    return bSuc;
+}
+
+template <unsigned int BYTES_PER_PIXEL>
+bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo)
+{
+    bool bSuc = false;
+    unsigned int bytesPerPixel = BYTES_PER_PIXEL;
+    unsigned int bytesPerLine = bytesPerPixel * partBitmapInfo.bmWidth;
+    unsigned int x, y;
+    unsigned char i;
+    unsigned char *pSrc, *pDst;
+
+    for (y = searchRect.y; y < searchRect.y + searchRect.height - partBitmapInfo.bmHeight; ++y) {
+        for (x = searchRect.x; x < searchRect.x + searchRect.width - partBitmapInfo.bmWidth; ++x) {
+            pSrc = (unsigned char *)partBitmapInfo.bmBits;
+            pDst = (unsigned char *)wholeBitmapInfo.bmBits + wholeBitmapInfo.bmWidthBytes * y + bytesPerPixel * x;
+            if (memcpy(pDst, pSrc, bytesPerLine) != 0) {
+                continue;
+            } else {
+                bool matched = true;
+                for (i = 1; i < partBitmapInfo.bmHeight; ++i) {
+                    pSrc += partBitmapInfo.bmWidthBytes;
+                    pDst += wholeBitmapInfo.bmWidthBytes;
+                    if (memcpy(pDst, pSrc, bytesPerLine) != 0) {
+                        matched = false;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    continue;
+                } else {
+                    bSuc = true;
+                    matchedRect.x = x;
+                    matchedRect.y = y;
+                    matchedRect.width = partBitmapInfo.bmWidth;
+                    matchedRect.height = partBitmapInfo.bmHeight;
+                }
+            }
+        }
+    }
+
+    return bSuc;
 }
 
 } // namespace GuiISTk {

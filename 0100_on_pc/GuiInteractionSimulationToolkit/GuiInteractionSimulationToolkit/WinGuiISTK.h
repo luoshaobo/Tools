@@ -1,5 +1,8 @@
 #pragma once
+#include <Windows.h>
 #include "GuiISTk.h"
+
+class CBitmap;
 
 namespace GuiISTk {
 
@@ -31,13 +34,24 @@ public:
     virtual void mouseRightDrag(const Point &srcPoint, const Point &dstPoint);
     virtual void mouseScroll(const Point &point, int steps);
     
-    virtual bool findImageRect(const Image &image, Rect &rect, unsigned int timeout = INFINITE_TIME);
-    virtual bool findImageRect(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
-    virtual bool findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
+    virtual bool findImageRect(const Image &image, Rect &rect);
+    virtual bool findImageRect(const Image &image, Rect &rect, const Rect &searchRect);
+    virtual bool findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint);
     
     virtual bool waitImageShown(const Image &image, unsigned int timeout = INFINITE_TIME);
     virtual bool waitImageShown(const Image &image, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
     virtual bool waitImageShown(const Image &image, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
+
+private:
+    CBitmap *getDesktopWindowAsBitmap();
+    CBitmap *loadImageAsBitmap(const std::string &imageFilePath);
+    bool findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap);
+    bool findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
+    template <unsigned int BYTES_PER_PIXEL>
+    bool findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
+    bool findImageRect_impl(const Image &image, Rect &rect);
+    bool findImageRect_impl(const Image &image, Rect &rect, const Rect &searchRect);
+    bool findImageRect_impl(const Image &image, Rect &rect, const Point &searchBeginningPoint);
 
 private:
     DWORD sx(DWORD x);
