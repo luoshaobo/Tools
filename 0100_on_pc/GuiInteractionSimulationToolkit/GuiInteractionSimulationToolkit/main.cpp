@@ -41,9 +41,9 @@ void help(int argc, char* argv[])
     fprintf(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
     fprintf(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
     fprintf(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning> [<nTimeout>]\n", basename(argv[0]));
+    fprintf(stdout, "  %s findImageRect <sImagePath>\n", basename(argv[0]));
+    fprintf(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    fprintf(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
     fprintf(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>]\n", basename(argv[0]));
     fprintf(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>]\n", basename(argv[0]));
     fprintf(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>]\n", basename(argv[0]));

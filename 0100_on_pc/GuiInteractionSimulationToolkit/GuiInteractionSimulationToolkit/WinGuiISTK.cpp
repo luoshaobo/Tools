@@ -19,14 +19,17 @@ void Rect::intersect(const Rect &other)
     height = resultRect.Height();
 }
 
+ULONG_PTR gdiplusToken;
+
 WinGuiISTK::WinGuiISTK(void)
 {
-
+    Gdiplus::GdiplusStartupInput StartupInput;
+    GdiplusStartup(&gdiplusToken, &StartupInput,NULL);
 }
 
 WinGuiISTK::~WinGuiISTK(void)
 {
-
+    GdiplusShutdown(gdiplusToken);
 }
 
 void WinGuiISTK::delay(unsigned int milliSecond)
