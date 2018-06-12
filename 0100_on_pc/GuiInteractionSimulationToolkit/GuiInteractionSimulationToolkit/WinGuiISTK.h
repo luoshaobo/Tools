@@ -38,9 +38,9 @@ public:
     virtual bool findImageRect(const Image &image, Rect &rect, const Rect &searchRect);
     virtual bool findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint);
     
-    virtual bool waitImageShown(const Image &image, unsigned int timeout = INFINITE_TIME);
-    virtual bool waitImageShown(const Image &image, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
-    virtual bool waitImageShown(const Image &image, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
+    virtual bool waitImageShown(const Image &image, Rect &rect, unsigned int timeout = INFINITE_TIME);
+    virtual bool waitImageShown(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
+    virtual bool waitImageShown(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
 
 private:
     CBitmap *getDesktopWindowAsBitmap();

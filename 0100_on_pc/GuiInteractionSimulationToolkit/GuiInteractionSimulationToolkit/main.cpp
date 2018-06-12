@@ -927,6 +927,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     int nRet = 0;
     std::string imagePath;
     unsigned int timeout = GuiISTk::INFINITE_TIME;
+    GuiISTk::Rect rect;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
@@ -946,7 +947,11 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        toolkit.waitImageShown(GuiISTk::Image(imagePath), timeout);
+        if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, timeout)) {
+            nRet = 1;
+        } else {
+            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+        }
     }
 
     return nRet;
@@ -958,6 +963,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     std::string imagePath;
     GuiISTk::Rect searchRect;
     unsigned int timeout = GuiISTk::INFINITE_TIME;
+    GuiISTk::Rect rect;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -984,7 +990,11 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        toolkit.waitImageShown(GuiISTk::Image(imagePath), searchRect, timeout);
+        if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, searchRect, timeout)) {
+            nRet = 1;
+        } else {
+            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+        }
     }
 
     return nRet;
@@ -996,6 +1006,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     std::string imagePath;
     GuiISTk::Point searchBeginningPoint;
     unsigned int timeout = GuiISTk::INFINITE_TIME;
+    GuiISTk::Rect rect;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -1022,7 +1033,11 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        toolkit.waitImageShown(GuiISTk::Image(imagePath), searchBeginningPoint, timeout);
+        if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, searchBeginningPoint, timeout)) {
+            nRet = 1;
+        } else {
+            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+        }
     }
 
     return nRet;

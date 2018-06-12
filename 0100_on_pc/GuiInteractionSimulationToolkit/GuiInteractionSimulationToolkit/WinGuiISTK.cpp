@@ -442,11 +442,10 @@ bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect, const Point 
     return bSuc;
 }
 
-bool WinGuiISTK::waitImageShown(const Image &image, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::waitImageShown(const Image &image, Rect &rect, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
-    Rect rect;
 
     LOG_GEN_PRINTF("image.path=\"%s\", timeout=%u\n", 
         image.getPath().c_str(), 
@@ -470,11 +469,10 @@ bool WinGuiISTK::waitImageShown(const Image &image, unsigned int timeout /*= INF
     return bSuc;
 }
 
-bool WinGuiISTK::waitImageShown(const Image &image, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::waitImageShown(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
-    Rect rect;
 
     LOG_GEN_PRINTF("image.path=\"%s\", searchRect=(%d,%d,%u,%u), timeout=%u\n", 
         image.getPath().c_str(), 
@@ -499,11 +497,10 @@ bool WinGuiISTK::waitImageShown(const Image &image, const Rect &searchRect, unsi
     return bSuc;
 }
 
-bool WinGuiISTK::waitImageShown(const Image &image, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::waitImageShown(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
-    Rect rect;
 
     LOG_GEN_PRINTF("image.path=\"%s\", searchBeginningPoint=(%d,%d), timeout=%u\n", 
         image.getPath().c_str(), 

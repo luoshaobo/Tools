@@ -85,9 +85,9 @@ public:
     virtual bool findImageRect(const Image &image, Rect &rect, const Rect &searchRect) = 0;
     virtual bool findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint) = 0;
     
-    virtual bool waitImageShown(const Image &image, unsigned int timeout = INFINITE_TIME) = 0;
-    virtual bool waitImageShown(const Image &image, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
-    virtual bool waitImageShown(const Image &image, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool waitImageShown(const Image &image, Rect &rect, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool waitImageShown(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool waitImageShown(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
 };
 
 } // namespace GuiISTk {
