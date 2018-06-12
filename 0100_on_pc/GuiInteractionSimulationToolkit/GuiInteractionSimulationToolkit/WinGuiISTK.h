@@ -9,8 +9,8 @@ namespace GuiISTk {
 class WinGuiISTK : public IToolkit
 {
 public:
-    WinGuiISTK(void);
-    virtual ~WinGuiISTK(void);
+    WinGuiISTK();
+    virtual ~WinGuiISTK();
 
     virtual void delay(unsigned int milliSecond);
     
@@ -56,6 +56,13 @@ private:
 private:
     DWORD sx(DWORD x);
     DWORD sy(DWORD y);
+
+private:
+    DWORD *m_pPartBitmapMem;
+    DWORD m_nPartBitmapMemSize;
+    DWORD *m_pWholeBitmapMem;
+    DWORD m_nWholeBitmapMemSize;
+    std::string m_sEnvVarScreenPictureFilePath;
 };
 
 } // namespace GuiISTk {

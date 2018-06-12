@@ -823,9 +823,10 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect)) {
-            printf("rect=(x=%d,y=%d,w=%u,h=%u)\n", rect.x, rect.y, rect.width, rect.height);
+            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         } else {
-            printf("not found!\n");
+            nRet = 1;
+            fprintf(stderr, "not found!\n");
         }
     }
 
@@ -859,9 +860,10 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchRect)) {
-            printf("rect=(x=%d,y=%d,w=%u,h=%u)\n", rect.x, rect.y, rect.width, rect.height);
+            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         } else {
-            printf("not found!\n");
+            nRet = 1;
+            fprintf(stderr, "not found!\n");
         }
     }
 
@@ -895,9 +897,10 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchBeginningPoint)) {
-            printf("rect=(x=%d,y=%d,w=%u,h=%u)\n", rect.x, rect.y, rect.width, rect.height);
+            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         } else {
-            printf("not found!\n");
+            nRet = 1;
+            fprintf(stderr, "not found!\n");
         }
     }
 
@@ -1040,9 +1043,27 @@ int CommandHandler_waitImageShown(const std::vector<Argument> &arguments, GuiIST
     }
 }
 
+class LibraryInitializer
+{
+public:
+    LibraryInitializer()
+    {
+        Gdiplus::GdiplusStartupInput StartupInput;
+        GdiplusStartup(&gdiplusToken, &StartupInput,NULL);
+    }
+
+    ~LibraryInitializer()
+    {
+        GdiplusShutdown(gdiplusToken);
+    }
+private:
+    ULONG_PTR gdiplusToken;
+};
+
 int main(int argc, char* argv[])
 {
     int nRet = 0;
+    LibraryInitializer libraryInitializer;
     std::vector<Argument> arguments = build_argument_array(argc, argv);
     const struct {
         const char *sCommond;
@@ -1077,23 +1098,24 @@ int main(int argc, char* argv[])
     if (argc < 2) {
         nRet = 1;
         help(argc, argv);
-        return nRet;
+        goto END;
     }
 
     for (i = 0; i < commandMapCount; ++i) {
         if (TK_Tools::LowerCase(std::string(commandMap[i].sCommond)) == TK_Tools::LowerCase(arguments[1].str)) {
             nRet = commandMap[i].commandHandler(arguments, winGuiISTK);
             if (nRet != 0) {
-                fprintf(stderr, "*** Error: %s: failed to execute!\n", arguments[1].str.c_str());
-                return nRet;
+                goto END;
             } else {
-                return 0;
+                goto END;
             }
         }
     }
     
     nRet = 1;
     fprintf(stderr, "*** Error: unknown command: %s\n", arguments[1].str.c_str());
-	help(argc, argv);
+    goto END;
+
+END:
     return nRet;
 }

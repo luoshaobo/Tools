@@ -19,22 +19,25 @@ void Rect::intersect(const Rect &other)
     height = resultRect.Height();
 }
 
-ULONG_PTR gdiplusToken;
-
-WinGuiISTK::WinGuiISTK(void)
+WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pWholeBitmapMem(NULL), m_nWholeBitmapMemSize(0)
 {
-    Gdiplus::GdiplusStartupInput StartupInput;
-    GdiplusStartup(&gdiplusToken, &StartupInput,NULL);
+    m_nPartBitmapMemSize = 1920 * 1080 * 4 * 4;
+    m_nWholeBitmapMemSize = 1920 * 1080 * 4 * 4;;
+
+    m_pPartBitmapMem = new DWORD[m_nPartBitmapMemSize / 4];
+    m_pWholeBitmapMem = new DWORD[m_nWholeBitmapMemSize / 4];
+
+    m_sEnvVarScreenPictureFilePath = getenv("SCREEN_PICTURE_FILE_PATH");
 }
 
-WinGuiISTK::~WinGuiISTK(void)
+WinGuiISTK::~WinGuiISTK()
 {
-    GdiplusShutdown(gdiplusToken);
+    delete [] m_pPartBitmapMem;
+    delete [] m_pWholeBitmapMem;
 }
 
 void WinGuiISTK::delay(unsigned int milliSecond)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("milliSecond=%u\n", milliSecond);
 
     Sleep(milliSecond);
@@ -42,7 +45,6 @@ void WinGuiISTK::delay(unsigned int milliSecond)
 
 void WinGuiISTK::kbdKeyDown(unsigned char vk)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     keybd_event(vk,0,0,0);
@@ -50,7 +52,6 @@ void WinGuiISTK::kbdKeyDown(unsigned char vk)
 
 void WinGuiISTK::kbdKeyUp(unsigned char vk)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     keybd_event(vk,0,KEYEVENTF_KEYUP,0);
@@ -58,7 +59,6 @@ void WinGuiISTK::kbdKeyUp(unsigned char vk)
 
 void WinGuiISTK::kbdKeyOn(unsigned char vk)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     if (!GetKeyState(vk) & 0x1) {
@@ -69,7 +69,6 @@ void WinGuiISTK::kbdKeyOn(unsigned char vk)
 
 void WinGuiISTK::kbdKeyOff(unsigned char vk)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     if (GetKeyState(vk) & 0x1) {
@@ -120,7 +119,6 @@ void WinGuiISTK::kbdCtrlV()
 
 void WinGuiISTK::kbdChar(char ch)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("ch=%u\n", ch);
 
     int words_num = 1;
@@ -144,7 +142,6 @@ void WinGuiISTK::kbdChar(char ch)
 
 void WinGuiISTK::kbdString(const std::string &s)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("s=%s\n", s.c_str());
 
     int words_num = s.length();
@@ -168,7 +165,6 @@ void WinGuiISTK::kbdString(const std::string &s)
 
 void WinGuiISTK::mouseMove(const Point &point, bool absolute /*= true*/)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("point=(%d,%d), absolute=%d\n", point.x, point.y, absolute);
 
     if (absolute) {
@@ -180,7 +176,6 @@ void WinGuiISTK::mouseMove(const Point &point, bool absolute /*= true*/)
 
 void WinGuiISTK::mouseClick(const Point &point)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
@@ -191,7 +186,6 @@ void WinGuiISTK::mouseClick(const Point &point)
 
 void WinGuiISTK::moustDoubleClick(const Point &point)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
@@ -205,7 +199,6 @@ void WinGuiISTK::moustDoubleClick(const Point &point)
 
 void WinGuiISTK::mouseDrag(const Point &srcPoint, const Point &dstPoint)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
@@ -216,7 +209,6 @@ void WinGuiISTK::mouseDrag(const Point &srcPoint, const Point &dstPoint)
 
 void WinGuiISTK::mouseRightClick(const Point &point)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
@@ -226,7 +218,6 @@ void WinGuiISTK::mouseRightClick(const Point &point)
 
 void WinGuiISTK::moustDoubleRightClick(const Point &point)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
@@ -240,7 +231,6 @@ void WinGuiISTK::moustDoubleRightClick(const Point &point)
 
 void WinGuiISTK::mouseRightDrag(const Point &srcPoint, const Point &dstPoint)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
@@ -251,7 +241,6 @@ void WinGuiISTK::mouseRightDrag(const Point &srcPoint, const Point &dstPoint)
 
 void WinGuiISTK::mouseScroll(const Point &point, int steps)
 {
-    LOG_GEN();
     LOG_GEN_PRINTF("point=(%d,%d), steps=%d\n", point.x, point.y, steps);
 
     mouse_event(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
@@ -259,10 +248,8 @@ void WinGuiISTK::mouseScroll(const Point &point, int steps)
 
 bool WinGuiISTK::findImageRect(const Image &image, Rect &rect)
 {
-    LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u)\n", 
-        image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height
+    LOG_GEN_PRINTF("image.path=\"%s\"\n", 
+        image.getPath().c_str()
     );
 
     return findImageRect_impl(image, rect);
@@ -276,16 +263,17 @@ bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect)
     Rect searchRectNormalized;
     BITMAP wholeBitmapInfo;
 
-    LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u)\n", 
-        image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height
-    );
-
     if (bSuc) {
-        pDesktopWindowBitmap = getDesktopWindowAsBitmap();
-        if (pDesktopWindowBitmap == NULL) {
-            bSuc = false;
+        if (!m_sEnvVarScreenPictureFilePath.empty()) {
+            pDesktopWindowBitmap = loadImageAsBitmap(m_sEnvVarScreenPictureFilePath);
+            if (pDesktopWindowBitmap == NULL) {
+                bSuc = false;
+            }
+        } else {
+            pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+            if (pDesktopWindowBitmap == NULL) {
+                bSuc = false;
+            }
         }
     }
 
@@ -325,10 +313,8 @@ bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect)
 
 bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, const Rect &searchRect)
 {
-    LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchRect=(%d,%d,%u,%u)\n", 
+    LOG_GEN_PRINTF("image.path=\"%s\", searchRect=(%d,%d,%u,%u)\n", 
         image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height,
         searchRect.x, searchRect.y, searchRect.width, searchRect.height
     );
 
@@ -344,9 +330,16 @@ bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect, const Rect &
     Rect searchRectNormalized = searchRect;
 
     if (bSuc) {
-        pDesktopWindowBitmap = getDesktopWindowAsBitmap();
-        if (pDesktopWindowBitmap == NULL) {
-            bSuc = false;
+        if (!m_sEnvVarScreenPictureFilePath.empty()) {
+            pDesktopWindowBitmap = loadImageAsBitmap(m_sEnvVarScreenPictureFilePath);
+            if (pDesktopWindowBitmap == NULL) {
+                bSuc = false;
+            }
+        } else {
+            pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+            if (pDesktopWindowBitmap == NULL) {
+                bSuc = false;
+            }
         }
     }
 
@@ -383,10 +376,8 @@ bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect, const Rect &
 
 bool WinGuiISTK::findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint)
 {
-    LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchBeginningPoint=(%d,%d)\n", 
+    LOG_GEN_PRINTF("image.path=\"%s\", searchBeginningPoint=(%d,%d)\n", 
         image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height,
         searchBeginningPoint.x, searchBeginningPoint.y
     );
 
@@ -401,17 +392,17 @@ bool WinGuiISTK::findImageRect_impl(const Image &image, Rect &rect, const Point 
     Rect searchRectNormalized;
     BITMAP wholeBitmapInfo;
 
-    LOG_GEN();
-    LOG_GEN_PRINTF("image.path=\"%s\", rect=(%d,%d,%u,%u), searchBeginningPoint=(%d,%d)\n", 
-        image.getPath().c_str(), 
-        rect.x, rect.y, rect.width, rect.height,
-        searchBeginningPoint.x, searchBeginningPoint.y
-    );
-
     if (bSuc) {
-        pDesktopWindowBitmap = getDesktopWindowAsBitmap();
-        if (pDesktopWindowBitmap == NULL) {
-            bSuc = false;
+        if (!m_sEnvVarScreenPictureFilePath.empty()) {
+            pDesktopWindowBitmap = loadImageAsBitmap(m_sEnvVarScreenPictureFilePath);
+            if (pDesktopWindowBitmap == NULL) {
+                bSuc = false;
+            }
+        } else {
+            pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+            if (pDesktopWindowBitmap == NULL) {
+                bSuc = false;
+            }
         }
     }
 
@@ -456,7 +447,6 @@ bool WinGuiISTK::waitImageShown(const Image &image, unsigned int timeout /*= INF
     unsigned int elapsedTime = 0;
     Rect rect;
 
-    LOG_GEN();
     LOG_GEN_PRINTF("image.path=\"%s\", timeout=%u\n", 
         image.getPath().c_str(), 
         timeout
@@ -485,7 +475,6 @@ bool WinGuiISTK::waitImageShown(const Image &image, const Rect &searchRect, unsi
     unsigned int elapsedTime = 0;
     Rect rect;
 
-    LOG_GEN();
     LOG_GEN_PRINTF("image.path=\"%s\", searchRect=(%d,%d,%u,%u), timeout=%u\n", 
         image.getPath().c_str(), 
         searchRect.x, searchRect.y, searchRect.width, searchRect.height,
@@ -515,7 +504,6 @@ bool WinGuiISTK::waitImageShown(const Image &image, const Point &searchBeginning
     unsigned int elapsedTime = 0;
     Rect rect;
 
-    LOG_GEN();
     LOG_GEN_PRINTF("image.path=\"%s\", searchBeginningPoint=(%d,%d), timeout=%u\n", 
         image.getPath().c_str(), 
         searchBeginningPoint.x, searchBeginningPoint.y, 
@@ -605,7 +593,7 @@ CBitmap *WinGuiISTK::getDesktopWindowAsBitmap()
     }
 
     if (bSuc) {
-        if (!pBitmap->CreateCompatibleBitmap(&bitmapDC, desktopWndRect.Width(), desktopWndRect.Height())) {
+        if (!pBitmap->CreateCompatibleBitmap(pDesktopDC, desktopWndRect.Width(), desktopWndRect.Height())) {
             bSuc = false;
         }
     }
@@ -677,7 +665,7 @@ CBitmap *WinGuiISTK::loadImageAsBitmap(const std::string &imageFilePath)
     }
 
     if (bSuc) {
-        if (!pBitmap->CreateCompatibleBitmap(&bitmapDC, pImage->GetWidth(), pImage->GetHeight())) {
+        if (!pBitmap->CreateCompatibleBitmap(pDesktopDC, pImage->GetWidth(), pImage->GetHeight())) {
             bSuc = false;
         }
     }
@@ -738,9 +726,19 @@ bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, C
     }
 
     if (bSuc) {
+        partBitmapInfo.bmBits = m_pPartBitmapMem;
+        partBitmap->GetBitmapBits(m_nPartBitmapMemSize, m_pPartBitmapMem);
+    }
+
+    if (bSuc) {
         if (!wholeBitmap->GetBitmap(&wholeBitmapInfo)) {
             bSuc = false;
         }
+    }
+
+    if (bSuc) {
+        wholeBitmapInfo.bmBits = m_pWholeBitmapMem;
+        wholeBitmap->GetBitmapBits(m_nWholeBitmapMemSize, m_pWholeBitmapMem);
     }
 
     if (bSuc) {
@@ -786,18 +784,18 @@ bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& 
     unsigned char i;
     unsigned char *pSrc, *pDst;
 
-    for (y = searchRect.y; y < searchRect.y + searchRect.height - partBitmapInfo.bmHeight; ++y) {
-        for (x = searchRect.x; x < searchRect.x + searchRect.width - partBitmapInfo.bmWidth; ++x) {
+    for (y = searchRect.y; y <= searchRect.y + searchRect.height - partBitmapInfo.bmHeight; ++y) {
+        for (x = searchRect.x; x <= searchRect.x + searchRect.width - partBitmapInfo.bmWidth; ++x) {
             pSrc = (unsigned char *)partBitmapInfo.bmBits;
             pDst = (unsigned char *)wholeBitmapInfo.bmBits + wholeBitmapInfo.bmWidthBytes * y + bytesPerPixel * x;
-            if (memcpy(pDst, pSrc, bytesPerLine) != 0) {
+            if (memcmp(pDst, pSrc, bytesPerLine) != 0) {
                 continue;
             } else {
                 bool matched = true;
                 for (i = 1; i < partBitmapInfo.bmHeight; ++i) {
                     pSrc += partBitmapInfo.bmWidthBytes;
                     pDst += wholeBitmapInfo.bmWidthBytes;
-                    if (memcpy(pDst, pSrc, bytesPerLine) != 0) {
+                    if (memcmp(pDst, pSrc, bytesPerLine) != 0) {
                         matched = false;
                         break;
                     }

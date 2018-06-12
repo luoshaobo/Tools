@@ -9,6 +9,48 @@
 #define unlink _unlink
 #endif // WIN32
 
+void log_printf_def(const char *pFormat, ...)
+{
+    int nError = 0;
+    va_list args;
+    int len = 0;
+    char *buffer = NULL;
+
+    if (nError == 0) {
+        if (pFormat == NULL) {
+            nError = 1;
+        }
+    }
+
+    if (nError == 0) {
+        va_start(args, pFormat);
+        len = vsnprintf(NULL, 0, pFormat, args);
+        if (len <= 0) {
+            len = 1024;
+        }
+        buffer = (char *)malloc((len + 1) * sizeof(char));
+        if (buffer == NULL) {
+           nError = -1;
+        }
+        va_end(args);
+    }
+
+    if (nError == 0) {
+        va_start(args, pFormat);
+        vsnprintf(buffer, len + 1, pFormat, args);
+        buffer[len] = '\0';
+        fprintf(stderr, buffer);                                                       // to be changed to any function which can output a string
+        va_end(args);
+    }
+
+    if (buffer != NULL) {
+        free(buffer);
+        buffer = NULL;
+    }
+
+    return;
+}
+
 const char *basename(const char *path)
 {
     const char *pRet = path;

@@ -82,8 +82,9 @@
 #define LOG_GEN() do { log_printf("=== LOG_GEN: [%s: %u: %s]\n", basename((char *)__FILE__), __LINE__, FUNCTION_STR); } while(0)
 #define LOG_GEN_PRINTF(format,...) do { log_printf((std::string("=== LOG_GEN: [%s: %u: %s] ")+format).c_str(), basename((char *)__FILE__), __LINE__, FUNCTION_STR, ## __VA_ARGS__); } while(0)
 
-#define log_printf printf
+#define log_printf log_printf_def
 
+void log_printf_def(const char *pFormat, ...);
 const char *basename(const char *path);
 
 namespace std {
