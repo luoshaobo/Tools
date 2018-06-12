@@ -200,14 +200,18 @@ void WinGuiISTK::kbdCtrlV()
 
 void WinGuiISTK::kbdChar(char ch)
 {
+    std::wstring ws;
+
     LOG_GEN_PRINTF("ch=%u\n", ch);
 
-    int words_num = 1;
+    ws = TK_Tools::str2wstr(std::string(1, ch));
+
+    int words_num = ws.length();
     KEYBDINPUT *keyinput = new KEYBDINPUT[words_num];
     memset(keyinput, 0, words_num * sizeof(KEYBDINPUT));
     for (int i = 0; i < words_num; i++)
     {
-        keyinput[i].wScan = ch;
+        keyinput[i].wScan = ws[i];
         keyinput[i].dwFlags = KEYEVENTF_UNICODE;
     }
     INPUT *input = new INPUT[words_num];
@@ -223,14 +227,18 @@ void WinGuiISTK::kbdChar(char ch)
 
 void WinGuiISTK::kbdString(const std::string &s)
 {
+    std::wstring ws;
+
     LOG_GEN_PRINTF("s=%s\n", s.c_str());
 
-    int words_num = s.length();
+    ws = TK_Tools::str2wstr(s);
+
+    int words_num = ws.length();
     KEYBDINPUT *keyinput = new KEYBDINPUT[words_num];
     memset(keyinput, 0, words_num * sizeof(KEYBDINPUT));
     for (int i = 0; i < words_num; i++)
     {
-        keyinput[i].wScan = s[i];
+        keyinput[i].wScan = ws[i];
         keyinput[i].dwFlags = KEYEVENTF_UNICODE;
     }
     INPUT *input = new INPUT[words_num];
