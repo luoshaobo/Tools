@@ -23,6 +23,8 @@ void help(int argc, char* argv[])
 {
     fprintf(stdout, "Usage:\n");
     fprintf(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
+    fprintf(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
+    fprintf(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
     fprintf(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
     fprintf(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
     fprintf(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
@@ -369,6 +371,47 @@ int CommandHandler_delay(const std::vector<Argument> &arguments, GuiISTk::IToolk
 
     if (nRet == 0) {
         toolkit.delay(milliSecond);
+    }
+
+    return nRet;
+}
+
+int CommandHandler_cbdPutString(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string s;
+
+    if (nRet == 0) {
+        if (arguments.size() < 3) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "delay");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        s = arguments[2].str;
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.cbdPutString(s)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_cbdGetString(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string s;
+
+    if (nRet == 0) {
+        if (!toolkit.cbdGetString(s)) {
+            nRet = 1;
+        } else {
+            fprintf(stdout, "%s\n", s.c_str());
+        }
     }
 
     return nRet;
@@ -1085,6 +1128,8 @@ int main(int argc, char* argv[])
         int (*commandHandler)(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit);
     } commandMap[] = {
         COMMAND_HANDLER_PAIR(delay),
+        COMMAND_HANDLER_PAIR(cbdPutString),
+        COMMAND_HANDLER_PAIR(cbdGetString),
         COMMAND_HANDLER_PAIR(kbdKeyDown),
         COMMAND_HANDLER_PAIR(kbdKeyUp),
         COMMAND_HANDLER_PAIR(kbdKeyOn),

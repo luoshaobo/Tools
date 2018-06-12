@@ -44,6 +44,86 @@ void WinGuiISTK::delay(unsigned int milliSecond)
     Sleep(milliSecond);
 }
 
+bool WinGuiISTK::cbdPutString(const std::string &s)
+{
+    bool bSuc = true;
+    std::wstring ws;
+    HGLOBAL hClip = NULL;
+    wchar_t *pBuff = NULL;
+
+    LOG_GEN_PRINTF("s=\"%s\"\n", s.c_str());
+
+    if (bSuc) {
+        if (!::OpenClipboard(NULL)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        ws = TK_Tools::str2wstr(s);
+    }
+
+    if (bSuc) {
+        ::EmptyClipboard();
+        hClip = ::GlobalAlloc(GMEM_MOVEABLE, (ws.length() + 1) * sizeof(wchar_t));
+        if (hClip != NULL) {
+            pBuff = (wchar_t *)::GlobalLock(hClip);
+            if (pBuff != NULL) {
+                wcscpy(pBuff, ws.c_str());
+            } else {
+                bSuc = false;
+            }
+            ::GlobalUnlock(hClip);
+            if (pBuff != NULL) {
+                ::SetClipboardData(CF_UNICODETEXT, hClip);
+            }
+        } else {
+            bSuc = false;
+        }
+        ::CloseClipboard();
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::cbdGetString(std::string &s)
+{
+    bool bSuc = true;
+    std::wstring ws;
+    HGLOBAL hClip = NULL;
+    wchar_t *pBuff = NULL;
+
+    LOG_GEN();
+
+    if (bSuc) {
+        if (!::OpenClipboard(NULL)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        hClip = ::GetClipboardData(CF_UNICODETEXT);
+        if (hClip != NULL) {
+            pBuff = (wchar_t *)::GlobalLock(hClip);
+            if (pBuff != NULL) {
+                ws = pBuff;
+            } else {
+                bSuc = false;
+            }
+            ::GlobalUnlock(hClip);
+        } else {
+            bSuc = false;
+        }
+        ::CloseClipboard();
+    }
+
+    if (bSuc) {
+        s = TK_Tools::wstr2str(ws);
+    }
+
+    return bSuc;
+}
+
 void WinGuiISTK::kbdKeyDown(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);

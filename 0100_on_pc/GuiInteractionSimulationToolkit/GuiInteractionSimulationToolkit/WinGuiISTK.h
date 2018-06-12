@@ -13,6 +13,9 @@ public:
     virtual ~WinGuiISTK();
 
     virtual void delay(unsigned int milliSecond);
+
+    virtual bool cbdPutString(const std::string &s);
+    virtual bool cbdGetString(std::string &s);
     
     virtual void kbdKeyDown(unsigned char vk);
     virtual void kbdKeyUp(unsigned char vk);

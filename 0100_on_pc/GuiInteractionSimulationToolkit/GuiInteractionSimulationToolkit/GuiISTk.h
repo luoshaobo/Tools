@@ -60,6 +60,9 @@ public:
     virtual ~IToolkit() {}
     
     virtual void delay(unsigned int milliSecond) = 0;
+
+    virtual bool cbdPutString(const std::string &s) = 0;
+    virtual bool cbdGetString(std::string &s) = 0;
     
     virtual void kbdKeyDown(unsigned char vk) = 0;
     virtual void kbdKeyUp(unsigned char vk) = 0;
