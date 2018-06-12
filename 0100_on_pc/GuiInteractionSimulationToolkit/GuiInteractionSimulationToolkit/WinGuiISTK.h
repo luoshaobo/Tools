@@ -52,6 +52,7 @@ private:
     bool findImageRect_impl(const Image &image, Rect &rect);
     bool findImageRect_impl(const Image &image, Rect &rect, const Rect &searchRect);
     bool findImageRect_impl(const Image &image, Rect &rect, const Point &searchBeginningPoint);
+    bool fixBitmapAlphaBits(const BITMAP &bitmapInfo);
 
 private:
     DWORD sx(DWORD x);

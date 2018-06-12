@@ -4,7 +4,7 @@
 
 namespace GuiISTk {
 
-const unsigned int WAIT_IMAGE_SHOWN_INTERVAL = 1000;
+const unsigned int WAIT_IMAGE_SHOWN_INTERVAL = 500;
 
 void Rect::intersect(const Rect &other)
 {
@@ -19,7 +19,7 @@ void Rect::intersect(const Rect &other)
     height = resultRect.Height();
 }
 
-WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pWholeBitmapMem(NULL), m_nWholeBitmapMemSize(0)
+WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pWholeBitmapMem(NULL), m_nWholeBitmapMemSize(0), m_sEnvVarScreenPictureFilePath()
 {
     m_nPartBitmapMemSize = 1920 * 1080 * 4 * 4;
     m_nWholeBitmapMemSize = 1920 * 1080 * 4 * 4;;
@@ -27,7 +27,8 @@ WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pW
     m_pPartBitmapMem = new DWORD[m_nPartBitmapMemSize / 4];
     m_pWholeBitmapMem = new DWORD[m_nWholeBitmapMemSize / 4];
 
-    m_sEnvVarScreenPictureFilePath = getenv("SCREEN_PICTURE_FILE_PATH");
+    const char *pEnvVarScreenPictureFilePath = getenv("SCREEN_PICTURE_FILE_PATH");
+    m_sEnvVarScreenPictureFilePath = pEnvVarScreenPictureFilePath == NULL ? "" : pEnvVarScreenPictureFilePath;
 }
 
 WinGuiISTK::~WinGuiISTK()
@@ -706,6 +707,37 @@ CBitmap *WinGuiISTK::loadImageAsBitmap(const std::string &imageFilePath)
     return pBitmap;
 }
 
+bool WinGuiISTK::fixBitmapAlphaBits(const BITMAP &bitmapInfo)
+{
+    bool bSuc = true;
+    RGBQUAD *pColor;
+    int x, y;
+
+    if (bSuc) {
+        if (bitmapInfo.bmBitsPixel != 32) {
+            return true;
+        }
+    }
+
+    if (bSuc) {
+        if (bitmapInfo.bmBits == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pColor = (RGBQUAD *)bitmapInfo.bmBits;
+        for (y = 0; y < bitmapInfo.bmHeight; ++y) {
+            for (x = 0; x < bitmapInfo.bmWidth; ++x) {
+                pColor->rgbReserved = 0xFF;
+                pColor++;
+            }
+        }
+    }
+
+    return bSuc;
+}
+
 bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap)
 {
     bool bSuc = true;
@@ -728,6 +760,9 @@ bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, C
     if (bSuc) {
         partBitmapInfo.bmBits = m_pPartBitmapMem;
         partBitmap->GetBitmapBits(m_nPartBitmapMemSize, m_pPartBitmapMem);
+        if (!fixBitmapAlphaBits(partBitmapInfo)) {
+            bSuc = false;
+        }
     }
 
     if (bSuc) {
@@ -739,6 +774,9 @@ bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, C
     if (bSuc) {
         wholeBitmapInfo.bmBits = m_pWholeBitmapMem;
         wholeBitmap->GetBitmapBits(m_nWholeBitmapMemSize, m_pWholeBitmapMem);
+        if (!fixBitmapAlphaBits(wholeBitmapInfo)) {
+            bSuc = false;
+        }
     }
 
     if (bSuc) {
