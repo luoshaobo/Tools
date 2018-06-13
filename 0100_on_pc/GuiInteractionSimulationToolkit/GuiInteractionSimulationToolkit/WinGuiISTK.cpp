@@ -459,14 +459,15 @@ void WinGuiISTK::kbdChar(char ch)
         keyinput[i].wScan = ws[i];
         keyinput[i].dwFlags = KEYEVENTF_UNICODE;
     }
-    INPUT *input = new INPUT[words_num];
+    INPUT input;
     for (int i = 0; i < words_num; i++)
     {
-        input[i].type = INPUT_KEYBOARD;
-        input[i].ki = keyinput[i];
+        input.type = INPUT_KEYBOARD;
+        input.ki = keyinput[i];
+        ::SendInput(1, &input, sizeof(INPUT));
+        Sleep(50);
     }
-    SendInput(words_num, input, sizeof(INPUT));
-    delete[] input;
+    
     delete[] keyinput;
 }
 
@@ -486,14 +487,15 @@ void WinGuiISTK::kbdString(const std::string &s)
         keyinput[i].wScan = ws[i];
         keyinput[i].dwFlags = KEYEVENTF_UNICODE;
     }
-    INPUT *input = new INPUT[words_num];
+    INPUT input;
     for (int i = 0; i < words_num; i++)
     {
-        input[i].type = INPUT_KEYBOARD;
-        input[i].ki = keyinput[i];
+        input.type = INPUT_KEYBOARD;
+        input.ki = keyinput[i];
+        ::SendInput(1, &input, sizeof(INPUT));
+        Sleep(50);
     }
-    SendInput(words_num, input, sizeof(INPUT));
-    delete[] input;
+    
     delete[] keyinput;
 }
 
