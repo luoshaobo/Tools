@@ -52,6 +52,28 @@ private:
     std::string m_imageFilePath;
 };
 
+struct ScreenInfo
+{
+    ScreenInfo() : title(), fullMatched(false), allMatched(false) {}
+    ScreenInfo(const std::string &a_title, bool a_fullMatched = false, bool a_allMatched = false) : title(a_title), fullMatched(a_fullMatched), allMatched(a_allMatched) {}
+
+    std::string title;
+    bool fullMatched;
+    bool allMatched;
+};
+
+enum ScreenShowingMode {
+    SSM_CURRENT,
+    SSM_NORMAL,
+    SSM_MIN,
+    SSM_MAX,
+};
+
+enum ScreenZorder {
+    SZO_BOTTOM,
+    SZO_TOP,
+};
+
 const unsigned int INFINITE_TIME = (unsigned int)-1;
 
 class IToolkit
@@ -60,6 +82,14 @@ public:
     virtual ~IToolkit() {}
     
     virtual void delay(unsigned int milliSecond) = 0;
+
+    virtual unsigned int scnGetCount(const ScreenInfo &screenInfo) = 0;
+    virtual bool scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode) = 0;
+    virtual bool scnHide(const ScreenInfo &screenInfo) = 0;
+    virtual bool scnClose(const ScreenInfo &screenInfo) = 0;
+    virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point) = 0;
+    virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect) = 0;
+    virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder) = 0;
 
     virtual bool cbdPutString(const std::string &s) = 0;
     virtual bool cbdGetString(std::string &s) = 0;

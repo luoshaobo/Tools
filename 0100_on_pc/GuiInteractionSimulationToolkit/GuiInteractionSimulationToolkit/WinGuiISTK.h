@@ -14,6 +14,14 @@ public:
 
     virtual void delay(unsigned int milliSecond);
 
+    virtual unsigned int scnGetCount(const ScreenInfo &screenInfo);
+    virtual bool scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode);
+    virtual bool scnHide(const ScreenInfo &screenInfo);
+    virtual bool scnClose(const ScreenInfo &screenInfo);
+    virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point);
+    virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect);
+    virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder);
+
     virtual bool cbdPutString(const std::string &s);
     virtual bool cbdGetString(std::string &s);
     
@@ -57,6 +65,16 @@ private:
     bool findImageRect_impl(const Image &image, Rect &rect, const Point &searchBeginningPoint);
     bool fixBitmapAlphaBits(const BITMAP &bitmapInfo);
 
+    struct Arguments_getMatchedWindows_EnumWindowsProc {
+        Arguments_getMatchedWindows_EnumWindowsProc(WinGuiISTK *a_thiz, const ScreenInfo &a_screenInfo, std::vector<HWND> &a_winHandles) : thiz(a_thiz), screenInfo(a_screenInfo), winHandles(a_winHandles) {}
+        
+        WinGuiISTK *thiz;
+        const ScreenInfo &screenInfo;
+        std::vector<HWND> &winHandles;
+    };
+    bool getMatchedWindows(std::vector<HWND> &winHandles, const ScreenInfo &screenInfo);
+    static BOOL CALLBACK getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lParam);
+
 private:
     DWORD sx(DWORD x);
     DWORD sy(DWORD y);
@@ -66,6 +84,7 @@ private:
     DWORD m_nPartBitmapMemSize;
     DWORD *m_pWholeBitmapMem;
     DWORD m_nWholeBitmapMemSize;
+    CString m_sExeFileName;
     std::string m_sEnvVarScreenPictureFilePath;
 };
 

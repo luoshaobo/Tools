@@ -12,156 +12,14 @@
 #define VK_INFO_PAIR(vk)                            { #vk, vk }
 #define VK_INFO_PAIR2(vk,vk_code)                   { #vk, vk_code }
 
-struct Argument {
-    Argument() : isStrArray(false), str(), strArray() {}
-    bool isStrArray;
-    std::string str;
-    std::vector<std::string> strArray;
-};
+namespace {
+    struct Argument {
+        Argument() : isStrArray(false), str(), strArray() {}
+        bool isStrArray;
+        std::string str;
+        std::vector<std::string> strArray;
+    };
 
-void help(int argc, char* argv[])
-{
-    fprintf(stdout, "Usage:\n");
-    fprintf(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
-    fprintf(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
-    fprintf(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyOff <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlA\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlC\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlX\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdString <sString>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseMove <x,y> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s moustDoubleClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseRightClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
-    fprintf(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "\n");
-}
-
-std::vector<Argument> build_argument_array(int argc, char* argv[])
-{
-    std::vector<Argument> arguments;
-    int i;
-
-    for (i = 0; i < argc; ++i) {
-        Argument argument;
-        argument.isStrArray = false;
-        argument.str = std::string(argv[i]);
-        argument.strArray = TK_Tools::SplitString(argument.str, ",");
-        if (argument.strArray.size() > 1) {
-            argument.isStrArray = true;
-        }
-        arguments.push_back(argument);
-    }
-
-    return arguments;
-}
-
-bool parseBoolFromStr(bool &result, const std::string s)
-{
-    bool bRet = true;
-    std::string lowerS = TK_Tools::LowerCase(s);
-
-    result = false;
-
-    if (bRet) {
-        if (lowerS == "true" 
-            || lowerS == "1" 
-            || lowerS == "on"
-        ) {
-            result = true;
-        } else if (lowerS == "false" 
-            || lowerS == "0" 
-            || lowerS == "off"
-        ) {
-            result = false;
-        } else {
-            bRet = false;
-        }
-    }
-
-    return bRet;
-}
-
-bool parsePointFromStr(GuiISTk::Point &point, const std::string s)
-{
-    bool bRet = true;
-    std::vector<std::string> ss;
-
-    if (bRet) {
-        ss = TK_Tools::SplitString(s, ",");
-        if (ss.size() != 2) {
-            bRet = false;
-        }
-    }
-
-    if (bRet) {
-        point.x = (int)TK_Tools::StrToL(ss[0]);
-        point.y = (int)TK_Tools::StrToL(ss[1]);
-    }
-
-    return bRet;
-}
-
-bool parseSizeFromStr(GuiISTk::Size &size, const std::string s)
-{
-    bool bRet = true;
-    std::vector<std::string> ss;
-
-    if (bRet) {
-        ss = TK_Tools::SplitString(s, ",");
-        if (ss.size() != 2) {
-            bRet = false;
-        }
-    }
-
-    if (bRet) {
-        size.width = (unsigned int)TK_Tools::StrToL(ss[0]);
-        size.height = (unsigned int)TK_Tools::StrToL(ss[1]);
-    }
-
-    return bRet;
-}
-
-bool parseRectFromStr(GuiISTk::Rect &rect, const std::string s)
-{
-    bool bRet = true;
-    std::vector<std::string> ss;
-
-    if (bRet) {
-        ss = TK_Tools::SplitString(s, ",");
-        if (ss.size() != 4) {
-            bRet = false;
-        }
-    }
-
-    if (bRet) {
-        rect.x = (int)TK_Tools::StrToL(ss[0]);
-        rect.y = (int)TK_Tools::StrToL(ss[1]);
-        rect.width = (unsigned int)TK_Tools::StrToL(ss[2]);
-        rect.height = (unsigned int)TK_Tools::StrToL(ss[3]);
-    }
-
-    return bRet;
-}
-
-bool parseVkFromStr(unsigned char &vk, const std::string &vkStr)
-{
-    bool bRet = false;
     struct VkInfoItem {
         const char* vkStr;
         unsigned char vk;
@@ -340,6 +198,159 @@ bool parseVkFromStr(unsigned char &vk, const std::string &vkStr)
         VK_INFO_PAIR(VK_OEM_CLEAR),
     };
     unsigned int vkInfoCount = sizeof(vkInfo) / sizeof(vkInfo[0]);
+} // namespace {
+
+void help(int argc, char* argv[])
+{
+    fprintf(stdout, "Usage:\n");
+    fprintf(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnGetCount <sTitle> <bFullMatched>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_CURRENT|SSM_NORMAL|SSM_MIN|SSM_MAX\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
+    fprintf(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
+    fprintf(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdListVKs\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdKeyOff <sVirtualKey>\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdCtrlA\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdCtrlC\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdCtrlX\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
+    fprintf(stdout, "  %s kbdString <sString>\n", basename(argv[0]));
+    fprintf(stdout, "  %s mouseMove <x,y> [<nTimeout>]\n", basename(argv[0]));
+    fprintf(stdout, "  %s mouseClick <x,y>\n", basename(argv[0]));
+    fprintf(stdout, "  %s moustDoubleClick <x,y>\n", basename(argv[0]));
+    fprintf(stdout, "  %s mouseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
+    fprintf(stdout, "  %s mouseRightClick <x,y>\n", basename(argv[0]));
+    fprintf(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
+    fprintf(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
+    fprintf(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
+    fprintf(stdout, "  %s findImageRect <sImagePath>\n", basename(argv[0]));
+    fprintf(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    fprintf(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
+    fprintf(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>]\n", basename(argv[0]));
+    fprintf(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>]\n", basename(argv[0]));
+    fprintf(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>]\n", basename(argv[0]));
+    fprintf(stdout, "\n");
+}
+
+std::vector<Argument> build_argument_array(int argc, char* argv[])
+{
+    std::vector<Argument> arguments;
+    int i;
+
+    for (i = 0; i < argc; ++i) {
+        Argument argument;
+        argument.isStrArray = false;
+        argument.str = std::string(argv[i]);
+        argument.strArray = TK_Tools::SplitString(argument.str, ",");
+        if (argument.strArray.size() > 1) {
+            argument.isStrArray = true;
+        }
+        arguments.push_back(argument);
+    }
+
+    return arguments;
+}
+
+bool parseBoolFromStr(bool &result, const std::string s)
+{
+    bool bRet = true;
+    std::string lowerS = TK_Tools::LowerCase(s);
+
+    result = false;
+
+    if (bRet) {
+        if (lowerS == "true" 
+            || lowerS == "1" 
+            || lowerS == "on"
+        ) {
+            result = true;
+        } else if (lowerS == "false" 
+            || lowerS == "0" 
+            || lowerS == "off"
+        ) {
+            result = false;
+        } else {
+            bRet = false;
+        }
+    }
+
+    return bRet;
+}
+
+bool parsePointFromStr(GuiISTk::Point &point, const std::string s)
+{
+    bool bRet = true;
+    std::vector<std::string> ss;
+
+    if (bRet) {
+        ss = TK_Tools::SplitString(s, ",");
+        if (ss.size() != 2) {
+            bRet = false;
+        }
+    }
+
+    if (bRet) {
+        point.x = (int)TK_Tools::StrToL(ss[0]);
+        point.y = (int)TK_Tools::StrToL(ss[1]);
+    }
+
+    return bRet;
+}
+
+bool parseSizeFromStr(GuiISTk::Size &size, const std::string s)
+{
+    bool bRet = true;
+    std::vector<std::string> ss;
+
+    if (bRet) {
+        ss = TK_Tools::SplitString(s, ",");
+        if (ss.size() != 2) {
+            bRet = false;
+        }
+    }
+
+    if (bRet) {
+        size.width = (unsigned int)TK_Tools::StrToL(ss[0]);
+        size.height = (unsigned int)TK_Tools::StrToL(ss[1]);
+    }
+
+    return bRet;
+}
+
+bool parseRectFromStr(GuiISTk::Rect &rect, const std::string s)
+{
+    bool bRet = true;
+    std::vector<std::string> ss;
+
+    if (bRet) {
+        ss = TK_Tools::SplitString(s, ",");
+        if (ss.size() != 4) {
+            bRet = false;
+        }
+    }
+
+    if (bRet) {
+        rect.x = (int)TK_Tools::StrToL(ss[0]);
+        rect.y = (int)TK_Tools::StrToL(ss[1]);
+        rect.width = (unsigned int)TK_Tools::StrToL(ss[2]);
+        rect.height = (unsigned int)TK_Tools::StrToL(ss[3]);
+    }
+
+    return bRet;
+}
+
+bool parseVkFromStr(unsigned char &vk, const std::string &vkStr)
+{
+    bool bRet = false;
     unsigned int i;
 
     for (i = 0; i < vkInfoCount; ++i) {
@@ -351,6 +362,54 @@ bool parseVkFromStr(unsigned char &vk, const std::string &vkStr)
     }
 
    return bRet;
+}
+
+bool parseScreenShowingModeFromStr(GuiISTk::ScreenShowingMode &mode, const std::string &modeStr)
+{
+    bool bRet = true;
+    std::string modeStrUpper = TK_Tools::UpperCase(modeStr);
+    
+    if (modeStrUpper == "SSM_CURRENT") {
+        mode = GuiISTk::SSM_CURRENT;
+    } else if (modeStrUpper == "SSM_NORMAL") {
+        mode = GuiISTk::SSM_NORMAL;
+    } else if (modeStrUpper == "SSM_MIN") {
+        mode = GuiISTk::SSM_MIN;
+    } else if (modeStrUpper == "SSM_MAX") {
+        mode = GuiISTk::SSM_MAX;
+    } else {
+        bRet = false;
+    }
+
+   return bRet;
+}
+
+bool parseScreenZorderFromStr(GuiISTk::ScreenZorder &zorder, const std::string &zorderStr)
+{
+    bool bRet = true;
+    std::string zorderStrUpper = TK_Tools::UpperCase(zorderStr);
+    
+    if (zorderStrUpper == "SZO_BOTTOM") {
+        zorder = GuiISTk::SZO_BOTTOM;
+    } else if (zorderStrUpper == "SZO_TOP") {
+        zorder = GuiISTk::SZO_TOP;
+    } else {
+        bRet = false;
+    }
+
+   return bRet;
+}
+
+int CommandHandler_kbdListVKs(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    unsigned int i;
+
+    for (i = 0; i < vkInfoCount; ++i) {
+        fprintf(stdout, "  %s\n", vkInfo[i].vkStr);
+    }
+
+    return nRet;
 }
 
 int CommandHandler_delay(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
@@ -1101,6 +1160,317 @@ int CommandHandler_waitImageShown(const std::vector<Argument> &arguments, GuiIST
     }
 }
 
+int CommandHandler_scnGetCount(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    int nScreenCount = 0;
+
+    if (nRet == 0) {
+        if (arguments.size() < 4) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnGetCount");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnGetCount", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        nScreenCount = toolkit.scnGetCount(GuiISTk::ScreenInfo(sTitle, bFullMatched, true));
+        fprintf(stdout, "%u\n", nScreenCount);
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnShow(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+    GuiISTk::ScreenShowingMode mode;
+
+    if (nRet == 0) {
+        if (arguments.size() < 6) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnShow");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseScreenShowingModeFromStr(mode, arguments[5].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[5].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnShow(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), mode)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnHide(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+
+    if (nRet == 0) {
+        if (arguments.size() < 5) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnHide");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnHide", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnHide", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnHide(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched))) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnClose(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+
+    if (nRet == 0) {
+        if (arguments.size() < 5) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnClose");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnClose", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnClose", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnClose(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched))) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnMove(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+    GuiISTk::Point point;
+
+    if (nRet == 0) {
+        if (arguments.size() < 6) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnMove");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parsePointFromStr(point, arguments[5].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[5].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnMove(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), point)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnResize(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+    GuiISTk::Rect rect;
+
+    if (nRet == 0) {
+        if (arguments.size() < 6) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnResize");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseRectFromStr(rect, arguments[5].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[5].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnResize(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), rect)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnSetZorder(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+    GuiISTk::ScreenZorder zorder;
+
+    if (nRet == 0) {
+        if (arguments.size() < 6) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnSetZorder");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseScreenZorderFromStr(zorder, arguments[5].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[5].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnSetZorder(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), zorder)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
 class LibraryInitializer
 {
 public:
@@ -1128,8 +1498,16 @@ int main(int argc, char* argv[])
         int (*commandHandler)(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit);
     } commandMap[] = {
         COMMAND_HANDLER_PAIR(delay),
+        COMMAND_HANDLER_PAIR(scnGetCount),
+        COMMAND_HANDLER_PAIR(scnShow),
+        COMMAND_HANDLER_PAIR(scnHide),
+        COMMAND_HANDLER_PAIR(scnClose),
+        COMMAND_HANDLER_PAIR(scnMove),
+        COMMAND_HANDLER_PAIR(scnResize),
+        COMMAND_HANDLER_PAIR(scnSetZorder),
         COMMAND_HANDLER_PAIR(cbdPutString),
         COMMAND_HANDLER_PAIR(cbdGetString),
+        COMMAND_HANDLER_PAIR(kbdListVKs),
         COMMAND_HANDLER_PAIR(kbdKeyDown),
         COMMAND_HANDLER_PAIR(kbdKeyUp),
         COMMAND_HANDLER_PAIR(kbdKeyOn),

@@ -1,6 +1,9 @@
 #include "stdafx.h"
+#include "Psapi.h"
 #include "TK_Tools.h"
 #include "WinGuiISTK.h"
+
+#define THIS_PROG_BIN_NAME_DEF              L"guiistk"
 
 namespace GuiISTk {
 
@@ -21,14 +24,22 @@ void Rect::intersect(const Rect &other)
 
 WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pWholeBitmapMem(NULL), m_nWholeBitmapMemSize(0), m_sEnvVarScreenPictureFilePath()
 {
+    TCHAR szProcessName[MAX_PATH] = {0};
+
     m_nPartBitmapMemSize = 1920 * 1080 * 4 * 4;
-    m_nWholeBitmapMemSize = 1920 * 1080 * 4 * 4;;
+    m_nWholeBitmapMemSize = 1920 * 1080 * 4 * 4;
 
     m_pPartBitmapMem = new DWORD[m_nPartBitmapMemSize / 4];
     m_pWholeBitmapMem = new DWORD[m_nWholeBitmapMemSize / 4];
 
     const char *pEnvVarScreenPictureFilePath = getenv("SCREEN_PICTURE_FILE_PATH");
     m_sEnvVarScreenPictureFilePath = pEnvVarScreenPictureFilePath == NULL ? "" : pEnvVarScreenPictureFilePath;
+
+    ::GetModuleBaseName(::GetCurrentProcess, NULL, szProcessName, sizeof(szProcessName));
+    m_sExeFileName = szProcessName;
+    if (m_sExeFileName.IsEmpty()) {
+        m_sExeFileName = THIS_PROG_BIN_NAME_DEF;
+    }
 }
 
 WinGuiISTK::~WinGuiISTK()
@@ -42,6 +53,240 @@ void WinGuiISTK::delay(unsigned int milliSecond)
     LOG_GEN_PRINTF("milliSecond=%u\n", milliSecond);
 
     Sleep(milliSecond);
+}
+
+BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lParam)
+{
+    Arguments_getMatchedWindows_EnumWindowsProc &arguments = *(Arguments_getMatchedWindows_EnumWindowsProc *)lParam;
+    WinGuiISTK *thiz = arguments.thiz;
+    CString sTitle(TK_Tools::str2wstr(arguments.screenInfo.title).c_str());
+    CWnd window;
+    CString sWindowText;
+    bool bMatched = false;
+    bool bContinueEnumerating = true;
+
+    window.Attach(hwnd);
+    window.GetWindowText(sWindowText);
+    if (arguments.screenInfo.fullMatched) {
+        if (sTitle == sWindowText) {
+            bMatched = true;
+        }
+    } else {
+        if (sWindowText.Find(sTitle) != -1) {
+            if (sWindowText.Find(thiz->m_sExeFileName) == -1) {
+                bMatched = true;
+            }
+        }
+    }
+
+    if (bMatched) {
+        LOG_GEN_PRINTF("sWindowText=\"%s\"\n", TK_Tools::wstr2str(sWindowText.GetString()).c_str());
+        arguments.winHandles.push_back(hwnd);
+        if (!arguments.screenInfo.allMatched) {
+            bContinueEnumerating = false;
+        }
+    }
+
+    window.Detach();
+    return bContinueEnumerating;
+}
+
+bool WinGuiISTK::getMatchedWindows(std::vector<HWND> &winHandles, const ScreenInfo &screenInfo)
+{
+    bool bSuc = true;
+    Arguments_getMatchedWindows_EnumWindowsProc argumens(this, screenInfo, winHandles);
+
+    if (bSuc) {
+        if (!::EnumWindows(&getMatchedWindows_EnumWindowsProc, (LPARAM)&argumens)) {
+            bSuc = false;
+        }
+    }
+
+    return bSuc;
+}
+
+unsigned int WinGuiISTK::scnGetCount(const ScreenInfo &screenInfo)
+{
+    unsigned int nScreenCount = 0;
+    std::vector<HWND> winHandles;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched);
+
+    getMatchedWindows(winHandles, screenInfo);
+    nScreenCount = winHandles.size();
+
+    return nScreenCount;
+}
+
+bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    int nCmdShow;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, mode=%u\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, mode);
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+            switch (mode) {
+            case SSM_CURRENT:
+                nCmdShow = SW_SHOW;
+                break;
+            case SSM_NORMAL:
+                nCmdShow = SW_SHOWNORMAL;
+                break;
+            case SSM_MIN:
+                nCmdShow = SW_SHOWMINIMIZED;
+                break;
+            case SSM_MAX:
+                nCmdShow = SW_SHOWMAXIMIZED;
+                break;
+            default:
+                nCmdShow = SW_SHOW;
+                break;
+            }
+            ::ShowWindow(hWnd, nCmdShow);
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::scnHide(const ScreenInfo &screenInfo)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched);
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+            ::ShowWindow(hWnd, SW_HIDE);
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::scnClose(const ScreenInfo &screenInfo)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched);
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+            ::CloseWindow(hWnd);
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::scnMove(const ScreenInfo &screenInfo, const Point &point)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, point=(%d,%d)\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, point.x, point.y);
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+         
+            ::SetWindowPos(hWnd, NULL, point.x, point.y, 0, 0, SWP_ASYNCWINDOWPOS|SWP_NOSIZE|SWP_NOZORDER|SWP_SHOWWINDOW);
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::scnResize(const ScreenInfo &screenInfo, const Rect &rect)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, rect=(%d,%d,%u,%u)\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, rect.x, rect.y, rect.width, rect.height);
+    
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+         
+            ::SetWindowPos(hWnd, NULL, rect.x, rect.y, rect.width, rect.height, SWP_ASYNCWINDOWPOS|SWP_NOZORDER|SWP_SHOWWINDOW);
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+    HWND hWndInsertAfter;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, zorder=%u\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, zorder);
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+            switch (zorder) {
+            case SZO_BOTTOM:
+                hWndInsertAfter = HWND_BOTTOM;
+                break;
+            case SZO_TOP:
+                hWndInsertAfter = HWND_TOP;
+                break;
+            default:
+                hWndInsertAfter = HWND_TOP;
+                break;
+            }
+         
+            ::SetWindowPos(hWnd, hWndInsertAfter, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS|SWP_NOSIZE|SWP_NOMOVE|SWP_SHOWWINDOW);
+        }
+    }
+
+    return bSuc;
 }
 
 bool WinGuiISTK::cbdPutString(const std::string &s)
