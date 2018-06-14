@@ -90,6 +90,8 @@ public:
     virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point) = 0;
     virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect) = 0;
     virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder) = 0;
+    virtual bool scnSaveAsPictures(const ScreenInfo &screenInfo, const std::string &pictureFilePath) = 0;
+    virtual bool scnSaveDesktopAsPicture(const std::string &pictureFilePath) = 0;
 
     virtual bool cbdPutString(const std::string &s) = 0;
     virtual bool cbdGetString(std::string &s) = 0;

@@ -136,8 +136,8 @@ bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
         for (i = 0; i < winHandles.size(); ++i) {
             hWnd = winHandles[i];
             switch (mode) {
-            case SSM_CURRENT:
-                nCmdShow = SW_SHOW;
+            case SSM_RESTORE:
+                nCmdShow = SW_RESTORE;
                 break;
             case SSM_NORMAL:
                 nCmdShow = SW_SHOWNORMAL;
@@ -287,6 +287,228 @@ bool WinGuiISTK::scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder)
     }
 
     return bSuc;
+}
+
+bool WinGuiISTK::scnSaveAsPictures(const ScreenInfo &screenInfo, const std::string &pictureFilePath)
+{
+    bool bSuc = true;
+    std::string pictureFilePathTemplate;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, pictureFilePath=\"%s\"\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, pictureFilePath.c_str());
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        if (!makeFilePathTemplateByIndex(pictureFilePathTemplate, pictureFilePath)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+            ::ShowWindow(hWnd, SW_SHOWMINIMIZED);
+            ::Sleep(200);
+            ::ShowWindow(hWnd, SW_RESTORE);
+            ::Sleep(200);
+            std::string path = pictureFilePath;
+            if (winHandles.size() > 1) {
+                path = TK_Tools::FormatStr(pictureFilePathTemplate.c_str(), i + 1);
+            }
+            if (!saveWindowAsPicture(hWnd, path)) {
+                bSuc = false;
+                break;
+            }
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::scnSaveDesktopAsPicture(const std::string &pictureFilePath)
+{
+    bool bSuc = true;
+    HWND hWnd;
+
+    LOG_GEN_PRINTF("pictureFilePath=\"%s\"\n", pictureFilePath.c_str());
+
+    if (bSuc) {
+        hWnd = ::GetDesktopWindow();
+        if (!saveWindowAsPicture(hWnd, pictureFilePath)) {
+            bSuc = false;
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path)
+{
+    bool bSuc = true;
+    CLSID encoderClsId;
+    CRect windowRect;
+    Gdiplus::Bitmap *pBitmap = NULL;
+    Gdiplus::Graphics *pGraphics = NULL;
+
+    if (bSuc) {
+        if (!getImageGetEncoderFormPath(encoderClsId, path)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!::GetWindowRect(hWnd, (LPRECT)windowRect)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pBitmap = new Gdiplus::Bitmap(windowRect.Width(), windowRect.Height(), PixelFormat32bppARGB);
+        if (pBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pGraphics = new Gdiplus::Graphics(pBitmap);
+        if (pGraphics == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        HDC hGraphicsDC = pGraphics->GetHDC();
+        if (!::BitBlt(
+            hGraphicsDC,
+            0, 0, windowRect.Width(), windowRect.Height(),
+            ::GetWindowDC(hWnd),
+            0, 0,
+            SRCCOPY
+        )) {
+            bSuc = false;
+        }
+        pGraphics->ReleaseHDC(hGraphicsDC);
+    }
+
+    if (bSuc) {
+        if (pBitmap->Save(TK_Tools::str2wstr(path).c_str(), &encoderClsId, NULL) != Gdiplus::Ok) {
+            bSuc = false;
+        }
+    }
+
+    if (pGraphics != NULL) {
+        delete pGraphics;
+        pGraphics = NULL;
+    }
+
+    if (pBitmap != NULL) {
+        delete pBitmap;
+        pBitmap = NULL;
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::getImageGetEncoderFormPath(CLSID &encoderClsId, const std::string &path)
+{
+    bool bSuc = true;
+    std::string sExtName;
+
+    if (bSuc) {
+        std::string::size_type nPos = path.rfind('.');
+        if (nPos != std::string::npos) {
+            sExtName = path.substr(nPos + 1);
+            sExtName = TK_Tools::LowerCase(sExtName);
+        }
+    }
+
+    if (bSuc) {
+        if (sExtName == "bmp") {
+            if (GetEncoderClsid(L"image/bmp", &encoderClsId) < 0) {
+                bSuc = false;
+            }
+        } else if (sExtName == "jpg" || sExtName == "jpeg") {
+            if (GetEncoderClsid(L"image/jpeg", &encoderClsId) < 0) {
+                bSuc = false;
+            }
+        } else if (sExtName == "gif") {
+            if (GetEncoderClsid(L"image/gif", &encoderClsId) < 0) {
+                bSuc = false;
+            }
+        } else if (sExtName == "tiff" || sExtName == "tif") {
+            if (GetEncoderClsid(L"image/tiff", &encoderClsId) < 0) {
+                bSuc = false;
+            }
+        } else if (sExtName == "png") {
+            if (GetEncoderClsid(L"image/png", &encoderClsId) < 0) {
+                bSuc = false;
+            }
+        } else {
+            bSuc = false;
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::makeFilePathTemplateByIndex(std::string &pathTemplate, const std::string &path)
+{
+    bool bSuc = true;
+    std::string sPathWithoutDotExt;
+    std::string sExtName;
+
+    if (bSuc) {
+        std::string::size_type nPos = path.rfind('.');
+        if (nPos != std::string::npos) {
+            sPathWithoutDotExt = path.substr(0, nPos);
+            sExtName = path.substr(nPos + 1);
+            pathTemplate = sPathWithoutDotExt + "_%04u." + sExtName;
+        } else {
+            pathTemplate = path + "_%04u";
+        }
+    }
+
+    return bSuc;
+}
+
+int WinGuiISTK::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+{
+   UINT  num = 0;          // number of image encoders
+   UINT  size = 0;         // size of the image encoder array in bytes
+
+   Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+
+   if (format == NULL || pClsid == NULL) {
+       return -1;
+   }
+
+   Gdiplus::GetImageEncodersSize(&num, &size);
+   if(size == 0)
+      return -1;  // Failure
+
+   pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+   if(pImageCodecInfo == NULL)
+      return -1;  // Failure
+
+   Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+
+   for(UINT j = 0; j < num; ++j)
+   {
+      if( wcscmp(pImageCodecInfo[j].MimeType, format) == 0 )
+      {
+         *pClsid = pImageCodecInfo[j].Clsid;
+         free(pImageCodecInfo);
+         return j;  // Success
+      }    
+   }
+
+   free(pImageCodecInfo);
+   return -1;  // Failure
 }
 
 bool WinGuiISTK::cbdPutString(const std::string &s)
@@ -961,7 +1183,7 @@ CBitmap *WinGuiISTK::loadImageAsBitmap(const std::string &imageFilePath)
     CDC *pDesktopDC = NULL;
     CDC bitmapDC;
     CBitmap* pOldBitmap = NULL;
-    Graphics *pGraphics = NULL;
+    Gdiplus::Graphics *pGraphics = NULL;
 
     if (bSuc) {
         pImage = Gdiplus::Image::FromFile(TK_Tools::str2wstr(imageFilePath).c_str(), FALSE);
@@ -1005,7 +1227,7 @@ CBitmap *WinGuiISTK::loadImageAsBitmap(const std::string &imageFilePath)
 
     if (bSuc) {
         pOldBitmap = bitmapDC.SelectObject(pBitmap);
-        pGraphics = new Graphics(bitmapDC.GetSafeHdc());
+        pGraphics = new Gdiplus::Graphics(bitmapDC.GetSafeHdc());
         if (pGraphics == NULL) {
             bSuc = false;
         }

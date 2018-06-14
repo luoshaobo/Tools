@@ -74,7 +74,7 @@
 #define TK_TEXT_BUF_SIZE				1024
 
 #ifdef WIN32
-#define FUNCTION_STR                    __FUNCSIG__
+#define FUNCTION_STR                    __FUNCTION__ "()"
 #else
 #define FUNCTION_STR                    __PRETTY_FUNCTION__
 #endif // #ifdef WIN32

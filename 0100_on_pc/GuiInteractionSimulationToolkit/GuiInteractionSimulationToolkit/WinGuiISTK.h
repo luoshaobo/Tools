@@ -21,6 +21,8 @@ public:
     virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point);
     virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect);
     virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder);
+    virtual bool scnSaveAsPictures(const ScreenInfo &screenInfo, const std::string &pictureFilePath);
+    virtual bool scnSaveDesktopAsPicture(const std::string &pictureFilePath);
 
     virtual bool cbdPutString(const std::string &s);
     virtual bool cbdGetString(std::string &s);
@@ -74,6 +76,11 @@ private:
     };
     bool getMatchedWindows(std::vector<HWND> &winHandles, const ScreenInfo &screenInfo);
     static BOOL CALLBACK getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lParam);
+
+    bool saveWindowAsPicture(HWND hWnd, const std::string &path);
+    bool getImageGetEncoderFormPath(CLSID &encoderClsId, const std::string &path);
+    int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+    bool makeFilePathTemplateByIndex(std::string &pathTemplate, const std::string &path);
 
 private:
     DWORD sx(DWORD x);

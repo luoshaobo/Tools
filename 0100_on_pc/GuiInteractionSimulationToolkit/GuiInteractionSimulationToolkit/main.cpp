@@ -205,12 +205,14 @@ void help(int argc, char* argv[])
     fprintf(stdout, "Usage:\n");
     fprintf(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnGetCount <sTitle> <bFullMatched>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_CURRENT|SSM_NORMAL|SSM_MIN|SSM_MAX\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX\n", basename(argv[0]));
     fprintf(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnSaveAsPictures <sTitle> <bFullMatched> <bAllMatched> <pictureFilePath>\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnSaveDesktopAsPicture <pictureFilePath>\n", basename(argv[0]));
     fprintf(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
     fprintf(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
     fprintf(stdout, "  %s kbdListVKs\n", basename(argv[0]));
@@ -369,8 +371,8 @@ bool parseScreenShowingModeFromStr(GuiISTk::ScreenShowingMode &mode, const std::
     bool bRet = true;
     std::string modeStrUpper = TK_Tools::UpperCase(modeStr);
     
-    if (modeStrUpper == "SSM_CURRENT") {
-        mode = GuiISTk::SSM_CURRENT;
+    if (modeStrUpper == "SSM_RESTORE") {
+        mode = GuiISTk::SSM_RESTORE;
     } else if (modeStrUpper == "SSM_NORMAL") {
         mode = GuiISTk::SSM_NORMAL;
     } else if (modeStrUpper == "SSM_MIN") {
@@ -1471,6 +1473,77 @@ int CommandHandler_scnSetZorder(const std::vector<Argument> &arguments, GuiISTk:
     return nRet;
 }
 
+int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+    std::string sPictureFilePath;
+
+    if (nRet == 0) {
+        if (arguments.size() < 6) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnSaveAsPictures");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sPictureFilePath = arguments[5].str;
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnSaveAsPictures(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), sPictureFilePath)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_scnSaveDesktopAsPicture(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sPictureFilePath;
+
+    if (nRet == 0) {
+        if (arguments.size() < 3) {
+            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnSaveDesktopAsPicture");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sPictureFilePath = arguments[2].str;
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.scnSaveDesktopAsPicture(sPictureFilePath)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
 class LibraryInitializer
 {
 public:
@@ -1482,7 +1555,7 @@ public:
 
     ~LibraryInitializer()
     {
-        GdiplusShutdown(gdiplusToken);
+        Gdiplus::GdiplusShutdown(gdiplusToken);
     }
 private:
     ULONG_PTR gdiplusToken;
@@ -1505,6 +1578,8 @@ int main(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(scnMove),
         COMMAND_HANDLER_PAIR(scnResize),
         COMMAND_HANDLER_PAIR(scnSetZorder),
+        COMMAND_HANDLER_PAIR(scnSaveAsPictures),
+        COMMAND_HANDLER_PAIR(scnSaveDesktopAsPicture),
         COMMAND_HANDLER_PAIR(cbdPutString),
         COMMAND_HANDLER_PAIR(cbdGetString),
         COMMAND_HANDLER_PAIR(kbdListVKs),
