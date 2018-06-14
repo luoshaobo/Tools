@@ -205,7 +205,7 @@ void help(int argc, char* argv[])
     fprintf(stdout, "Usage:\n");
     fprintf(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnGetCount <sTitle> <bFullMatched>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX\n", basename(argv[0]));
+    fprintf(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX|SSM_FG\n", basename(argv[0]));
     fprintf(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     fprintf(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
@@ -379,6 +379,8 @@ bool parseScreenShowingModeFromStr(GuiISTk::ScreenShowingMode &mode, const std::
         mode = GuiISTk::SSM_MIN;
     } else if (modeStrUpper == "SSM_MAX") {
         mode = GuiISTk::SSM_MAX;
+    } else if (modeStrUpper == "SSM_FG") {
+        mode = GuiISTk::SSM_FG;
     } else {
         bRet = false;
     }

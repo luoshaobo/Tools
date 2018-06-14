@@ -63,10 +63,11 @@ struct ScreenInfo
 };
 
 enum ScreenShowingMode {
-    SSM_CURRENT,
+    SSM_RESTORE,
     SSM_NORMAL,
     SSM_MIN,
     SSM_MAX,
+    SSM_FG,
 };
 
 enum ScreenZorder {

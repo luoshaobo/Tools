@@ -35,8 +35,13 @@ WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pW
     const char *pEnvVarScreenPictureFilePath = getenv("SCREEN_PICTURE_FILE_PATH");
     m_sEnvVarScreenPictureFilePath = pEnvVarScreenPictureFilePath == NULL ? "" : pEnvVarScreenPictureFilePath;
 
-    ::GetModuleBaseName(::GetCurrentProcess, NULL, szProcessName, sizeof(szProcessName));
+    ::GetModuleBaseName(::GetCurrentProcess(), NULL, szProcessName, sizeof(szProcessName));
     m_sExeFileName = szProcessName;
+    int nPos = m_sExeFileName.ReverseFind(L'.');
+    if (nPos != -1) {
+        m_sExeFileName = m_sExeFileName.Left(nPos);
+    }
+
     if (m_sExeFileName.IsEmpty()) {
         m_sExeFileName = THIS_PROG_BIN_NAME_DEF;
     }
@@ -80,7 +85,21 @@ BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lP
     }
 
     if (bMatched) {
-        LOG_GEN_PRINTF("sWindowText=\"%s\"\n", TK_Tools::wstr2str(sWindowText.GetString()).c_str());
+        TCHAR szProcessName[MAX_PATH] = {0};
+        DWORD dwProcessId = -1;
+        HANDLE hProcess = NULL;
+        ::GetWindowThreadProcessId(hwnd, &dwProcessId);
+        if (dwProcessId != -1) {
+            hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION|PROCESS_VM_READ, FALSE, dwProcessId);
+            if (hProcess != NULL) {
+                ::GetModuleBaseName(hProcess, NULL, szProcessName, sizeof(szProcessName));
+            }
+        }
+
+        LOG_GEN_PRINTF("sWindowText=\"%s\", exe=\"%s\"\n", 
+            TK_Tools::wstr2str(sWindowText.GetString()).c_str(),
+            TK_Tools::wstr2str(szProcessName).c_str()
+        );
         arguments.winHandles.push_back(hwnd);
         if (!arguments.screenInfo.allMatched) {
             bContinueEnumerating = false;
@@ -88,6 +107,7 @@ BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lP
     }
 
     window.Detach();
+    ::SetLastError(0);
     return bContinueEnumerating;
 }
 
@@ -98,7 +118,9 @@ bool WinGuiISTK::getMatchedWindows(std::vector<HWND> &winHandles, const ScreenIn
 
     if (bSuc) {
         if (!::EnumWindows(&getMatchedWindows_EnumWindowsProc, (LPARAM)&argumens)) {
-            bSuc = false;
+            if (::GetLastError() != 0) {
+                bSuc = false;
+            }
         }
     }
 
@@ -123,7 +145,7 @@ bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
     bool bSuc = true;
     std::vector<HWND> winHandles;
     HWND hWnd;
-    int nCmdShow;
+    WINDOWPLACEMENT wndpl;
     unsigned int i;
 
     LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, mode=%u\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, mode);
@@ -137,22 +159,30 @@ bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
             hWnd = winHandles[i];
             switch (mode) {
             case SSM_RESTORE:
-                nCmdShow = SW_RESTORE;
+                ::ShowWindow(hWnd, SW_RESTORE);
                 break;
             case SSM_NORMAL:
-                nCmdShow = SW_SHOWNORMAL;
+                ::ShowWindow(hWnd, SW_SHOWNORMAL);
                 break;
             case SSM_MIN:
-                nCmdShow = SW_SHOWMINIMIZED;
+                ::ShowWindow(hWnd, SW_SHOWMINIMIZED);
                 break;
             case SSM_MAX:
-                nCmdShow = SW_SHOWMAXIMIZED;
+                ::ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+                break;
+            case SSM_FG:
+                memset(&wndpl, 0, sizeof(WINDOWPLACEMENT));
+                ::GetWindowPlacement(hWnd, &wndpl);
+                if (wndpl.showCmd == SW_SHOWMINIMIZED) {
+                    ::ShowWindow(hWnd, SW_SHOWNORMAL);
+                }
+                ::SetForegroundWindow(hWnd);
+                Sleep(500);
                 break;
             default:
-                nCmdShow = SW_SHOW;
+                ::ShowWindow(hWnd, SW_SHOWNORMAL);
                 break;
             }
-            ::ShowWindow(hWnd, nCmdShow);
         }
     }
 
@@ -295,6 +325,7 @@ bool WinGuiISTK::scnSaveAsPictures(const ScreenInfo &screenInfo, const std::stri
     std::string pictureFilePathTemplate;
     std::vector<HWND> winHandles;
     HWND hWnd;
+    WINDOWPLACEMENT wndpl;
     unsigned int i;
 
     LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, pictureFilePath=\"%s\"\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, pictureFilePath.c_str());
@@ -312,10 +343,15 @@ bool WinGuiISTK::scnSaveAsPictures(const ScreenInfo &screenInfo, const std::stri
     if (bSuc) {
         for (i = 0; i < winHandles.size(); ++i) {
             hWnd = winHandles[i];
-            ::ShowWindow(hWnd, SW_SHOWMINIMIZED);
-            ::Sleep(200);
-            ::ShowWindow(hWnd, SW_RESTORE);
-            ::Sleep(200);
+
+            memset(&wndpl, 0, sizeof(WINDOWPLACEMENT));
+            ::GetWindowPlacement(hWnd, &wndpl);
+            if (wndpl.showCmd == SW_SHOWMINIMIZED) {
+                ::ShowWindow(hWnd, SW_SHOWNORMAL);
+            }
+            ::SetForegroundWindow(hWnd);
+            ::Sleep(500);
+
             std::string path = pictureFilePath;
             if (winHandles.size() > 1) {
                 path = TK_Tools::FormatStr(pictureFilePathTemplate.c_str(), i + 1);
@@ -386,8 +422,8 @@ bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path)
         if (!::BitBlt(
             hGraphicsDC,
             0, 0, windowRect.Width(), windowRect.Height(),
-            ::GetWindowDC(hWnd),
-            0, 0,
+            ::GetWindowDC(::GetDesktopWindow()),
+            windowRect.left, windowRect.top,
             SRCCOPY
         )) {
             bSuc = false;
