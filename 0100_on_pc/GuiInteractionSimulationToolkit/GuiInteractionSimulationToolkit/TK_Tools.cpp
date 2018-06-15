@@ -41,7 +41,7 @@ void log_printf_def(const char *pFormat, ...)
         va_start(args, pFormat);
         vsnprintf(buffer, len + 1, pFormat, args);
         buffer[len] = '\0';
-        fprintf(stderr, buffer);                                                       // to be changed to any function which can output a string
+        local_fprintf(stderr, buffer);                                                       // to be changed to any function which can output a string
         va_end(args);
     }
 

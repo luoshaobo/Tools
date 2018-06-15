@@ -251,10 +251,6 @@ bool Socket::accept(int& connected_fd, struct sockaddr* addr /*= NULL*/, int* ad
 		return false;
 	
 	connected_fd = ::accept(m_socket, addr, (socklen_t *)addrlen);
-    {
-        char opt = 1;
-        ::setsockopt(connected_fd, SOL_SOCKET, SO_KEEPALIVE, &opt, 1);
-    }
 	
 	return connected_fd == -1 ? false : true;
 }
@@ -268,10 +264,6 @@ bool Socket::accept(Socket& sock, struct sockaddr* addr /*= NULL*/, int* addrlen
 		return false;
 		
 	sock.m_socket = ::accept(m_socket, addr, (socklen_t *)addrlen);
-    {
-        char opt = 1;
-        ::setsockopt(sock.m_socket, SOL_SOCKET, SO_KEEPALIVE, &opt, 1);
-    }
 	
 	return sock.m_socket == -1 ? false : true;
 }

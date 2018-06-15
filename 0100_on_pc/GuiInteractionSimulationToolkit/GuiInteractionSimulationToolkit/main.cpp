@@ -228,7 +228,7 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdString <sString>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseMove <x,y> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseMove <x,y> [<bAbsolute>=true]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s mouseClick <x,y>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s moustDoubleClick <x,y>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s mouseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));

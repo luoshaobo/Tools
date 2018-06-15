@@ -38,12 +38,12 @@ class Socket
 public:
 	// 构造与解除
 	Socket();								// 创建一个空的Socket对象
-	bool create(int type = SOCK_STREAM, int protocol = IPPROTO_TCP, int domain = PF_INET);
+	bool create(int type = SOCK_STREAM, int protocol = 0, int domain = PF_INET);
 											// 为空的对象创建socket描述符
 	~Socket();								// 关闭连接和套接字
 	void destroy();							// 关闭连接和套接字
 	
-	bool open_fd(int type = SOCK_STREAM, int protocol = IPPROTO_TCP, int domain = PF_INET);	
+	bool open_fd(int type = SOCK_STREAM, int protocol = 0, int domain = PF_INET);	
 											// 先关闭原有的连接和套接字，然后创建新的socket
 	void close_fd();						// 关闭套接字
 	void attach_fd(int fd);					// 先关闭原有的连接和套接字，然后连接到指定的socket描述符

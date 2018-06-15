@@ -9,6 +9,27 @@ namespace GuiISTk {
 
 const unsigned int WAIT_IMAGE_SHOWN_INTERVAL = 500;
 
+VOID local_mouse_event(
+    DWORD dwFlags,
+    DWORD dx,
+    DWORD dy,
+    DWORD dwData,
+    ULONG_PTR dwExtraInfo
+)
+{
+    INPUT input;
+
+    input.type = INPUT_MOUSE;
+    input.mi.dx = dx;
+    input.mi.dy = dy;
+    input.mi.mouseData = dwData;
+    input.mi.dwFlags = dwFlags;
+    input.mi.time = 0;
+    input.mi.dwExtraInfo = dwExtraInfo;
+
+    ::SendInput(1, &input, sizeof(INPUT));
+}
+
 void Rect::intersect(const Rect &other)
 {
     CRect rect1(x, y, x + width, y + height);
@@ -762,9 +783,9 @@ void WinGuiISTK::mouseMove(const Point &point, bool absolute /*= true*/)
     LOG_GEN_PRINTF("point=(%d,%d), absolute=%d\n", point.x, point.y, absolute);
 
     if (absolute) {
-        mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+        local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
     } else {
-        mouse_event(MOUSEEVENTF_MOVE, point.x, point.y, 0, NULL);
+        local_mouse_event(MOUSEEVENTF_MOVE, point.x, point.y, 0, NULL);
     }
 }
 
@@ -772,72 +793,72 @@ void WinGuiISTK::mouseClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::moustDoubleClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::mouseDrag(const Point &srcPoint, const Point &dstPoint)
 {
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
 }
 
 void WinGuiISTK::mouseRightClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::moustDoubleRightClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::mouseRightDrag(const Point &srcPoint, const Point &dstPoint)
 {
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
-    mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
 }
 
 void WinGuiISTK::mouseScroll(const Point &point, int steps)
 {
     LOG_GEN_PRINTF("point=(%d,%d), steps=%d\n", point.x, point.y, steps);
 
-    mouse_event(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
+    local_mouse_event(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
 }
 
 bool WinGuiISTK::findImageRect(const Image &image, Rect &rect)
