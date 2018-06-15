@@ -9,6 +9,8 @@
 #define unlink _unlink
 #endif // WIN32
 
+extern void local_fprintf(FILE *stream, const char *pFormat, ...);
+
 void log_printf_def(const char *pFormat, ...)
 {
     int nError = 0;

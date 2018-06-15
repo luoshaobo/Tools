@@ -181,7 +181,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RemoteCmd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TK_sock.cpp"
 				>
 			</File>
 			<File
@@ -207,11 +215,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RemoteCmd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TK_sock.h"
 				>
 			</File>
 			<File

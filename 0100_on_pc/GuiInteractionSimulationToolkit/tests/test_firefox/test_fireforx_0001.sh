@@ -7,8 +7,14 @@ function main
     #
     # to show screen with title: $MOZILA_FIREFOX_TITLE
     #
-    guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 1 SSM_MIN
-    guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 1 SSM_MAX
+    guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MIN
+    guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MAX
+    #guiistk scnResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,800,600
+    
+    guiistk kbdKeyDown VK_LWIN
+    guiistk kbdKeyDown VK_LEFT
+    guiistk kbdKeyUp VK_LEFT
+    guiistk kbdKeyUp VK_LWIN
 
     guiistk delay 100
     

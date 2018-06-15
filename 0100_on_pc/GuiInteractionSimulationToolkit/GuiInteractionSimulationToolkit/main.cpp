@@ -7,6 +7,7 @@
 #include <string>
 #include "TK_Tools.h"
 #include "WinGuiISTK.h"
+#include "RemoteCmd.h"
 
 #define COMMAND_HANDLER_PAIR(command)               { #command, &CommandHandler_ ## command }
 #define VK_INFO_PAIR(vk)                            { #vk, vk }
@@ -202,45 +203,46 @@ namespace {
 
 void help(int argc, char* argv[])
 {
-    fprintf(stdout, "Usage:\n");
-    fprintf(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnGetCount <sTitle> <bFullMatched>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX|SSM_FG\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnSaveAsPictures <sTitle> <bFullMatched> <bAllMatched> <pictureFilePath>\n", basename(argv[0]));
-    fprintf(stdout, "  %s scnSaveDesktopAsPicture <pictureFilePath>\n", basename(argv[0]));
-    fprintf(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
-    fprintf(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdListVKs\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdKeyOff <sVirtualKey>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlA\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlC\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlX\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
-    fprintf(stdout, "  %s kbdString <sString>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseMove <x,y> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s moustDoubleClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseRightClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
-    fprintf(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
-    fprintf(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
-    fprintf(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>]\n", basename(argv[0]));
-    fprintf(stdout, "\n");
+    FPRINTF(stdout, "Usage:\n");
+    FPRINTF(stdout, "  %s RemoteServer [<port>=8888] [<ip>=0.0.0.0]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnGetCount <sTitle> <bFullMatched>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX|SSM_FG\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnSaveAsPictures <sTitle> <bFullMatched> <bAllMatched> <pictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnSaveDesktopAsPicture <pictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdListVKs\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyOff <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlA\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlC\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlX\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdString <sString>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseMove <x,y> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s moustDoubleClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseRightClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s findImageRect <sImagePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "\n");
 }
 
 std::vector<Argument> build_argument_array(int argc, char* argv[])
@@ -410,7 +412,7 @@ int CommandHandler_kbdListVKs(const std::vector<Argument> &arguments, GuiISTk::I
     unsigned int i;
 
     for (i = 0; i < vkInfoCount; ++i) {
-        fprintf(stdout, "  %s\n", vkInfo[i].vkStr);
+        FPRINTF(stdout, "  %s\n", vkInfo[i].vkStr);
     }
 
     return nRet;
@@ -423,7 +425,7 @@ int CommandHandler_delay(const std::vector<Argument> &arguments, GuiISTk::IToolk
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "delay");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "delay");
             nRet = 1;
         }
     }
@@ -446,7 +448,7 @@ int CommandHandler_cbdPutString(const std::vector<Argument> &arguments, GuiISTk:
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "delay");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "delay");
             nRet = 1;
         }
     }
@@ -473,7 +475,7 @@ int CommandHandler_cbdGetString(const std::vector<Argument> &arguments, GuiISTk:
         if (!toolkit.cbdGetString(s)) {
             nRet = 1;
         } else {
-            fprintf(stdout, "%s\n", s.c_str());
+            FPRINTF(stdout, "%s\n", s.c_str());
         }
     }
 
@@ -486,14 +488,14 @@ int CommandHandler_kbdKeyDown(const std::vector<Argument> &arguments, GuiISTk::I
     unsigned char vk = 0;
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "kbdKeyDown");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdKeyDown");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseVkFromStr(vk, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyDown", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyDown", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -512,14 +514,14 @@ int CommandHandler_kbdKeyUp(const std::vector<Argument> &arguments, GuiISTk::ITo
         
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "kbdKeyUp");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdKeyUp");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseVkFromStr(vk, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyUp", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyUp", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -538,14 +540,14 @@ int CommandHandler_kbdKeyOn(const std::vector<Argument> &arguments, GuiISTk::ITo
         
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "kbdKeyOn");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdKeyOn");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseVkFromStr(vk, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyOn", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyOn", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -564,14 +566,14 @@ int CommandHandler_kbdKeyOff(const std::vector<Argument> &arguments, GuiISTk::IT
     
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "kbdKeyOff");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdKeyOff");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseVkFromStr(vk, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyOff", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyOff", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -634,7 +636,7 @@ int CommandHandler_kbdChar(const std::vector<Argument> &arguments, GuiISTk::IToo
     
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "kbdChar");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdChar");
             nRet = 1;
         }
     }
@@ -657,7 +659,7 @@ int CommandHandler_kbdString(const std::vector<Argument> &arguments, GuiISTk::IT
     
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "kbdString");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdString");
             nRet = 1;
         }
     }
@@ -681,14 +683,14 @@ int CommandHandler_mouseMove(const std::vector<Argument> &arguments, GuiISTk::IT
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "mouseMove");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseMove");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseMove", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseMove", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -696,7 +698,7 @@ int CommandHandler_mouseMove(const std::vector<Argument> &arguments, GuiISTk::IT
     if (nRet == 0) {
         if (arguments.size() >= 4) {
             if (!parseBoolFromStr(absolute, arguments[3].str)) {
-                fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseMove", arguments[3].str.c_str());
+                FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseMove", arguments[3].str.c_str());
                 nRet = 1;
             }
         }
@@ -716,14 +718,14 @@ int CommandHandler_mouseClick(const std::vector<Argument> &arguments, GuiISTk::I
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "mouseClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -742,14 +744,14 @@ int CommandHandler_moustDoubleClick(const std::vector<Argument> &arguments, GuiI
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "moustDoubleClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "moustDoubleClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "moustDoubleClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "moustDoubleClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -768,21 +770,21 @@ int CommandHandler_mouseDrag(const std::vector<Argument> &arguments, GuiISTk::IT
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "mouseDrag");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseDrag");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(srcPoint, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseDrag", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseDrag", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(dstPoint, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseDrag", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseDrag", arguments[3].str.c_str());
             nRet = 1;
         }
     }
@@ -801,14 +803,14 @@ int CommandHandler_mouseRightClick(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "mouseRightClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseRightClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -827,14 +829,14 @@ int CommandHandler_moustDoubleRightClick(const std::vector<Argument> &arguments,
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "moustDoubleRightClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "moustDoubleRightClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "moustDoubleRightClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "moustDoubleRightClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -853,21 +855,21 @@ int CommandHandler_mouseRightDrag(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "mouseRightDrag");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseRightDrag");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(srcPoint, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightDrag", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightDrag", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(dstPoint, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightDrag", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightDrag", arguments[3].str.c_str());
             nRet = 1;
         }
     }
@@ -887,14 +889,14 @@ int CommandHandler_mouseScroll(const std::vector<Argument> &arguments, GuiISTk::
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "mouseScroll");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseScroll");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseScroll", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseScroll", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -918,7 +920,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "findImageRect1");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "findImageRect1");
             nRet = 1;
         }
     }
@@ -929,10 +931,10 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect)) {
-            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         } else {
             nRet = 1;
-            fprintf(stderr, "not found!\n");
+            FPRINTF(stderr, "not found!\n");
         }
     }
 
@@ -948,7 +950,7 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "findImageRect2");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "findImageRect2");
             nRet = 1;
         }
     }
@@ -959,17 +961,17 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (!parseRectFromStr(searchRect, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "findImageRect2", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "findImageRect2", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchRect)) {
-            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         } else {
             nRet = 1;
-            fprintf(stderr, "not found!\n");
+            FPRINTF(stderr, "not found!\n");
         }
     }
 
@@ -985,7 +987,7 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "findImageRect3");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "findImageRect3");
             nRet = 1;
         }
     }
@@ -996,17 +998,17 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (!parsePointFromStr(searchBeginningPoint, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "findImageRect3", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "findImageRect3", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchBeginningPoint)) {
-            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         } else {
             nRet = 1;
-            fprintf(stderr, "not found!\n");
+            FPRINTF(stderr, "not found!\n");
         }
     }
 
@@ -1037,7 +1039,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "waitImageShown1");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "waitImageShown1");
             nRet = 1;
         }
     }
@@ -1056,7 +1058,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
         if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, timeout)) {
             nRet = 1;
         } else {
-            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         }
     }
 
@@ -1073,7 +1075,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "waitImageShown2");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "waitImageShown2");
             nRet = 1;
         }
     }
@@ -1084,7 +1086,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (!parseRectFromStr(searchRect, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "waitImageShown2", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "waitImageShown2", arguments[3].str.c_str());
             nRet = 1;
         }
     }
@@ -1099,7 +1101,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
         if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, searchRect, timeout)) {
             nRet = 1;
         } else {
-            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         }
     }
 
@@ -1116,7 +1118,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "waitImageShown3");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "waitImageShown3");
             nRet = 1;
         }
     }
@@ -1127,7 +1129,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (!parsePointFromStr(searchBeginningPoint, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "waitImageShown3", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "waitImageShown3", arguments[3].str.c_str());
             nRet = 1;
         }
     }
@@ -1142,7 +1144,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
         if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, searchBeginningPoint, timeout)) {
             nRet = 1;
         } else {
-            fprintf(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
         }
     }
 
@@ -1173,7 +1175,7 @@ int CommandHandler_scnGetCount(const std::vector<Argument> &arguments, GuiISTk::
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnGetCount");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnGetCount");
             nRet = 1;
         }
     }
@@ -1184,14 +1186,14 @@ int CommandHandler_scnGetCount(const std::vector<Argument> &arguments, GuiISTk::
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnGetCount", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnGetCount", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         nScreenCount = toolkit.scnGetCount(GuiISTk::ScreenInfo(sTitle, bFullMatched, true));
-        fprintf(stdout, "%u\n", nScreenCount);
+        FPRINTF(stdout, "%u\n", nScreenCount);
     }
 
     return nRet;
@@ -1207,7 +1209,7 @@ int CommandHandler_scnShow(const std::vector<Argument> &arguments, GuiISTk::IToo
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnShow");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnShow");
             nRet = 1;
         }
     }
@@ -1218,21 +1220,21 @@ int CommandHandler_scnShow(const std::vector<Argument> &arguments, GuiISTk::IToo
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseScreenShowingModeFromStr(mode, arguments[5].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[5].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnShow", arguments[5].str.c_str());
             nRet = 1;
         }
     }
@@ -1255,7 +1257,7 @@ int CommandHandler_scnHide(const std::vector<Argument> &arguments, GuiISTk::IToo
 
     if (nRet == 0) {
         if (arguments.size() < 5) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnHide");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnHide");
             nRet = 1;
         }
     }
@@ -1266,14 +1268,14 @@ int CommandHandler_scnHide(const std::vector<Argument> &arguments, GuiISTk::IToo
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnHide", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnHide", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnHide", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnHide", arguments[4].str.c_str());
             nRet = 1;
         }
     }
@@ -1296,7 +1298,7 @@ int CommandHandler_scnClose(const std::vector<Argument> &arguments, GuiISTk::ITo
 
     if (nRet == 0) {
         if (arguments.size() < 5) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnClose");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnClose");
             nRet = 1;
         }
     }
@@ -1307,14 +1309,14 @@ int CommandHandler_scnClose(const std::vector<Argument> &arguments, GuiISTk::ITo
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnClose", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnClose", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnClose", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnClose", arguments[4].str.c_str());
             nRet = 1;
         }
     }
@@ -1338,7 +1340,7 @@ int CommandHandler_scnMove(const std::vector<Argument> &arguments, GuiISTk::IToo
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnMove");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnMove");
             nRet = 1;
         }
     }
@@ -1349,21 +1351,21 @@ int CommandHandler_scnMove(const std::vector<Argument> &arguments, GuiISTk::IToo
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[5].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[5].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnMove", arguments[5].str.c_str());
             nRet = 1;
         }
     }
@@ -1387,7 +1389,7 @@ int CommandHandler_scnResize(const std::vector<Argument> &arguments, GuiISTk::IT
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnResize");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnResize");
             nRet = 1;
         }
     }
@@ -1398,21 +1400,21 @@ int CommandHandler_scnResize(const std::vector<Argument> &arguments, GuiISTk::IT
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseRectFromStr(rect, arguments[5].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[5].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnResize", arguments[5].str.c_str());
             nRet = 1;
         }
     }
@@ -1436,7 +1438,7 @@ int CommandHandler_scnSetZorder(const std::vector<Argument> &arguments, GuiISTk:
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnSetZorder");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSetZorder");
             nRet = 1;
         }
     }
@@ -1447,21 +1449,21 @@ int CommandHandler_scnSetZorder(const std::vector<Argument> &arguments, GuiISTk:
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseScreenZorderFromStr(zorder, arguments[5].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[5].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSetZorder", arguments[5].str.c_str());
             nRet = 1;
         }
     }
@@ -1485,7 +1487,7 @@ int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, Gui
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnSaveAsPictures");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveAsPictures");
             nRet = 1;
         }
     }
@@ -1496,14 +1498,14 @@ int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, Gui
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            fprintf(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[4].str.c_str());
             nRet = 1;
         }
     }
@@ -1528,7 +1530,7 @@ int CommandHandler_scnSaveDesktopAsPicture(const std::vector<Argument> &argument
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            fprintf(stderr, "*** Error: %s: too few argument!\n", "scnSaveDesktopAsPicture");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveDesktopAsPicture");
             nRet = 1;
         }
     }
@@ -1553,6 +1555,12 @@ public:
     {
         Gdiplus::GdiplusStartupInput StartupInput;
         GdiplusStartup(&gdiplusToken, &StartupInput,NULL);
+
+        WSADATA wsaData;
+        int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+        if (iResult != NO_ERROR) {
+            fprintf(stdout, "*** Error at WSAStartup()\n");
+        }
     }
 
     ~LibraryInitializer()
@@ -1563,10 +1571,9 @@ private:
     ULONG_PTR gdiplusToken;
 };
 
-int main(int argc, char* argv[])
+int main_local(int argc, char* argv[])
 {
     int nRet = 0;
-    LibraryInitializer libraryInitializer;
     std::vector<Argument> arguments = build_argument_array(argc, argv);
     const struct {
         const char *sCommond;
@@ -1628,9 +1635,59 @@ int main(int argc, char* argv[])
     }
     
     nRet = 1;
-    fprintf(stderr, "*** Error: unknown command: %s\n", arguments[1].str.c_str());
+    FPRINTF(stderr, "*** Error: unknown command: %s\n", arguments[1].str.c_str());
     goto END;
 
 END:
+    return nRet;
+}
+
+int main(int argc, char* argv[])
+{
+    LibraryInitializer libraryInitializer;
+    int nRet = 0;
+    const char *pRemoteServerIP = getenv("REMOTE_SERVER_IP");
+    const char *pRemoteServerPort = getenv("REMOTE_SERVER_PORT");
+
+    if (argc >= 2 && TK_Tools::LowerCase(argv[1]) == TK_Tools::LowerCase("RemoteServer")) {
+        std::string sRemoteServerIP = "0.0.0.0";
+        unsigned short nRemoteServerPort = 8888;
+
+        if (argc >= 3) {
+            nRemoteServerPort = (unsigned short)TK_Tools::StrToUL(argv[2]);
+        }
+        if (argc >= 4) {
+            sRemoteServerIP = argv[3];
+        }
+        
+        RemoteCmd::RemoteCmdServer remoteCmdServer(sRemoteServerIP, nRemoteServerPort);
+
+        if (nRet == 0) {
+            if (!remoteCmdServer.SetCmdLineHandlerProc(&main_local)) {
+                nRet = 1;
+            }
+        }
+
+        if (nRet == 0) {
+            fprintf(stderr, "RemoteCmdServer is running!\n");
+            if (!remoteCmdServer.Run()) {
+                nRet = 1;
+            }
+        }
+    } else if (pRemoteServerIP != NULL && pRemoteServerPort != NULL) {
+        unsigned short nRemoteServerPort = (unsigned short)TK_Tools::StrToUL(pRemoteServerPort);
+        std::string sRemoteServerIP = pRemoteServerIP;
+
+        RemoteCmd::RemoteCmdClient remoteCmdClient(sRemoteServerIP, nRemoteServerPort);
+
+        if (nRet == 0) {
+            if (!remoteCmdClient.ExecCmdLineOnServer(argc, argv)) {
+                nRet = 1;
+            }
+        }
+    } else {
+        nRet = main_local(argc, argv);
+    }
+
     return nRet;
 }
