@@ -24,7 +24,7 @@ public:
 
 private:
     bool ProcessRequestPackages();
-    bool SendResponsePackage_CMDLINEEND();
+    bool SendResponsePackage_CMDLINEEND(int nRet);
 
 public:
     std::string m_sServerAddr;
@@ -41,7 +41,7 @@ public:
     RemoteCmdClient(const std::string &sServerAddr, unsigned short nServerPort);
     ~RemoteCmdClient();
 
-    bool ExecCmdLineOnServer(int argc, char* argv[]);
+    bool ExecCmdLineOnServer(int argc, char* argv[], int &nRet);
 
 private:
     bool ConnectToServer();
@@ -51,6 +51,7 @@ private:
     std::string m_sServerAddr;
     unsigned short m_nServerPort;
     TK_Tools::Socket m_socket;
+    int *m_pRet;
 };
 
 } // namespace RemoteCmd {

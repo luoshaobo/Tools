@@ -53,7 +53,7 @@ WinGuiISTK::WinGuiISTK() : m_pPartBitmapMem(NULL), m_nPartBitmapMemSize(0), m_pW
     m_pPartBitmapMem = new DWORD[m_nPartBitmapMemSize / 4];
     m_pWholeBitmapMem = new DWORD[m_nWholeBitmapMemSize / 4];
 
-    const char *pEnvVarScreenPictureFilePath = getenv("SCREEN_PICTURE_FILE_PATH");
+    const char *pEnvVarScreenPictureFilePath = getenv("DESKTOP_PICTURE_FILE_PATH");
     m_sEnvVarScreenPictureFilePath = pEnvVarScreenPictureFilePath == NULL ? "" : pEnvVarScreenPictureFilePath;
 
     ::GetModuleBaseName(::GetCurrentProcess(), NULL, szProcessName, sizeof(szProcessName));

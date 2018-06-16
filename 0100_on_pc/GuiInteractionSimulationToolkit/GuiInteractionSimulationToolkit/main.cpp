@@ -242,6 +242,11 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>=-1]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>=-1]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>=-1]\n", basename(argv[0]));
+
+    FPRINTF(stdout, "Note:\n");
+    FPRINTF(stdout, "1) The environment variables REMOTE_SERVER_IP and REMOTE_SERVER_PORT can be set to run in remote client mode.\n");
+    FPRINTF(stdout, "2) The environment variable DESKTOP_PICTURE_FILE_PATH can be set to simulate the bitmap of the desktop.\n");
+
     FPRINTF(stdout, "\n");
 }
 
@@ -1681,7 +1686,7 @@ int main(int argc, char* argv[])
         RemoteCmd::RemoteCmdClient remoteCmdClient(sRemoteServerIP, nRemoteServerPort);
 
         if (nRet == 0) {
-            if (!remoteCmdClient.ExecCmdLineOnServer(argc, argv)) {
+            if (!remoteCmdClient.ExecCmdLineOnServer(argc, argv, nRet)) {
                 nRet = 1;
             }
         }

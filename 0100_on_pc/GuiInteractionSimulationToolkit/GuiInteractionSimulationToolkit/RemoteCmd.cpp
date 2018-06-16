@@ -7,6 +7,9 @@ namespace RemoteCmd {
 const unsigned char PACKAGE_MAGIC[] = "!@#$%^&*";
 const unsigned int PACKAGE_MAGIC_LEN = 8;
 
+const int SOCKET_RCV_BUF_LEN = 1024 * 1024;
+const int SOCKET_SND_BUF_LEN = 1024 * 1024;
+
 const char ARGUMENT_SEPERATOR_CHAR = '\1';
 
 enum RequestId {
@@ -71,7 +74,7 @@ bool RemoteCmdServer::Run()
 
     if (bSuc) {
         if (!m_socket.create()) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -82,7 +85,7 @@ bool RemoteCmdServer::Run()
 
     if (bSuc) {
         if (!m_socket.bind(m_nServerPort, m_sServerAddr.c_str())) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -90,23 +93,28 @@ bool RemoteCmdServer::Run()
     while (bSuc && bRunning) {
         if (bSuc) {
             if (!m_socket.listen()) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             }
         }
 
         if (bSuc) {
             if (!m_socket.accept(m_socketComm)) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             } else {
                 m_pCurrentCommSocket = &m_socketComm;
             }
         }
+
+        if (bSuc) {
+            ::setsockopt(m_socketComm.fd(), SOL_SOCKET, SO_RCVBUF, (const char *)&SOCKET_RCV_BUF_LEN, sizeof(int));
+            ::setsockopt(m_socketComm.fd(), SOL_SOCKET, SO_SNDBUF, (const char *)&SOCKET_SND_BUF_LEN, sizeof(int));
+        }
         
         if (bSuc) {
             if (!ProcessRequestPackages()) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             }
         }
@@ -229,7 +237,7 @@ bool RemoteCmdServer::OutputToClientStderr(const std::string &text)
     return bSuc;
 }
 
-bool RemoteCmdServer::SendResponsePackage_CMDLINEEND()
+bool RemoteCmdServer::SendResponsePackage_CMDLINEEND(int nRet)
 {
     bool bSuc = true;
     PackageHead *pPackageHead = NULL;
@@ -238,16 +246,16 @@ bool RemoteCmdServer::SendResponsePackage_CMDLINEEND()
 
     if (bSuc) {
         if (m_pCurrentCommSocket == NULL) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
 
     if (bSuc) {
-        nPackageSize = sizeof(PackageHead) + sizeof(ResponsePackageBody) - 1;
+        nPackageSize = sizeof(PackageHead) + sizeof(ResponsePackageBody) - 1 + sizeof(int);
         pPackageHead = (PackageHead *)new unsigned char [nPackageSize];
         if (pPackageHead == NULL) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -259,17 +267,18 @@ bool RemoteCmdServer::SendResponsePackage_CMDLINEEND()
 
         pResponsePackageBody = (ResponsePackageBody *)&pPackageHead[1];
         pResponsePackageBody->id = RESID_CMDLINEEND;
-        pResponsePackageBody->nContentSize = 0;
+        pResponsePackageBody->nContentSize = sizeof(int);
+        memcpy(&pResponsePackageBody->content, &nRet, sizeof(int));
     }
 
     if (bSuc) {
         size_t size = nPackageSize;
         if (!m_pCurrentCommSocket->write((void *)pPackageHead, size)) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         } else {
             if (size != nPackageSize) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             }
         }
@@ -293,7 +302,7 @@ bool RemoteCmdServer::ProcessRequestPackages()
 
     if (bSuc) {
         if (m_pCmdLineHandlerProc == NULL) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -302,15 +311,15 @@ bool RemoteCmdServer::ProcessRequestPackages()
         if (bSuc) {
             size_t size = sizeof(PackageHead);
             if (!m_socketComm.read((void *)&packageHead, size)) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             } else {
                 if (size != sizeof(PackageHead)) {
-                    LOG_GEN_PRINTF("*** Error!");
+                    LOG_GEN_PRINTF("*** Error!\n");
                     bSuc = false;
                 } else {
                     if (memcmp(&packageHead.magic, PACKAGE_MAGIC, PACKAGE_MAGIC_LEN) != 0) {
-                        LOG_GEN_PRINTF("*** Error!");
+                        LOG_GEN_PRINTF("*** Error!\n");
                         bSuc = false;
                     }
                 }
@@ -320,7 +329,7 @@ bool RemoteCmdServer::ProcessRequestPackages()
         if (bSuc) {
             pRequestPackageBody = (RequestPackageBody *)new unsigned char [packageHead.nPackageSize - sizeof(PackageHead)];
             if (pRequestPackageBody == NULL) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             }
         }
@@ -328,12 +337,11 @@ bool RemoteCmdServer::ProcessRequestPackages()
         if (bSuc) {
             size_t size = packageHead.nPackageSize - sizeof(PackageHead);
             if (!m_socketComm.read((void *)pRequestPackageBody, size)) {
-                int error = ::GetLastError();
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             } else {
                 if (size != packageHead.nPackageSize - sizeof(PackageHead)) {
-                    LOG_GEN_PRINTF("*** Error!");
+                    LOG_GEN_PRINTF("*** Error!\n");
                     bSuc = false;
                 }
             }
@@ -350,15 +358,15 @@ bool RemoteCmdServer::ProcessRequestPackages()
                     for (int i = 0; i < argc; ++i) {
                         argv[i] = (char *)arguments[i].c_str();
                     }
-                    m_pCmdLineHandlerProc(argc, argv);
+                    int nRet = m_pCmdLineHandlerProc(argc, argv);
                     delete [] argv;
-                    SendResponsePackage_CMDLINEEND();
+                    SendResponsePackage_CMDLINEEND(nRet);
                     bWaitingForInput = false;
                 }
                 break;
             default:
                 {
-                    LOG_GEN_PRINTF("*** Error!");
+                    LOG_GEN_PRINTF("*** Error!\n");
                     bWaitingForInput = false;
                     bSuc = false;
                 }
@@ -378,7 +386,7 @@ bool RemoteCmdServer::ProcessRequestPackages()
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 RemoteCmdClient::RemoteCmdClient(const std::string &sServerAddr, unsigned short nServerPort)
-    : m_sServerAddr(sServerAddr), m_nServerPort(nServerPort), m_socket()
+    : m_sServerAddr(sServerAddr), m_nServerPort(nServerPort), m_socket(), m_pRet(NULL)
 {
 
 }
@@ -394,14 +402,19 @@ bool RemoteCmdClient::ConnectToServer()
 
     if (bSuc) {
         if (!m_socket.create()) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
 
     if (bSuc) {
+        ::setsockopt(m_socket.fd(), SOL_SOCKET, SO_RCVBUF, (const char *)&SOCKET_RCV_BUF_LEN, sizeof(int));
+        ::setsockopt(m_socket.fd(), SOL_SOCKET, SO_SNDBUF, (const char *)&SOCKET_SND_BUF_LEN, sizeof(int));
+    }
+
+    if (bSuc) {
         if (!m_socket.connect(m_sServerAddr.c_str(), m_nServerPort)) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -409,7 +422,7 @@ bool RemoteCmdClient::ConnectToServer()
     return bSuc;
 }
 
-bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[])
+bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[], int &nRet)
 {
     bool bSuc = true;
     std::string sArguments;
@@ -417,6 +430,10 @@ bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[])
     PackageHead *pPackage = NULL;
     unsigned int nPackageSize = 0;
     RequestPackageBody *pRequestPackageBody = NULL;
+
+    if (bSuc) {
+        m_pRet = &nRet;
+    }
 
     if (bSuc) {
         for (i = 0; i < argc; ++i) {
@@ -429,7 +446,7 @@ bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[])
 
     if (bSuc) {
         if (!ConnectToServer()) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -438,7 +455,7 @@ bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[])
         nPackageSize = sizeof(PackageHead) + sizeof(RequestPackageBody) - 1 + sArguments.length();
         pPackage = (PackageHead *)new unsigned char [nPackageSize];
         if (pPackage == NULL) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
@@ -457,11 +474,11 @@ bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[])
     if (bSuc) {
         size_t size = nPackageSize;
         if (!m_socket.write((const void *)pPackage, size)) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         } else {
             if (size != nPackageSize) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             }
         }
@@ -475,10 +492,12 @@ bool RemoteCmdClient::ExecCmdLineOnServer(int argc, char* argv[])
 
     if (bSuc) {
         if (!ProcessResponsePackages()) {
-            LOG_GEN_PRINTF("*** Error!");
+            LOG_GEN_PRINTF("*** Error!\n");
             bSuc = false;
         }
     }
+
+    m_pRet = NULL;
 
     return bSuc;
 }
@@ -494,15 +513,15 @@ bool RemoteCmdClient::ProcessResponsePackages()
         if (bSuc) {
             size_t size = sizeof(PackageHead);
             if (!m_socket.read((void *)&packageHead, size)) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             } else {
                 if (size != sizeof(PackageHead)) {
-                    LOG_GEN_PRINTF("*** Error!");
+                    LOG_GEN_PRINTF("*** Error!\n");
                     bSuc = false;
                 } else {
                     if (memcmp(&packageHead.magic, PACKAGE_MAGIC, PACKAGE_MAGIC_LEN) != 0) {
-                        LOG_GEN_PRINTF("*** Error!");
+                        LOG_GEN_PRINTF("*** Error!\n");
                         bSuc = false;
                     }
                 }
@@ -513,11 +532,12 @@ bool RemoteCmdClient::ProcessResponsePackages()
             pResponsePackageBody = (ResponsePackageBody *)new unsigned char [packageHead.nPackageSize - sizeof(PackageHead)];
             size_t size = packageHead.nPackageSize - sizeof(PackageHead);
             if (!m_socket.read((void *)pResponsePackageBody, size)) {
-                LOG_GEN_PRINTF("*** Error!");
+                LOG_GEN_PRINTF("*** Error!\n");
                 bSuc = false;
             } else {
                 if (size != packageHead.nPackageSize - sizeof(PackageHead)) {
-                    LOG_GEN_PRINTF("*** Error!");
+                    LOG_GEN_PRINTF("*** Error!\n");
+                    LOG_GEN_PRINTF("*** size=%u, (packageHead.nPackageSize - sizeof(PackageHead))=%u\n", size, packageHead.nPackageSize - sizeof(PackageHead));
                     bSuc = false;
                 }
             }
@@ -539,12 +559,15 @@ bool RemoteCmdClient::ProcessResponsePackages()
                 break;
             case RESID_CMDLINEEND:
                 {
+                    if (m_pRet != NULL) {
+                        memcmp(m_pRet, &pResponsePackageBody->content, sizeof(int));
+                    }
                     bWaitingForOutput = false;
                 }
                 break;
             default:
                 {
-                    LOG_GEN_PRINTF("*** Error!");
+                    LOG_GEN_PRINTF("*** Error!\n");
                     bWaitingForOutput = false;
                     bSuc = false;
                 }

@@ -163,6 +163,11 @@ void Socket::shutdown_fd(int how /*= SHUT_RDWR*/)
 	}
 }
 
+int Socket::fd() const
+{
+    return m_socket;
+}
+
 bool Socket::get_fd(int& fd) const
 {
 	if (m_socket == -1)

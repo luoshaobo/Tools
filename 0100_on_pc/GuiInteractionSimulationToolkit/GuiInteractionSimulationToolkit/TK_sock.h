@@ -51,6 +51,7 @@ public:
 	void shutdown_fd(int how = SHUT_RDWR);	// 关闭连接
 	
 	// 属性
+    int fd() const;
 	bool get_fd(int& fd) const;
 	bool getlocalsock(struct sockaddr* localaddr, int* addrlen = NULL) const;
 	bool getpeersock(struct sockaddr* peeraddr, int* addrlen = NULL) const;
