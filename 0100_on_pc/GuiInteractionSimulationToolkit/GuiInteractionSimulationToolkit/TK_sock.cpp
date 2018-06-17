@@ -331,6 +331,165 @@ void Socket::set_block(bool bblock /*= true*/)
 #endif
 }
 
+bool Socket::broken_by_EINTR()
+{
+    if (errno == EINTR) {
+        return true;
+    }
+
+    return false;
+}
+
+bool Socket::write_ex(const void* buf, size_t& size, int flags /*= 0*/)
+{
+    bool bSuc = true;
+    int nLeftSize = size;
+    int nTotalHandledSize = 0;
+    int nLastHandledSize = 0;
+    fd_set fds;
+    struct timeval timeout = { 10, 0 };
+
+    if (bSuc) {
+        if (m_socket == -1) {
+            bSuc = false;
+        }
+    }
+
+    while (bSuc && nLeftSize > 0) {
+        nLastHandledSize = ::send(m_socket, (const char *)buf + nTotalHandledSize, nLeftSize, flags);
+        if (nLastHandledSize < 0) {
+            if (broken_by_EINTR()) {
+                continue;
+            } else {
+                bSuc = false;
+            }
+        } else if (nLastHandledSize < nLeftSize) {
+            nLeftSize -= nLastHandledSize;
+            nTotalHandledSize += nLastHandledSize;
+            while (bSuc && nLeftSize > 0) {
+                if (bSuc) {
+                    FD_ZERO(&fds);
+                    FD_SET(m_socket, &fds);
+                }
+
+                if (bSuc) {
+                    int nRet = ::select(m_socket + 1, NULL, &fds, NULL, &timeout);
+                    if (nRet < 0) {
+                        if (broken_by_EINTR()) {
+                            continue;
+                        } else {
+                            bSuc = false;
+                        }
+                    } else if (nRet == 0) { // timed out!
+                        bSuc = false;
+                    } else {
+                        // it's OK
+                    }
+                }
+
+                if (bSuc) {
+                    nLastHandledSize = ::send(m_socket, (const char *)buf + nTotalHandledSize, nLeftSize, flags);
+                    if (nLastHandledSize < 0) {
+                        if (broken_by_EINTR()) {
+                            continue;
+                        } else {
+                            bSuc = false;
+                        }
+                    } else if (nLastHandledSize < nLeftSize) {
+                        nLeftSize -= nLastHandledSize;
+                        nTotalHandledSize += nLastHandledSize;
+                    } else { // successful!
+                        nLeftSize -= nLastHandledSize;
+                        nTotalHandledSize += nLastHandledSize;
+                    }
+                }
+            }
+        } else { // successful!
+            nLeftSize -= nLastHandledSize;
+            nTotalHandledSize += nLastHandledSize;
+        }
+    }
+
+    size = nTotalHandledSize;
+    
+    return bSuc;
+}
+
+bool Socket::read_ex(void* buf, size_t& size, int flags /*= 0*/)
+{
+    bool bSuc = true;
+    int nLeftSize = size;
+    int nTotalHandledSize = 0;
+    int nLastHandledSize = 0;
+    fd_set fds;
+    struct timeval timeout = { 10, 0 };
+
+    if (bSuc) {
+        if (m_socket == -1) {
+            bSuc = false;
+        }
+    }
+
+    while (bSuc && nLeftSize > 0) {
+        nLastHandledSize = ::recv(m_socket, (char *)buf + nTotalHandledSize, nLeftSize, flags);
+        if (nLastHandledSize < 0) {
+            if (broken_by_EINTR()) {
+                continue;
+            } else {
+                bSuc = false;
+            }
+        } else if (nLastHandledSize < nLeftSize) {
+            nLeftSize -= nLastHandledSize;
+            nTotalHandledSize += nLastHandledSize;
+            while (bSuc && nLeftSize > 0) {
+                if (bSuc) {
+                    FD_ZERO(&fds);
+                    FD_SET(m_socket, &fds);
+                }
+
+                if (bSuc) {
+                    int nRet = ::select(m_socket + 1, &fds, NULL, NULL, &timeout);
+                    if (nRet < 0) {
+                        if (broken_by_EINTR()) {
+                            continue;
+                        } else {
+                            bSuc = false;
+                        }
+                    } else if (nRet == 0) { // timed out!
+                        bSuc = false;
+                    } else {
+                        // it's OK
+                    }
+                }
+
+                if (bSuc) {
+                    nLastHandledSize = ::recv(m_socket, (char *)buf + nTotalHandledSize, nLeftSize, flags);
+                    if (nLastHandledSize < 0) {
+                        if (broken_by_EINTR()) {
+                            continue;
+                        } else {
+                            bSuc = false;
+                        }
+                    } else if (nLastHandledSize < nLeftSize) {
+                        nLeftSize -= nLastHandledSize;
+                        nTotalHandledSize += nLastHandledSize;
+                    } else { // successful!
+                        nLeftSize -= nLastHandledSize;
+                        nTotalHandledSize += nLastHandledSize;
+                    }
+                }
+            }
+        } else { // successful!
+            nLeftSize -= nLastHandledSize;
+            nTotalHandledSize += nLastHandledSize;
+        }
+    }
+
+    size = nTotalHandledSize;
+    
+    return bSuc;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // private methodes
 
