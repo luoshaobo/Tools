@@ -47,13 +47,13 @@ public:
     virtual void mouseRightDrag(const Point &srcPoint, const Point &dstPoint);
     virtual void mouseScroll(const Point &point, int steps);
     
-    virtual bool findImageRect(const Image &image, Rect &rect);
-    virtual bool findImageRect(const Image &image, Rect &rect, const Rect &searchRect);
-    virtual bool findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint);
+    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index);
+    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
+    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
     
-    virtual bool waitImageShown(const Image &image, Rect &rect, unsigned int timeout = INFINITE_TIME);
-    virtual bool waitImageShown(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
-    virtual bool waitImageShown(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
+    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME);
+    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
+    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
 
 private:
     CBitmap *getDesktopWindowAsBitmap();
@@ -62,9 +62,9 @@ private:
     bool findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
     template <unsigned int BYTES_PER_PIXEL>
     bool findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
-    bool findImageRect_impl(const Image &image, Rect &rect);
-    bool findImageRect_impl(const Image &image, Rect &rect, const Rect &searchRect);
-    bool findImageRect_impl(const Image &image, Rect &rect, const Point &searchBeginningPoint);
+    bool findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index);
+    bool findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
+    bool findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
     bool fixBitmapAlphaBits(const BITMAP &bitmapInfo);
 
     struct Arguments_getMatchedWindows_EnumWindowsProc {
@@ -82,15 +82,13 @@ private:
     int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
     bool makeFilePathTemplateByIndex(std::string &pathTemplate, const std::string &path);
 
+    std::string getImagesPaths(const std::vector<Image> &images);
+
 private:
     DWORD sx(DWORD x);
     DWORD sy(DWORD y);
 
 private:
-    DWORD *m_pPartBitmapMem;
-    DWORD m_nPartBitmapMemSize;
-    DWORD *m_pWholeBitmapMem;
-    DWORD m_nWholeBitmapMemSize;
     CString m_sExeFileName;
     std::string m_sEnvVarScreenPictureFilePath;
 };

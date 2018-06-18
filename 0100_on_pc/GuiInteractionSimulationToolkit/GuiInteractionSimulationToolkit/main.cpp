@@ -236,12 +236,12 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s findImageRect <sImagePath>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s findImageRect <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s findImageRect <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s waitImageShown <sImagePath> [<nTimeout>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s waitImageShown <sImagePath> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s waitImageShown <sImagePath> <xBeginning,yBeginning> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s findImageRect <sImagePath[,sImagePath[,...]]>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s findImageRect <sImagePath[,sImagePath[,...]]> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s findImageRect <sImagePath[,sImagePath[,...]]> <xBeginning,yBeginning>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s waitImageShown <sImagePath[,sImagePath[,...]]> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s waitImageShown <sImagePath[,sImagePath[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s waitImageShown <sImagePath[,sImagePath[,...]]> <xBeginning,yBeginning> [<nTimeout>=-1]\n", basename(argv[0]));
 
     FPRINTF(stdout, "Note:\n");
     FPRINTF(stdout, "1) The environment variables REMOTE_SERVER_IP and REMOTE_SERVER_PORT can be set to run in remote client mode.\n");
@@ -917,11 +917,26 @@ int CommandHandler_mouseScroll(const std::vector<Argument> &arguments, GuiISTk::
     return nRet;
 }
 
+bool parseImagesFromStr(std::vector<GuiISTk::Image> &images, const std::string &s)
+{
+    bool bSuc = true;
+    std::vector<std::string> imageStrs;
+    unsigned i;
+
+    imageStrs = TK_Tools::SplitString(s, ",");
+    for (i = 0; i < imageStrs.size(); ++i) {
+        images.push_back(GuiISTk::Image(imageStrs[i]));
+    }
+
+    return bSuc;
+}
+
 int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    std::string imagePath;
+    std::vector<GuiISTk::Image> images;
     GuiISTk::Rect rect;
+    int index = -1;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
@@ -931,12 +946,14 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        imagePath = arguments[2].str;
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
     }
 
     if (nRet == 0) {
-        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect)) {
-            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+        if (toolkit.findImageRect(images, rect, index)) {
+            FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         } else {
             nRet = 1;
             FPRINTF(stderr, "not found!\n");
@@ -949,9 +966,10 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
 int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    std::string imagePath;
+    std::vector<GuiISTk::Image> images;
     GuiISTk::Rect rect;
     GuiISTk::Rect searchRect;
+    int index = -1;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -961,7 +979,9 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        imagePath = arguments[2].str;
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
     }
 
     if (nRet == 0) {
@@ -972,8 +992,8 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchRect)) {
-            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+        if (toolkit.findImageRect(images, rect, index, searchRect)) {
+            FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         } else {
             nRet = 1;
             FPRINTF(stderr, "not found!\n");
@@ -986,9 +1006,10 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
 int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    std::string imagePath;
+    std::vector<GuiISTk::Image> images;
     GuiISTk::Rect rect;
     GuiISTk::Point searchBeginningPoint;
+    int index = -1;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -998,7 +1019,9 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        imagePath = arguments[2].str;
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
     }
 
     if (nRet == 0) {
@@ -1009,8 +1032,8 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        if (toolkit.findImageRect(GuiISTk::Image(imagePath), rect, searchBeginningPoint)) {
-            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+        if (toolkit.findImageRect(images, rect, index, searchBeginningPoint)) {
+            FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         } else {
             nRet = 1;
             FPRINTF(stderr, "not found!\n");
@@ -1038,9 +1061,10 @@ int CommandHandler_findImageRect(const std::vector<Argument> &arguments, GuiISTk
 int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    std::string imagePath;
+    std::vector<GuiISTk::Image> images;
     unsigned int timeout = GuiISTk::INFINITE_TIME;
     GuiISTk::Rect rect;
+    int index = -1;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
@@ -1050,7 +1074,9 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        imagePath = arguments[2].str;
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
     }
 
     if (nRet == 0) {
@@ -1060,10 +1086,10 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, timeout)) {
+        if (!toolkit.waitImageShown(images, rect, index, timeout)) {
             nRet = 1;
         } else {
-            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         }
     }
 
@@ -1073,10 +1099,11 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
 int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    std::string imagePath;
+    std::vector<GuiISTk::Image> images;
     GuiISTk::Rect searchRect;
     unsigned int timeout = GuiISTk::INFINITE_TIME;
     GuiISTk::Rect rect;
+    int index = -1;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -1086,7 +1113,9 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        imagePath = arguments[2].str;
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
     }
 
     if (nRet == 0) {
@@ -1103,10 +1132,10 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, searchRect, timeout)) {
+        if (!toolkit.waitImageShown(images, rect, index, searchRect, timeout)) {
             nRet = 1;
         } else {
-            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         }
     }
 
@@ -1116,10 +1145,11 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
 int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    std::string imagePath;
+    std::vector<GuiISTk::Image> images;
     GuiISTk::Point searchBeginningPoint;
     unsigned int timeout = GuiISTk::INFINITE_TIME;
     GuiISTk::Rect rect;
+    int index = -1;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -1129,7 +1159,9 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        imagePath = arguments[2].str;
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
     }
 
     if (nRet == 0) {
@@ -1146,10 +1178,10 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        if (!toolkit.waitImageShown(GuiISTk::Image(imagePath), rect, searchBeginningPoint, timeout)) {
+        if (!toolkit.waitImageShown(images, rect, index, searchBeginningPoint, timeout)) {
             nRet = 1;
         } else {
-            FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+            FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         }
     }
 

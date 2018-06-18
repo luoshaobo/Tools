@@ -117,13 +117,13 @@ public:
     virtual void mouseRightDrag(const Point &srcPoint, const Point &dstPoint) = 0;
     virtual void mouseScroll(const Point &point, int steps) = 0;
     
-    virtual bool findImageRect(const Image &image, Rect &rect) = 0;
-    virtual bool findImageRect(const Image &image, Rect &rect, const Rect &searchRect) = 0;
-    virtual bool findImageRect(const Image &image, Rect &rect, const Point &searchBeginningPoint) = 0;
+    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index) = 0;
+    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect) = 0;
+    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint) = 0;
     
-    virtual bool waitImageShown(const Image &image, Rect &rect, unsigned int timeout = INFINITE_TIME) = 0;
-    virtual bool waitImageShown(const Image &image, Rect &rect, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
-    virtual bool waitImageShown(const Image &image, Rect &rect, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
 };
 
 } // namespace GuiISTk {

@@ -34,22 +34,10 @@ function main
     #
     # to add a new page
     #
-    RECT=`guiistk findImageRect "pattern__add_new_page.PNG"`
+    RECT=`guiistk findImageRect "pattern__add_new_page.PNG,pattern__add_new_page_2.PNG,pattern__add_new_page_3.PNG,pattern__add_new_page_4.PNG,pattern__add_new_page_5.PNG"`
     if [ $? -ne 0 ]; then
-        RECT=`guiistk findImageRect "pattern__add_new_page_2.PNG"`
-		if [ $? -ne 0 ]; then
-			RECT=`guiistk findImageRect "pattern__add_new_page_3.PNG"`
-			if [ $? -ne 0 ]; then
-				RECT=`guiistk findImageRect "pattern__add_new_page_4.PNG"`
-				if [ $? -ne 0 ]; then
-					RECT=`guiistk findImageRect "pattern__add_new_page_5.PNG"`
-					if [ $? -ne 0 ]; then
-						echo "*** Error: the button \"add new page\" is not found!" >&2
-						return 1
-					fi
-				fi
-			fi
-		fi
+        echo "*** Error: the button \"add new page\" is not found!" >&2
+        return 1
     fi
     echo "$RECT"
     X=`echo $RECT | awk '{print $1}'`

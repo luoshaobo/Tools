@@ -85,8 +85,8 @@ public:
 	bool recv(void* buf, size_t& size, int flags = 0) { return _recv_aux(false, buf, size, flags); }
 	bool write(const void* buf, size_t& size, int flags = 0) { return _send_aux(false, buf, size, flags); }
 	bool read(void* buf, size_t& size, int flags = 0) { return _recv_aux(false, buf, size, flags); }
-    bool write_ex(const void* buf, size_t& size, int flags = 0);                // ensure size to be written
-	bool read_ex(void* buf, size_t& size, int flags = 0);                       // ensure size to be read
+    bool write_ex(const void* buf, size_t& size, int flags = 0);                // ensure size bytes to be written
+	bool read_ex(void* buf, size_t& size, int flags = 0);                       // ensure size bytes to be read
 	
 	bool sendto(const void* buf, size_t& size, struct sockaddr* to, socklen_t addrlen = sizeof(struct sockaddr), int flags = 0)
 	{ return _sendto_aux(false, buf, size, to, addrlen, flags); }
