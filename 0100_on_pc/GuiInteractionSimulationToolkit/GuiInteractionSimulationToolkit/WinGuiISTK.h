@@ -27,6 +27,7 @@ public:
     virtual bool cbdPutStr(const std::string &s);
     virtual bool cbdGetStr(std::string &s);
     
+    virtual void kbdKeyClick(unsigned char vk);
     virtual void kbdKeyDown(unsigned char vk);
     virtual void kbdKeyUp(unsigned char vk);
     virtual void kbdKeyOn(unsigned char vk);

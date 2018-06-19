@@ -30,6 +30,7 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s cbdPutStr <sString>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s cbdGetStr\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdVkList\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyClick <sVirtualKey>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
@@ -671,6 +672,31 @@ int CommandHandler_cbdGetStr(const std::vector<Argument> &arguments, GuiISTk::IT
         } else {
             FPRINTF(stdout, "%s\n", s.c_str());
         }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_kbdKeyClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    unsigned char vk = 0;
+    if (nRet == 0) {
+        if (arguments.size() < 3) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdKeyClick");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseVkFromStr(vk, arguments[2].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "kbdKeyClick", arguments[2].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        toolkit.kbdKeyClick(vk);
     }
 
     return nRet;
@@ -1870,6 +1896,7 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(cbdPutStr),
         COMMAND_HANDLER_PAIR(cbdGetStr),
         COMMAND_HANDLER_PAIR(kbdVkList),
+        COMMAND_HANDLER_PAIR(kbdKeyClick),
         COMMAND_HANDLER_PAIR(kbdKeyDown),
         COMMAND_HANDLER_PAIR(kbdKeyUp),
         COMMAND_HANDLER_PAIR(kbdKeyOn),

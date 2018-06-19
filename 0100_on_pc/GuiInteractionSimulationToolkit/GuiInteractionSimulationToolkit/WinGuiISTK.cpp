@@ -9,7 +9,7 @@ namespace GuiISTk {
 
 const unsigned int WAIT_IMAGE_SHOWN_INTERVAL = 500;
 
-VOID local_mouse_event(
+VOID SendMouseEvent(
     DWORD dwFlags,
     DWORD dx,
     DWORD dy,
@@ -26,6 +26,25 @@ VOID local_mouse_event(
     input.mi.dwFlags = dwFlags;
     input.mi.time = 0;
     input.mi.dwExtraInfo = dwExtraInfo;
+
+    ::SendInput(1, &input, sizeof(INPUT));
+}
+
+VOID SendKeyboardEvent(
+    BYTE bVk,
+    BYTE bScan,
+    DWORD dwFlags,
+    ULONG_PTR dwExtraInfo
+)
+{
+    INPUT input;
+
+    input.type = INPUT_KEYBOARD;
+    input.ki.wVk = bVk;
+    input.ki.wScan = bScan;
+    input.ki.dwFlags = dwFlags;
+    input.ki.time = 0;
+    input.ki.dwExtraInfo = dwExtraInfo;
 
     ::SendInput(1, &input, sizeof(INPUT));
 }
@@ -644,27 +663,35 @@ bool WinGuiISTK::cbdGetStr(std::string &s)
     return bSuc;
 }
 
+void WinGuiISTK::kbdKeyClick(unsigned char vk)
+{
+    LOG_GEN_PRINTF("vk=%u\n", vk);
+
+    SendKeyboardEvent(vk, 0, 0, 0);
+    SendKeyboardEvent(vk, 0, KEYEVENTF_KEYUP, 0);
+}
+
 void WinGuiISTK::kbdKeyDown(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
-    keybd_event(vk, 0, 0, 0);
+    SendKeyboardEvent(vk, 0, 0, 0);
 }
 
 void WinGuiISTK::kbdKeyUp(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
-    keybd_event(vk, 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(vk, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdKeyOn(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
-    if (!GetKeyState(vk) & 0x1) {
-        keybd_event(vk, 0, 0, 0);
-        keybd_event(vk, 0, KEYEVENTF_KEYUP, 0);
+    if (!::GetKeyState(vk) & 0x1) {
+        SendKeyboardEvent(vk, 0, 0, 0);
+        SendKeyboardEvent(vk, 0, KEYEVENTF_KEYUP, 0);
     }
 }
 
@@ -672,9 +699,9 @@ void WinGuiISTK::kbdKeyOff(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
-    if (GetKeyState(vk) & 0x1) {
-        keybd_event(vk, 0, 0, 0);
-        keybd_event(vk, 0, KEYEVENTF_KEYUP, 0);
+    if (::GetKeyState(vk) & 0x1) {
+        SendKeyboardEvent(vk, 0, 0, 0);
+        SendKeyboardEvent(vk, 0, KEYEVENTF_KEYUP, 0);
     }
 }
 
@@ -682,40 +709,40 @@ void WinGuiISTK::kbdCtrlA()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL, 0, 0, 0);
-    keybd_event('A', 0, 0, 0);
-    keybd_event('A', 0, KEYEVENTF_KEYUP, 0);
-    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
+    SendKeyboardEvent('A', 0, 0, 0);
+    SendKeyboardEvent('A', 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdCtrlC()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL, 0, 0, 0);
-    keybd_event('C', 0, 0, 0);
-    keybd_event('C', 0, KEYEVENTF_KEYUP, 0);
-    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
+    SendKeyboardEvent('C', 0, 0, 0);
+    SendKeyboardEvent('C', 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdCtrlX()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL, 0, 0, 0);
-    keybd_event('X', 0, 0, 0);
-    keybd_event('X', 0, KEYEVENTF_KEYUP, 0);
-    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
+    SendKeyboardEvent('X', 0, 0, 0);
+    SendKeyboardEvent('X', 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdCtrlV()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL, 0, 0, 0);
-    keybd_event('V', 0, 0, 0);
-    keybd_event('V', 0, KEYEVENTF_KEYUP, 0);
-    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
+    SendKeyboardEvent('V', 0, 0, 0);
+    SendKeyboardEvent('V', 0, KEYEVENTF_KEYUP, 0);
+    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdChar(char ch)
@@ -779,9 +806,9 @@ void WinGuiISTK::mseMove(const Point &point, bool absolute /*= true*/)
     LOG_GEN_PRINTF("point=(%d,%d), absolute=%d\n", point.x, point.y, absolute);
 
     if (absolute) {
-        local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+        SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
     } else {
-        local_mouse_event(MOUSEEVENTF_MOVE, point.x, point.y, 0, NULL);
+        SendMouseEvent(MOUSEEVENTF_MOVE, point.x, point.y, 0, NULL);
     }
 }
 
@@ -789,72 +816,72 @@ void WinGuiISTK::mseClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::mseDClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::mseDrag(const Point &srcPoint, const Point &dstPoint)
 {
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
 }
 
 void WinGuiISTK::mseRClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::mseDRClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
 void WinGuiISTK::mseRDrag(const Point &srcPoint, const Point &dstPoint)
 {
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
-    local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
 }
 
 void WinGuiISTK::mseScroll(const Point &point, int steps)
 {
     LOG_GEN_PRINTF("point=(%d,%d), steps=%d\n", point.x, point.y, steps);
 
-    local_mouse_event(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
+    SendMouseEvent(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
 }
 
 std::string WinGuiISTK::getImagesPaths(const std::vector<Image> &images)

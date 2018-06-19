@@ -11,10 +11,10 @@ function main
     guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MAX
     #guiistk scnResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,800,600
     
-    guiistk kbdKeyDown VK_LWIN
-    guiistk kbdKeyDown VK_LEFT
-    guiistk kbdKeyUp VK_LEFT
-    guiistk kbdKeyUp VK_LWIN
+    # guiistk kbdKeyDown VK_LWIN
+    # guiistk kbdKeyDown VK_LEFT
+    # guiistk kbdKeyUp VK_LEFT
+    # guiistk kbdKeyUp VK_LWIN
 
     guiistk Delay 100
     
@@ -31,9 +31,9 @@ function main
     #
     # to add a new page
     #
-    RECT=`guiistk imgFindRect "pattern__add_new_page.PNG"`
+    RECT=`guiistk imgWaitShown "pattern__add_new_page.PNG"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"add new page\" is not found!" >&2
+        echo "*** Error: the button \"add_new_page\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -51,9 +51,9 @@ function main
     #
     # to input the address then go
     #
-    RECT=`guiistk imgFindRect "pattern__show_site_info_disabled.PNG"`
+    RECT=`guiistk imgWaitShown "pattern__show_site_info_disabled.PNG"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"show site information\" with disabled state is not found!" >&2
+        echo "*** Error: the button \"show_site_info_disabled\" with disabled state is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -67,11 +67,34 @@ function main
     
     guiistk mseClick $X,$Y
     guiistk kbdCtrlA
-    guiistk kbdCtrlX
+    guiistk kbdKeyClick VK_DELETE
     guiistk kbdStr "http://www.baidu.com"
-    guiistk kbdKeyDown VK_RETURN
-    guiistk kbdKeyUp VK_RETURN
-        
+    guiistk kbdKeyClick VK_RETURN
+    
+    guiistk Delay 1000
+    
+    #
+    # to input the search keyword then go
+    #
+    RECT=`guiistk imgWaitShown "pattern__camera_icon_on_right_of_keyword_input_box.PNG"`
+    if [ $? -ne 0 ]; then
+        echo "*** Error: the icon \"camera_icon_on_right_of_keyword_input_box\" with disabled state is not found!" >&2
+        return 1
+    fi
+    echo "$RECT"
+    X=`echo $RECT | awk '{print $1}'`
+    Y=`echo $RECT | awk '{print $2}'`
+    
+    X=`expr $X - 10`
+    Y=`expr $Y \+ 5`
+    
+    echo "$X $Y"
+    
+    guiistk mseClick $X,$Y
+    guiistk kbdCtrlA
+    guiistk kbdKeyClick VK_DELETE
+    guiistk kbdStr "我的小书屋"
+    guiistk kbdKeyClick VK_RETURN    
 }
 
 main
