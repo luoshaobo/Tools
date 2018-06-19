@@ -93,7 +93,7 @@ function main
     guiistk mseClick $X,$Y
     guiistk kbdCtrlA
     guiistk kbdKeyClick VK_DELETE
-    guiistk kbdStr "ÎÒµÄĞ¡ÊéÎİ"
+    guiistk kbdStr "æˆ‘çš„å°ä¹¦å±‹"
     guiistk kbdKeyClick VK_RETURN    
 }
 

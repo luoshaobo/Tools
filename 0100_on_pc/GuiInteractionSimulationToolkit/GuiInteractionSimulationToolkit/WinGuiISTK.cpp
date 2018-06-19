@@ -419,6 +419,32 @@ bool WinGuiISTK::scnSaveDesktopAsPic(const std::string &pictureFilePath)
     return bSuc;
 }
 
+void WinGuiISTK::scnGetDesktopSize(Size &size)
+{
+    bool bSuc = true;
+    HWND hWnd = NULL;
+    CRect rect;
+
+    LOG_GEN_PRINTF("\n");
+
+    if (bSuc) {
+        size.width = 0;
+        size.height = 0;
+    }
+
+    if (bSuc) {
+        hWnd = ::GetDesktopWindow();
+        if (!::GetWindowRect(hWnd, (RECT *)rect)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        size.width = rect.Width();
+        size.height = rect.Height();
+    }
+}
+
 bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path)
 {
     bool bSuc = true;

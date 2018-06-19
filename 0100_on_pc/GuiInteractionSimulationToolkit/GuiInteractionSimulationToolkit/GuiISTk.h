@@ -118,6 +118,7 @@ public:
     virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder) = 0;
     virtual bool scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &pictureFilePath) = 0;
     virtual bool scnSaveDesktopAsPic(const std::string &pictureFilePath) = 0;
+    virtual void scnGetDesktopSize(Size &size) = 0;
 
     virtual bool cbdPutStr(const std::string &s) = 0;
     virtual bool cbdGetStr(std::string &s) = 0;

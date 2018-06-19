@@ -27,6 +27,7 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
     FPRINTF(stdout, "  %s scnSaveAsPics <sTitle> <bFullMatched> <bAllMatched> <pictureFilePath>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s scnSaveDesktopAsPic <pictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnGetDesktopSize\n", basename(argv[0]));
     FPRINTF(stdout, "  %s cbdPutStr <sString>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s cbdGetStr\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdVkList\n", basename(argv[0]));
@@ -1852,6 +1853,26 @@ int CommandHandler_scnSaveDesktopAsPic(const std::vector<Argument> &arguments, G
     return nRet;
 }
 
+int CommandHandler_scnGetDesktopSize(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    GuiISTk::Size size;
+
+    if (nRet == 0) {
+        if (arguments.size() < 2) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveDesktopAsPic");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        toolkit.scnGetDesktopSize(size);
+        FPRINTF(stdout, "%u %u\n", size.width, size.height);
+    }
+
+    return nRet;
+}
+
 class LibraryInitializer
 {
 public:
@@ -1893,6 +1914,7 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(scnSetZorder),
         COMMAND_HANDLER_PAIR(scnSaveAsPics),
         COMMAND_HANDLER_PAIR(scnSaveDesktopAsPic),
+        COMMAND_HANDLER_PAIR(scnGetDesktopSize),
         COMMAND_HANDLER_PAIR(cbdPutStr),
         COMMAND_HANDLER_PAIR(cbdGetStr),
         COMMAND_HANDLER_PAIR(kbdVkList),
