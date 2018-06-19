@@ -30,6 +30,7 @@ VOID local_mouse_event(
     ::SendInput(1, &input, sizeof(INPUT));
 }
 
+#if 0
 void Rect::intersect(const Rect &other)
 {
     CRect rect1(x, y, x + width, y + height);
@@ -42,6 +43,7 @@ void Rect::intersect(const Rect &other)
     width = resultRect.Width();
     height = resultRect.Height();
 }
+#endif // #if 0
 
 WinGuiISTK::WinGuiISTK() : m_sExeFileName(), m_sEnvVarScreenPictureFilePath()
 {

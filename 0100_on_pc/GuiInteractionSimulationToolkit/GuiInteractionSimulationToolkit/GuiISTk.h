@@ -31,7 +31,32 @@ struct Rect
     Rect(int a_x, int a_y, int a_width, int a_height) : x(a_x), y(a_y), width(a_width), height(a_height) {}
     Rect &operator =(const Rect &other) { x = other.x; y = other.y; width = other.width; height = other.height; return *this; }
 
-    void intersect(const Rect &other);
+    void intersect(const Rect &other)
+    {
+        int nTwiceCenterXDelta = (x + (x + width)) - (other.x + (other.x + other.width));
+        nTwiceCenterXDelta = nTwiceCenterXDelta >= 0 ? nTwiceCenterXDelta : -nTwiceCenterXDelta;
+        
+        int nTwiceCenterYDelta = (y + (y + height)) - (other.y + (other.y + other.height));
+        nTwiceCenterYDelta = nTwiceCenterYDelta >= 0 ? nTwiceCenterYDelta : -nTwiceCenterYDelta;
+
+        if (nTwiceCenterXDelta < (int)(width + other.width) && nTwiceCenterYDelta < (int)(height + other.height)) {
+            int resultX1, resultY1, resultX2, resultY2;
+            resultX1 = x > other.x ? x : other.x;
+            resultY1 = y > other.y ? y : other.y;
+            resultX2 = (x + width) < (other.x + other.width) ? (x + width) : (other.x + other.width);
+            resultY2 = (y + height) < (other.y + other.height) ? (y + height) : (other.y + other.height);
+
+            x = resultX1;
+            y = resultY1;
+            width = resultX2 - resultX1;
+            height = resultY2 - resultY1;
+        } else {
+            x = 0;
+            y = 0;
+            width = 0;
+            height = 0;
+        }
+    }
 
     int x;
     int y;
