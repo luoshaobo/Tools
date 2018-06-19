@@ -107,20 +107,20 @@ class IToolkit
 public:
     virtual ~IToolkit() {}
     
-    virtual void delay(unsigned int milliSecond) = 0;
+    virtual void Delay(unsigned int milliSecond) = 0;
 
-    virtual unsigned int scnGetCount(const ScreenInfo &screenInfo) = 0;
+    virtual unsigned int scnCount(const ScreenInfo &screenInfo) = 0;
     virtual bool scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode) = 0;
     virtual bool scnHide(const ScreenInfo &screenInfo) = 0;
     virtual bool scnClose(const ScreenInfo &screenInfo) = 0;
     virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point) = 0;
     virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect) = 0;
     virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder) = 0;
-    virtual bool scnSaveAsPictures(const ScreenInfo &screenInfo, const std::string &pictureFilePath) = 0;
-    virtual bool scnSaveDesktopAsPicture(const std::string &pictureFilePath) = 0;
+    virtual bool scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &pictureFilePath) = 0;
+    virtual bool scnSaveDesktopAsPic(const std::string &pictureFilePath) = 0;
 
-    virtual bool cbdPutString(const std::string &s) = 0;
-    virtual bool cbdGetString(std::string &s) = 0;
+    virtual bool cbdPutStr(const std::string &s) = 0;
+    virtual bool cbdGetStr(std::string &s) = 0;
     
     virtual void kbdKeyDown(unsigned char vk) = 0;
     virtual void kbdKeyUp(unsigned char vk) = 0;
@@ -131,24 +131,23 @@ public:
     virtual void kbdCtrlX() = 0;
     virtual void kbdCtrlV() = 0;
     virtual void kbdChar(char ch) = 0;
-    virtual void kbdString(const std::string &s) = 0;
+    virtual void kbdStr(const std::string &s) = 0;
     
-    virtual void mouseMove(const Point &point, bool absolute = true) = 0;
-    virtual void mouseClick(const Point &point) = 0;
-    virtual void moustDoubleClick(const Point &point) = 0;
-    virtual void mouseDrag(const Point &srcPoint, const Point &dstPoint) = 0;
-    virtual void mouseRightClick(const Point &point) = 0;
-    virtual void moustDoubleRightClick(const Point &point) = 0;
-    virtual void mouseRightDrag(const Point &srcPoint, const Point &dstPoint) = 0;
-    virtual void mouseScroll(const Point &point, int steps) = 0;
+    virtual void mseMove(const Point &point, bool absolute = true) = 0;
+    virtual void mseClick(const Point &point) = 0;
+    virtual void mseDClick(const Point &point) = 0;
+    virtual void mseDrag(const Point &srcPoint, const Point &dstPoint) = 0;
+    virtual void mseRClick(const Point &point) = 0;
+    virtual void mseDRClick(const Point &point) = 0;
+    virtual void mseRDrag(const Point &srcPoint, const Point &dstPoint) = 0;
+    virtual void mseScroll(const Point &point, int steps) = 0;
     
-    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index) = 0;
-    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect) = 0;
-    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint) = 0;
-    
-    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME) = 0;
-    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
-    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index) = 0;
+    virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect) = 0;
+    virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint) = 0;
+    virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
 };
 
 } // namespace GuiISTk {

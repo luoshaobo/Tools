@@ -12,20 +12,20 @@ public:
     WinGuiISTK();
     virtual ~WinGuiISTK();
 
-    virtual void delay(unsigned int milliSecond);
+    virtual void Delay(unsigned int milliSecond);
 
-    virtual unsigned int scnGetCount(const ScreenInfo &screenInfo);
+    virtual unsigned int scnCount(const ScreenInfo &screenInfo);
     virtual bool scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode);
     virtual bool scnHide(const ScreenInfo &screenInfo);
     virtual bool scnClose(const ScreenInfo &screenInfo);
     virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point);
     virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect);
     virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder);
-    virtual bool scnSaveAsPictures(const ScreenInfo &screenInfo, const std::string &pictureFilePath);
-    virtual bool scnSaveDesktopAsPicture(const std::string &pictureFilePath);
+    virtual bool scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &pictureFilePath);
+    virtual bool scnSaveDesktopAsPic(const std::string &pictureFilePath);
 
-    virtual bool cbdPutString(const std::string &s);
-    virtual bool cbdGetString(std::string &s);
+    virtual bool cbdPutStr(const std::string &s);
+    virtual bool cbdGetStr(std::string &s);
     
     virtual void kbdKeyDown(unsigned char vk);
     virtual void kbdKeyUp(unsigned char vk);
@@ -36,24 +36,23 @@ public:
     virtual void kbdCtrlX();
     virtual void kbdCtrlV();
     virtual void kbdChar(char ch);
-    virtual void kbdString(const std::string &s);
+    virtual void kbdStr(const std::string &s);
     
-    virtual void mouseMove(const Point &point, bool absolute = true);
-    virtual void mouseClick(const Point &point);
-    virtual void moustDoubleClick(const Point &point);
-    virtual void mouseDrag(const Point &srcPoint, const Point &dstPoint);
-    virtual void mouseRightClick(const Point &point);
-    virtual void moustDoubleRightClick(const Point &point);
-    virtual void mouseRightDrag(const Point &srcPoint, const Point &dstPoint);
-    virtual void mouseScroll(const Point &point, int steps);
+    virtual void mseMove(const Point &point, bool absolute = true);
+    virtual void mseClick(const Point &point);
+    virtual void mseDClick(const Point &point);
+    virtual void mseDrag(const Point &srcPoint, const Point &dstPoint);
+    virtual void mseRClick(const Point &point);
+    virtual void mseDRClick(const Point &point);
+    virtual void mseRDrag(const Point &srcPoint, const Point &dstPoint);
+    virtual void mseScroll(const Point &point, int steps);
     
-    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index);
-    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
-    virtual bool findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
-    
-    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME);
-    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
-    virtual bool waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
+    virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index);
+    virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
+    virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
+    virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME);
+    virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
+    virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
 
 private:
     CBitmap *getDesktopWindowAsBitmap();
@@ -62,9 +61,9 @@ private:
     bool findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
     template <unsigned int BYTES_PER_PIXEL>
     bool findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
-    bool findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index);
-    bool findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
-    bool findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
+    bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index);
+    bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
+    bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
     bool fixBitmapAlphaBits(const BITMAP &bitmapInfo);
 
     struct Arguments_getMatchedWindows_EnumWindowsProc {

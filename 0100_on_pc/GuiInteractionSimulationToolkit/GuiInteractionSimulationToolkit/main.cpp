@@ -13,6 +13,143 @@
 #define VK_INFO_PAIR(vk)                            { #vk, vk }
 #define VK_INFO_PAIR2(vk,vk_code)                   { #vk, vk_code }
 
+void help(int argc, char* argv[])
+{
+    FPRINTF(stdout, "Usage:\n");
+    FPRINTF(stdout, "  %s RemoteServer [<port>=8888] [<ip>=0.0.0.0]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s Delay <sMilliseconds>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnCount <sTitle> <bFullMatched>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX|SSM_FG\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnSaveAsPics <sTitle> <bFullMatched> <bAllMatched> <pictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s scnSaveDesktopAsPic <pictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s cbdPutStr <sString>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s cbdGetStr\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdVkList\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdKeyOff <sVirtualKey>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlA\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlC\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlX\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s kbdStr <sString>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseMove <x,y> [<bAbsolute>=true]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseDClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseRClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseDRClick <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseRDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s mseScroll <x,y> <nSteps>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindRect <sImagePath[,sImagePath[,...]]>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindRect <sImagePath[,sImagePath[,...]]> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindRect <sImagePath[,sImagePath[,...]]> <xBeginning,yBeginning>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitShown <sImagePath[,sImagePath[,...]]> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitShown <sImagePath[,sImagePath[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitShown <sImagePath[,sImagePath[,...]]> <xBeginning,yBeginning> [<nTimeout>=-1]\n", basename(argv[0]));
+
+    FPRINTF(stdout, "Note:\n");
+    FPRINTF(stdout, "1) The environment variables REMOTE_SERVER_IP and REMOTE_SERVER_PORT can be set to run in remote client mode.\n");
+    FPRINTF(stdout, "2) The environment variable DESKTOP_PICTURE_FILE_PATH can be set to simulate the bitmap of the desktop.\n");
+
+    FPRINTF(stdout, "\n");
+}
+
+bool parseBoolFromStr(bool &result, const std::string s)
+{
+    bool bRet = true;
+    std::string lowerS = TK_Tools::LowerCase(s);
+
+    result = false;
+
+    if (bRet) {
+        if (lowerS == "true" 
+            || lowerS == "1" 
+            || lowerS == "on"
+        ) {
+            result = true;
+        } else if (lowerS == "false" 
+            || lowerS == "0" 
+            || lowerS == "off"
+        ) {
+            result = false;
+        } else {
+            bRet = false;
+        }
+    }
+
+    return bRet;
+}
+
+bool parsePointFromStr(GuiISTk::Point &point, const std::string s)
+{
+    bool bRet = true;
+    std::vector<std::string> ss;
+
+    if (bRet) {
+        ss = TK_Tools::SplitString(s, ",");
+        if (ss.size() != 2) {
+            bRet = false;
+        }
+    }
+
+    if (bRet) {
+        point.x = (int)TK_Tools::StrToL(ss[0]);
+        point.y = (int)TK_Tools::StrToL(ss[1]);
+    }
+
+    return bRet;
+}
+
+bool parseSizeFromStr(GuiISTk::Size &size, const std::string s)
+{
+    bool bRet = true;
+    std::vector<std::string> ss;
+
+    if (bRet) {
+        ss = TK_Tools::SplitString(s, ",");
+        if (ss.size() != 2) {
+            bRet = false;
+        }
+    }
+
+    if (bRet) {
+        size.width = (unsigned int)TK_Tools::StrToL(ss[0]);
+        size.height = (unsigned int)TK_Tools::StrToL(ss[1]);
+    }
+
+    return bRet;
+}
+
+bool parseRectFromStr(GuiISTk::Rect &rect, const std::string s)
+{
+    bool bRet = true;
+    std::vector<std::string> ss;
+
+    if (bRet) {
+        ss = TK_Tools::SplitString(s, ",");
+        if (ss.size() != 4) {
+            bRet = false;
+        }
+    }
+
+    if (bRet) {
+        rect.x = (int)TK_Tools::StrToL(ss[0]);
+        rect.y = (int)TK_Tools::StrToL(ss[1]);
+        rect.width = (unsigned int)TK_Tools::StrToL(ss[2]);
+        rect.height = (unsigned int)TK_Tools::StrToL(ss[3]);
+    }
+
+    return bRet;
+}
+
 namespace {
     struct Argument {
         Argument() : isStrArray(false), str(), strArray() {}
@@ -201,162 +338,6 @@ namespace {
     unsigned int vkInfoCount = sizeof(vkInfo) / sizeof(vkInfo[0]);
 } // namespace {
 
-void help(int argc, char* argv[])
-{
-    FPRINTF(stdout, "Usage:\n");
-    FPRINTF(stdout, "  %s RemoteServer [<port>=8888] [<ip>=0.0.0.0]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s delay <sMilliseconds>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnGetCount <sTitle> <bFullMatched>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnShow <sTitle> <bFullMatched> <bAllMatched> SSM_RESTORE|SSM_NORMAL|SSM_MIN|SSM_MAX|SSM_FG\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnSaveAsPictures <sTitle> <bFullMatched> <bAllMatched> <pictureFilePath>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s scnSaveDesktopAsPicture <pictureFilePath>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s cbdPutString <sString>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s cbdpboardGetString\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdListVKs\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdKeyDown <sVirtualKey>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdKeyUp <sVirtualKey>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdKeyOn <sVirtualKey>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdKeyOff <sVirtualKey>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdCtrlA\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdCtrlC\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdCtrlX\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdCtrlV\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdChar <nChar>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s kbdString <sString>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseMove <x,y> [<bAbsolute>=true]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseClick <x,y>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s moustDoubleClick <x,y>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseRightClick <x,y>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s moustDoubleRightClick <x,y>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseRightDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s mouseScroll <x,y> <nSteps>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s findImageRect <sImagePath[,sImagePath[,...]]>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s findImageRect <sImagePath[,sImagePath[,...]]> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s findImageRect <sImagePath[,sImagePath[,...]]> <xBeginning,yBeginning>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s waitImageShown <sImagePath[,sImagePath[,...]]> [<nTimeout>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s waitImageShown <sImagePath[,sImagePath[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeout>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s waitImageShown <sImagePath[,sImagePath[,...]]> <xBeginning,yBeginning> [<nTimeout>=-1]\n", basename(argv[0]));
-
-    FPRINTF(stdout, "Note:\n");
-    FPRINTF(stdout, "1) The environment variables REMOTE_SERVER_IP and REMOTE_SERVER_PORT can be set to run in remote client mode.\n");
-    FPRINTF(stdout, "2) The environment variable DESKTOP_PICTURE_FILE_PATH can be set to simulate the bitmap of the desktop.\n");
-
-    FPRINTF(stdout, "\n");
-}
-
-std::vector<Argument> build_argument_array(int argc, char* argv[])
-{
-    std::vector<Argument> arguments;
-    int i;
-
-    for (i = 0; i < argc; ++i) {
-        Argument argument;
-        argument.isStrArray = false;
-        argument.str = std::string(argv[i]);
-        argument.strArray = TK_Tools::SplitString(argument.str, ",");
-        if (argument.strArray.size() > 1) {
-            argument.isStrArray = true;
-        }
-        arguments.push_back(argument);
-    }
-
-    return arguments;
-}
-
-bool parseBoolFromStr(bool &result, const std::string s)
-{
-    bool bRet = true;
-    std::string lowerS = TK_Tools::LowerCase(s);
-
-    result = false;
-
-    if (bRet) {
-        if (lowerS == "true" 
-            || lowerS == "1" 
-            || lowerS == "on"
-        ) {
-            result = true;
-        } else if (lowerS == "false" 
-            || lowerS == "0" 
-            || lowerS == "off"
-        ) {
-            result = false;
-        } else {
-            bRet = false;
-        }
-    }
-
-    return bRet;
-}
-
-bool parsePointFromStr(GuiISTk::Point &point, const std::string s)
-{
-    bool bRet = true;
-    std::vector<std::string> ss;
-
-    if (bRet) {
-        ss = TK_Tools::SplitString(s, ",");
-        if (ss.size() != 2) {
-            bRet = false;
-        }
-    }
-
-    if (bRet) {
-        point.x = (int)TK_Tools::StrToL(ss[0]);
-        point.y = (int)TK_Tools::StrToL(ss[1]);
-    }
-
-    return bRet;
-}
-
-bool parseSizeFromStr(GuiISTk::Size &size, const std::string s)
-{
-    bool bRet = true;
-    std::vector<std::string> ss;
-
-    if (bRet) {
-        ss = TK_Tools::SplitString(s, ",");
-        if (ss.size() != 2) {
-            bRet = false;
-        }
-    }
-
-    if (bRet) {
-        size.width = (unsigned int)TK_Tools::StrToL(ss[0]);
-        size.height = (unsigned int)TK_Tools::StrToL(ss[1]);
-    }
-
-    return bRet;
-}
-
-bool parseRectFromStr(GuiISTk::Rect &rect, const std::string s)
-{
-    bool bRet = true;
-    std::vector<std::string> ss;
-
-    if (bRet) {
-        ss = TK_Tools::SplitString(s, ",");
-        if (ss.size() != 4) {
-            bRet = false;
-        }
-    }
-
-    if (bRet) {
-        rect.x = (int)TK_Tools::StrToL(ss[0]);
-        rect.y = (int)TK_Tools::StrToL(ss[1]);
-        rect.width = (unsigned int)TK_Tools::StrToL(ss[2]);
-        rect.height = (unsigned int)TK_Tools::StrToL(ss[3]);
-    }
-
-    return bRet;
-}
-
 bool parseVkFromStr(unsigned char &vk, const std::string &vkStr)
 {
     bool bRet = false;
@@ -411,26 +392,234 @@ bool parseScreenZorderFromStr(GuiISTk::ScreenZorder &zorder, const std::string &
    return bRet;
 }
 
-int CommandHandler_kbdListVKs(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+bool parseImagesFromStr(std::vector<GuiISTk::Image> &images, const std::string &s)
 {
-    int nRet = 0;
-    unsigned int i;
+    bool bSuc = true;
+    std::vector<std::string> imageStrs;
+    unsigned i;
 
-    for (i = 0; i < vkInfoCount; ++i) {
-        FPRINTF(stdout, "  %s\n", vkInfo[i].vkStr);
+    imageStrs = TK_Tools::SplitString(s, ",");
+    for (i = 0; i < imageStrs.size(); ++i) {
+        images.push_back(GuiISTk::Image(imageStrs[i]));
+    }
+
+    return bSuc;
+}
+
+std::vector<Argument> build_argument_array(int argc, char* argv[])
+{
+    std::vector<Argument> arguments;
+    int i;
+
+    for (i = 0; i < argc; ++i) {
+        Argument argument;
+        argument.isStrArray = false;
+        argument.str = std::string(argv[i]);
+        argument.strArray = TK_Tools::SplitString(argument.str, ",");
+        if (argument.strArray.size() > 1) {
+            argument.isStrArray = true;
+        }
+        arguments.push_back(argument);
+    }
+
+    return arguments;
+}
+
+int CommandHandler_kbdVkList(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    static const char *sAllVksInfo = 
+        "  Virtual Key Name              Key Code            Comment\n" 
+        "  VK_LBUTTON                    1                   Left mouse button\n" 
+        "  VK_RBUTTON                    2                   Right mouse button\n" 
+        "  VK_CANCEL                     3                   Control-break processing\n" 
+        "  VK_MBUTTON                    4                   Middle mouse button\n" 
+        "  VK_XBUTTON1                   5                   X1 mouse button\n" 
+        "  VK_XBUTTON2                   6                   X2 mouse button\n" 
+        "  VK_BACK                       8                   BACKSPACE\n" 
+        "  VK_TAB                        9                   TAB\n" 
+        "  VK_CLEAR                      12                  CLEAR\n" 
+        "  VK_RETURN                     13                  ENTER\n" 
+        "  VK_SHIFT                      16                  SHIFT\n" 
+        "  VK_CONTROL                    17                  CTRL\n" 
+        "  VK_MENU                       18                  ALT\n" 
+        "  VK_PAUSE                      19                  PAUSE\n" 
+        "  VK_CAPITAL                    20                  CAPS LOCK\n" 
+        "  VK_KANA                       21                  IME Kana mode\n" 
+        "  VK_HANGUL                     21                  IME Hanguel mode\n" 
+        "  VK_JUNJA                      23                  IME Junja mode\n" 
+        "  VK_FINAL                      24                  IME final mode\n" 
+        "  VK_HANJA                      25                  IME Hanja mode\n" 
+        "  VK_KANJI                      25                  IME Kanji mode\n" 
+        "  VK_ESCAPE                     27                  ESC\n" 
+        "  VK_CONVERT                    28                  IME convert\n" 
+        "  VK_NONCONVERT                 29                  IME nonconvert\n" 
+        "  VK_ACCEPT                     30                  IME accept\n" 
+        "  VK_MODECHANGE                 31                  IME mode change request\n" 
+        "  VK_SPACE                      32                  SPACE\n" 
+        "  VK_PRIOR                      33                  PAGE UP\n" 
+        "  VK_NEXT                       34                  PAGE DOWN\n" 
+        "  VK_END                        35                  END\n" 
+        "  VK_HOME                       36                  HOME\n" 
+        "  VK_LEFT                       37                  LEFT ARROW\n" 
+        "  VK_UP                         38                  UP ARROW\n" 
+        "  VK_RIGHT                      39                  RIGHT ARROW\n" 
+        "  VK_DOWN                       40                  DOWN ARROW\n" 
+        "  VK_SELECT                     41                  SELECT\n" 
+        "  VK_PRINT                      42                  PRINT\n" 
+        "  VK_EXECUTE                    43                  EXECUTE\n" 
+        "  VK_SNAPSHOT                   44                  PRINT SCREEN\n" 
+        "  VK_INSERT                     45                  INS\n" 
+        "  VK_DELETE                     46                  DEL \n" 
+        "  VK_HELP                       47                  HELP\n" 
+        "  0                             48                  0\n" 
+        "  1                             49                  1\n" 
+        "  2                             50                  2\n" 
+        "  3                             51                  3\n" 
+        "  4                             52                  4\n" 
+        "  5                             53                  5\n" 
+        "  6                             54                  6\n" 
+        "  7                             55                  7\n" 
+        "  8                             56                  8\n" 
+        "  9                             57                  9\n" 
+        "  A                             65                  A\n" 
+        "  B                             66                  B\n" 
+        "  C                             67                  C\n" 
+        "  D                             68                  D\n" 
+        "  E                             69                  E\n" 
+        "  F                             70                  F\n" 
+        "  G                             71                  G\n" 
+        "  H                             72                  H\n" 
+        "  I                             73                  I\n" 
+        "  J                             74                  J\n" 
+        "  K                             75                  K\n" 
+        "  L                             76                  L\n" 
+        "  M                             77                  M\n" 
+        "  N                             78                  N\n" 
+        "  O                             79                  O\n" 
+        "  P                             80                  P\n" 
+        "  Q                             81                  Q\n" 
+        "  R                             82                  R\n" 
+        "  S                             83                  S\n" 
+        "  T                             84                  T\n" 
+        "  U                             85                  U\n" 
+        "  V                             86                  V\n" 
+        "  W                             87                  W\n" 
+        "  X                             88                  X\n" 
+        "  Y                             89                  Y\n" 
+        "  Z                             90                  Z\n" 
+        "  VK_LWIN                       91                  Left Windows key\n" 
+        "  VK_RWIN                       92                  Right Windows key\n" 
+        "  VK_APPS                       93                  Applications key (to popup right-click memu)\n" 
+        "  VK_SLEEP                      95                  Computer Sleep key\n" 
+        "  VK_NUMPAD0                    96                  Numeric keypad 0 key\n" 
+        "  VK_NUMPAD1                    97                  Numeric keypad 1 key\n" 
+        "  VK_NUMPAD2                    98                  Numeric keypad 2 key\n" 
+        "  VK_NUMPAD3                    99                  Numeric keypad 3 key\n" 
+        "  VK_NUMPAD4                    100                 Numeric keypad 4 key\n" 
+        "  VK_NUMPAD5                    101                 Numeric keypad 5 key\n" 
+        "  VK_NUMPAD6                    102                 Numeric keypad 6 key\n" 
+        "  VK_NUMPAD7                    103                 Numeric keypad 7 key\n" 
+        "  VK_NUMPAD8                    104                 Numeric keypad 8 key\n" 
+        "  VK_NUMPAD9                    105                 Numeric keypad 9 key\n" 
+        "  VK_MULTIPLY                   106                 Numeric keypad * key\n" 
+        "  VK_ADD                        107                 Numeric keypad + key\n" 
+        "  VK_SEPARATOR                  108                 Numeric keypad Enter key\n" 
+        "  VK_SUBTRACT                   109                 Numeric keypad - key\n" 
+        "  VK_DECIMAL                    110                 Numeric keypad . key\n" 
+        "  VK_DIVIDE                     111                 Numeric keypad / key\n" 
+        "  VK_F1                         112                 F1\n" 
+        "  VK_F2                         113                 F2\n" 
+        "  VK_F3                         114                 F3\n" 
+        "  VK_F4                         115                 F4\n" 
+        "  VK_F5                         116                 F5\n" 
+        "  VK_F6                         117                 F6\n" 
+        "  VK_F7                         118                 F7\n" 
+        "  VK_F8                         119                 F8\n" 
+        "  VK_F9                         120                 F9\n" 
+        "  VK_F10                        121                 F10\n" 
+        "  VK_F11                        122                 F11\n" 
+        "  VK_F12                        123                 F12\n" 
+        "  VK_F13                        124                 F13 \n" 
+        "  VK_F14                        125                 F14\n" 
+        "  VK_F15                        126                 F15\n" 
+        "  VK_F16                        127                 F16\n" 
+        "  VK_F17                        128                 F17\n" 
+        "  VK_F18                        129                 F18\n" 
+        "  VK_F19                        130                 F19\n" 
+        "  VK_F20                        131                 F20\n" 
+        "  VK_F21                        132                 F21\n" 
+        "  VK_F22                        133                 F22\n" 
+        "  VK_F23                        134                 F23\n" 
+        "  VK_F24                        135                 F24\n" 
+        "  VK_NUMLOCK                    144                 NUM LOCK\n" 
+        "  VK_SCROLL                     145                 SCROLL LOCK\n" 
+        "  VK_LSHIFT                     160                 Left SHIFT key\n" 
+        "  VK_RSHIFT                     161                 Right SHIFT key\n" 
+        "  VK_LCONTROL                   162                 Left CONTROL key\n" 
+        "  VK_RCONTROL                   163                 Right CONTROL key\n" 
+        "  VK_LMENU                      164                 Left ALT key\n" 
+        "  VK_RMENU                      165                 Right ALT key\n" 
+        "  VK_BROWSER_BACK               166                 Browser Back key\n" 
+        "  VK_BROWSER_FORWARD            167                 Browser Forward key\n" 
+        "  VK_BROWSER_REFRESH            168                 Browser Refresh key\n" 
+        "  VK_BROWSER_STOP               169                 Browser Stop key\n" 
+        "  VK_BROWSER_SEARCH             170                 Browser Search key\n" 
+        "  VK_BROWSER_FAVORITES          171                 Browser Favorites key\n" 
+        "  VK_BROWSER_HOME               172                 Browser Start and Home key\n" 
+        "  VK_VOLUME_MUTE                173                 Volume Mute key\n" 
+        "  VK_VOLUME_DOWN                174                 Volume Down key\n" 
+        "  VK_VOLUME_UP                  175                 Volume Up key\n" 
+        "  VK_MEDIA_NEXT_TRACK           176                 Next Track key\n" 
+        "  VK_MEDIA_PREV_TRACK           177                 Previous Track key\n" 
+        "  VK_MEDIA_STOP                 178                 Stop Media key\n" 
+        "  VK_MEDIA_PLAY_PAUSE           179                 Play/Pause Media key\n" 
+        "  VK_LAUNCH_MAIL                180                 Start Mail key\n" 
+        "  VK_LAUNCH_MEDIA_SELECT        181                 Select Media key\n" 
+        "  VK_LAUNCH_APP1                182                 Start Application 1 key\n" 
+        "  VK_LAUNCH_APP2                183                 Start Application 2 key\n" 
+        "  VK_OEM_1                      186                 ;:\n" 
+        "  VK_OEM_PLUS                   187                 =+\n" 
+        "  VK_OEM_COMMA                  188                 ,<\n" 
+        "  VK_OEM_MINUS                  189                 -_\n" 
+        "  VK_OEM_PERIOD                 190                 .>\n" 
+        "  VK_OEM_2                      191                 /?\n" 
+        "  VK_OEM_3                      192                 `~\n" 
+        "  VK_OEM_4                      219                 [{\n" 
+        "  VK_OEM_5                      220                 \\|\n" 
+        "  VK_OEM_6                      221                 ]}\n" 
+        "  VK_OEM_7                      222                 \'\"\n" 
+        "  VK_OEM_8                      223                 \n" 
+        "  VK_OEM_102                    226                 Either the angle bracket key or the backslash key on the RT 102-key keyboard\n" 
+        "  VK_PACKET                     231                 Used to pass Unicode characters as if they were keystrokes\n" 
+        "  VK_PROCESSKEY                 229                 IME PROCESS key\n" 
+        "  VK_ATTN                       246                 Attn key\n" 
+        "  VK_CRSEL                      247                 CrSel key\n" 
+        "  VK_EXSEL                      248                 ExSel key\n" 
+        "  VK_EREOF                      249                 Erase EOF key\n" 
+        "  VK_PLAY                       250                 Play key\n" 
+        "  VK_ZOOM                       251                 Zoom key\n" 
+        "  VK_NONAME                     252                 \n" 
+        "  VK_PA1                        253                 PA1 key\n" 
+        "  VK_OEM_CLEAR                  254                 Clear key\n"    
+    ;
+
+    int nRet = 0;
+
+    if (nRet == 0) {
+        FPRINTF(stdout, "%s\n", sAllVksInfo);
     }
 
     return nRet;
 }
 
-int CommandHandler_delay(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_Delay(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     unsigned int milliSecond = 0;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "delay");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "Delay");
             nRet = 1;
         }
     }
@@ -440,20 +629,20 @@ int CommandHandler_delay(const std::vector<Argument> &arguments, GuiISTk::IToolk
     }
 
     if (nRet == 0) {
-        toolkit.delay(milliSecond);
+        toolkit.Delay(milliSecond);
     }
 
     return nRet;
 }
 
-int CommandHandler_cbdPutString(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_cbdPutStr(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string s;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "delay");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "Delay");
             nRet = 1;
         }
     }
@@ -463,7 +652,7 @@ int CommandHandler_cbdPutString(const std::vector<Argument> &arguments, GuiISTk:
     }
 
     if (nRet == 0) {
-        if (!toolkit.cbdPutString(s)) {
+        if (!toolkit.cbdPutStr(s)) {
             nRet = 1;
         }
     }
@@ -471,13 +660,13 @@ int CommandHandler_cbdPutString(const std::vector<Argument> &arguments, GuiISTk:
     return nRet;
 }
 
-int CommandHandler_cbdGetString(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_cbdGetStr(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string s;
 
     if (nRet == 0) {
-        if (!toolkit.cbdGetString(s)) {
+        if (!toolkit.cbdGetStr(s)) {
             nRet = 1;
         } else {
             FPRINTF(stdout, "%s\n", s.c_str());
@@ -657,14 +846,14 @@ int CommandHandler_kbdChar(const std::vector<Argument> &arguments, GuiISTk::IToo
     return nRet;
 }
 
-int CommandHandler_kbdString(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_kbdStr(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string s;
     
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdString");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "kbdStr");
             nRet = 1;
         }
     }
@@ -674,13 +863,13 @@ int CommandHandler_kbdString(const std::vector<Argument> &arguments, GuiISTk::IT
     }
 
     if (nRet == 0) {
-        toolkit.kbdString(s);
+        toolkit.kbdStr(s);
     }
 
     return nRet;
 }
 
-int CommandHandler_mouseMove(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseMove(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point point;
@@ -688,14 +877,14 @@ int CommandHandler_mouseMove(const std::vector<Argument> &arguments, GuiISTk::IT
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseMove");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseMove");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseMove", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseMove", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -703,190 +892,190 @@ int CommandHandler_mouseMove(const std::vector<Argument> &arguments, GuiISTk::IT
     if (nRet == 0) {
         if (arguments.size() >= 4) {
             if (!parseBoolFromStr(absolute, arguments[3].str)) {
-                FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseMove", arguments[3].str.c_str());
+                FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseMove", arguments[3].str.c_str());
                 nRet = 1;
             }
         }
     }
 
     if (nRet == 0) {
-        toolkit.mouseMove(point, absolute);
+        toolkit.mseMove(point, absolute);
     }
 
     return nRet;
 }
 
-int CommandHandler_mouseClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point point;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.mouseClick(point);
+        toolkit.mseClick(point);
     }
 
     return nRet;
 }
 
-int CommandHandler_moustDoubleClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseDClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point point;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "moustDoubleClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseDClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "moustDoubleClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseDClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.moustDoubleClick(point);
+        toolkit.mseDClick(point);
     }
 
     return nRet;
 }
 
-int CommandHandler_mouseDrag(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseDrag(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point srcPoint, dstPoint;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseDrag");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseDrag");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(srcPoint, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseDrag", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseDrag", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(dstPoint, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseDrag", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseDrag", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.mouseDrag(srcPoint, dstPoint);
+        toolkit.mseDrag(srcPoint, dstPoint);
     }
 
     return nRet;
 }
 
-int CommandHandler_mouseRightClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseRClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point point;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseRightClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseRClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseRClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.mouseRightClick(point);
+        toolkit.mseRClick(point);
     }
 
     return nRet;
 }
 
-int CommandHandler_moustDoubleRightClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseDRClick(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point point;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "moustDoubleRightClick");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseDRClick");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "moustDoubleRightClick", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseDRClick", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.moustDoubleRightClick(point);
+        toolkit.mseDRClick(point);
     }
 
     return nRet;
 }
 
-int CommandHandler_mouseRightDrag(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseRDrag(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point srcPoint, dstPoint;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseRightDrag");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseRDrag");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(srcPoint, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightDrag", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseRDrag", arguments[2].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(dstPoint, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseRightDrag", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseRDrag", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.mouseRightDrag(srcPoint, dstPoint);
+        toolkit.mseRDrag(srcPoint, dstPoint);
     }
 
     return nRet;
 }
 
-int CommandHandler_mouseScroll(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_mseScroll(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     GuiISTk::Point point;
@@ -894,14 +1083,14 @@ int CommandHandler_mouseScroll(const std::vector<Argument> &arguments, GuiISTk::
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mouseScroll");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "mseScroll");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parsePointFromStr(point, arguments[2].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mouseScroll", arguments[2].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "mseScroll", arguments[2].str.c_str());
             nRet = 1;
         }
     }
@@ -911,27 +1100,13 @@ int CommandHandler_mouseScroll(const std::vector<Argument> &arguments, GuiISTk::
     }
 
     if (nRet == 0) {
-        toolkit.mouseScroll(point, steps);
+        toolkit.mseScroll(point, steps);
     }
 
     return nRet;
 }
 
-bool parseImagesFromStr(std::vector<GuiISTk::Image> &images, const std::string &s)
-{
-    bool bSuc = true;
-    std::vector<std::string> imageStrs;
-    unsigned i;
-
-    imageStrs = TK_Tools::SplitString(s, ",");
-    for (i = 0; i < imageStrs.size(); ++i) {
-        images.push_back(GuiISTk::Image(imageStrs[i]));
-    }
-
-    return bSuc;
-}
-
-int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgFindRect1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::vector<GuiISTk::Image> images;
@@ -941,7 +1116,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "findImageRect1");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgFindRect1");
             nRet = 1;
         }
     }
@@ -955,7 +1130,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     if (nRet == 0) {
         for (i = 0; i < (int)images.size(); ++i) {
             if (!TK_Tools::FileExists(images[i].getPath())) {
-                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "findImageRect1", images[i].getPath().c_str());
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgFindRect1", images[i].getPath().c_str());
                 nRet = 1;
                 break;
             }
@@ -963,7 +1138,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     }
 
     if (nRet == 0) {
-        if (toolkit.findImageRect(images, rect, index)) {
+        if (toolkit.imgFindRect(images, rect, index)) {
             FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         } else {
             nRet = 1;
@@ -974,7 +1149,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     return nRet;
 }
 
-int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgFindRect2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::vector<GuiISTk::Image> images;
@@ -985,7 +1160,7 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "findImageRect2");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgFindRect2");
             nRet = 1;
         }
     }
@@ -999,7 +1174,7 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     if (nRet == 0) {
         for (i = 0; i < (int)images.size(); ++i) {
             if (!TK_Tools::FileExists(images[i].getPath())) {
-                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "findImageRect2", images[i].getPath().c_str());
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgFindRect2", images[i].getPath().c_str());
                 nRet = 1;
                 break;
             }
@@ -1008,13 +1183,13 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (!parseRectFromStr(searchRect, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "findImageRect2", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgFindRect2", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        if (toolkit.findImageRect(images, rect, index, searchRect)) {
+        if (toolkit.imgFindRect(images, rect, index, searchRect)) {
             FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         } else {
             nRet = 1;
@@ -1025,7 +1200,7 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     return nRet;
 }
 
-int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgFindRect3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::vector<GuiISTk::Image> images;
@@ -1036,7 +1211,7 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "findImageRect3");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgFindRect3");
             nRet = 1;
         }
     }
@@ -1050,7 +1225,7 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     if (nRet == 0) {
         for (i = 0; i < (int)images.size(); ++i) {
             if (!TK_Tools::FileExists(images[i].getPath())) {
-                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "findImageRect3", images[i].getPath().c_str());
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgFindRect3", images[i].getPath().c_str());
                 nRet = 1;
                 break;
             }
@@ -1059,13 +1234,13 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
 
     if (nRet == 0) {
         if (!parsePointFromStr(searchBeginningPoint, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "findImageRect3", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgFindRect3", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        if (toolkit.findImageRect(images, rect, index, searchBeginningPoint)) {
+        if (toolkit.imgFindRect(images, rect, index, searchBeginningPoint)) {
             FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
         } else {
             nRet = 1;
@@ -1076,22 +1251,22 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     return nRet;
 }
 
-int CommandHandler_findImageRect(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgFindRect(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     if (arguments.size() < 4) {
-        return CommandHandler_findImageRect1(arguments, toolkit);
+        return CommandHandler_imgFindRect1(arguments, toolkit);
     } else {
         if (arguments[3].strArray.size() == 4) {
-            return CommandHandler_findImageRect2(arguments, toolkit);
+            return CommandHandler_imgFindRect2(arguments, toolkit);
         } else if (arguments[3].strArray.size() == 2) {
-            return CommandHandler_findImageRect3(arguments, toolkit);
+            return CommandHandler_imgFindRect3(arguments, toolkit);
         } else {
-            return CommandHandler_findImageRect1(arguments, toolkit);
+            return CommandHandler_imgFindRect1(arguments, toolkit);
         }
     }
 }
 
-int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgWaitShown1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::vector<GuiISTk::Image> images;
@@ -1102,7 +1277,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "waitImageShown1");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgWaitShown1");
             nRet = 1;
         }
     }
@@ -1116,7 +1291,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     if (nRet == 0) {
         for (i = 0; i < (int)images.size(); ++i) {
             if (!TK_Tools::FileExists(images[i].getPath())) {
-                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "waitImageShown1", images[i].getPath().c_str());
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgWaitShown1", images[i].getPath().c_str());
                 nRet = 1;
                 break;
             }
@@ -1130,7 +1305,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        if (!toolkit.waitImageShown(images, rect, index, timeout)) {
+        if (!toolkit.imgWaitShown(images, rect, index, timeout)) {
             nRet = 1;
         } else {
             FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
@@ -1140,7 +1315,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     return nRet;
 }
 
-int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgWaitShown2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::vector<GuiISTk::Image> images;
@@ -1152,7 +1327,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "waitImageShown2");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgWaitShown2");
             nRet = 1;
         }
     }
@@ -1166,7 +1341,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     if (nRet == 0) {
         for (i = 0; i < (int)images.size(); ++i) {
             if (!TK_Tools::FileExists(images[i].getPath())) {
-                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "waitImageShown2", images[i].getPath().c_str());
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgWaitShown2", images[i].getPath().c_str());
                 nRet = 1;
                 break;
             }
@@ -1175,7 +1350,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (!parseRectFromStr(searchRect, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "waitImageShown2", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgWaitShown2", arguments[3].str.c_str());
             nRet = 1;
         }
     }
@@ -1187,7 +1362,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        if (!toolkit.waitImageShown(images, rect, index, searchRect, timeout)) {
+        if (!toolkit.imgWaitShown(images, rect, index, searchRect, timeout)) {
             nRet = 1;
         } else {
             FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
@@ -1197,7 +1372,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     return nRet;
 }
 
-int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgWaitShown3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::vector<GuiISTk::Image> images;
@@ -1209,7 +1384,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "waitImageShown3");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgWaitShown3");
             nRet = 1;
         }
     }
@@ -1223,7 +1398,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     if (nRet == 0) {
         for (i = 0; i < (int)images.size(); ++i) {
             if (!TK_Tools::FileExists(images[i].getPath())) {
-                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "waitImageShown3", images[i].getPath().c_str());
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgWaitShown3", images[i].getPath().c_str());
                 nRet = 1;
                 break;
             }
@@ -1232,7 +1407,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
 
     if (nRet == 0) {
         if (!parsePointFromStr(searchBeginningPoint, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "waitImageShown3", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgWaitShown3", arguments[3].str.c_str());
             nRet = 1;
         }
     }
@@ -1244,7 +1419,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     }
 
     if (nRet == 0) {
-        if (!toolkit.waitImageShown(images, rect, index, searchBeginningPoint, timeout)) {
+        if (!toolkit.imgWaitShown(images, rect, index, searchBeginningPoint, timeout)) {
             nRet = 1;
         } else {
             FPRINTF(stdout, "%d %d %u %u %d\n", rect.x, rect.y, rect.width, rect.height, index);
@@ -1254,22 +1429,22 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     return nRet;
 }
 
-int CommandHandler_waitImageShown(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_imgWaitShown(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     if (arguments.size() < 4) {
-        return CommandHandler_waitImageShown1(arguments, toolkit);
+        return CommandHandler_imgWaitShown1(arguments, toolkit);
     } else {
         if (arguments[3].strArray.size() == 4) {
-            return CommandHandler_waitImageShown2(arguments, toolkit);
+            return CommandHandler_imgWaitShown2(arguments, toolkit);
         } else if (arguments[3].strArray.size() == 2) {
-            return CommandHandler_waitImageShown3(arguments, toolkit);
+            return CommandHandler_imgWaitShown3(arguments, toolkit);
         } else {
-            return CommandHandler_waitImageShown1(arguments, toolkit);
+            return CommandHandler_imgWaitShown1(arguments, toolkit);
         }
     }
 }
 
-int CommandHandler_scnGetCount(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_scnCount(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string sTitle;
@@ -1278,7 +1453,7 @@ int CommandHandler_scnGetCount(const std::vector<Argument> &arguments, GuiISTk::
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnGetCount");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnCount");
             nRet = 1;
         }
     }
@@ -1289,13 +1464,13 @@ int CommandHandler_scnGetCount(const std::vector<Argument> &arguments, GuiISTk::
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnGetCount", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnCount", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        nScreenCount = toolkit.scnGetCount(GuiISTk::ScreenInfo(sTitle, bFullMatched, true));
+        nScreenCount = toolkit.scnCount(GuiISTk::ScreenInfo(sTitle, bFullMatched, true));
         FPRINTF(stdout, "%u\n", nScreenCount);
     }
 
@@ -1580,7 +1755,7 @@ int CommandHandler_scnSetZorder(const std::vector<Argument> &arguments, GuiISTk:
     return nRet;
 }
 
-int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_scnSaveAsPics(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string sTitle;
@@ -1590,7 +1765,7 @@ int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, Gui
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveAsPictures");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveAsPics");
             nRet = 1;
         }
     }
@@ -1601,14 +1776,14 @@ int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, Gui
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPics", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPictures", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "scnSaveAsPics", arguments[4].str.c_str());
             nRet = 1;
         }
     }
@@ -1618,7 +1793,7 @@ int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, Gui
     }
 
     if (nRet == 0) {
-        if (!toolkit.scnSaveAsPictures(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), sPictureFilePath)) {
+        if (!toolkit.scnSaveAsPics(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), sPictureFilePath)) {
             nRet = 1;
         }
     }
@@ -1626,14 +1801,14 @@ int CommandHandler_scnSaveAsPictures(const std::vector<Argument> &arguments, Gui
     return nRet;
 }
 
-int CommandHandler_scnSaveDesktopAsPicture(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_scnSaveDesktopAsPic(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string sPictureFilePath;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveDesktopAsPicture");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "scnSaveDesktopAsPic");
             nRet = 1;
         }
     }
@@ -1643,7 +1818,7 @@ int CommandHandler_scnSaveDesktopAsPicture(const std::vector<Argument> &argument
     }
 
     if (nRet == 0) {
-        if (!toolkit.scnSaveDesktopAsPicture(sPictureFilePath)) {
+        if (!toolkit.scnSaveDesktopAsPic(sPictureFilePath)) {
             nRet = 1;
         }
     }
@@ -1682,19 +1857,19 @@ int main_local(int argc, char* argv[])
         const char *sCommond;
         int (*commandHandler)(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit);
     } commandMap[] = {
-        COMMAND_HANDLER_PAIR(delay),
-        COMMAND_HANDLER_PAIR(scnGetCount),
+        COMMAND_HANDLER_PAIR(Delay),
+        COMMAND_HANDLER_PAIR(scnCount),
         COMMAND_HANDLER_PAIR(scnShow),
         COMMAND_HANDLER_PAIR(scnHide),
         COMMAND_HANDLER_PAIR(scnClose),
         COMMAND_HANDLER_PAIR(scnMove),
         COMMAND_HANDLER_PAIR(scnResize),
         COMMAND_HANDLER_PAIR(scnSetZorder),
-        COMMAND_HANDLER_PAIR(scnSaveAsPictures),
-        COMMAND_HANDLER_PAIR(scnSaveDesktopAsPicture),
-        COMMAND_HANDLER_PAIR(cbdPutString),
-        COMMAND_HANDLER_PAIR(cbdGetString),
-        COMMAND_HANDLER_PAIR(kbdListVKs),
+        COMMAND_HANDLER_PAIR(scnSaveAsPics),
+        COMMAND_HANDLER_PAIR(scnSaveDesktopAsPic),
+        COMMAND_HANDLER_PAIR(cbdPutStr),
+        COMMAND_HANDLER_PAIR(cbdGetStr),
+        COMMAND_HANDLER_PAIR(kbdVkList),
         COMMAND_HANDLER_PAIR(kbdKeyDown),
         COMMAND_HANDLER_PAIR(kbdKeyUp),
         COMMAND_HANDLER_PAIR(kbdKeyOn),
@@ -1704,17 +1879,17 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(kbdCtrlX),
         COMMAND_HANDLER_PAIR(kbdCtrlV),
         COMMAND_HANDLER_PAIR(kbdChar),
-        COMMAND_HANDLER_PAIR(kbdString),
-        COMMAND_HANDLER_PAIR(mouseMove),
-        COMMAND_HANDLER_PAIR(mouseClick),
-        COMMAND_HANDLER_PAIR(moustDoubleClick),
-        COMMAND_HANDLER_PAIR(mouseDrag),
-        COMMAND_HANDLER_PAIR(mouseRightClick),
-        COMMAND_HANDLER_PAIR(moustDoubleRightClick),
-        COMMAND_HANDLER_PAIR(mouseRightDrag),
-        COMMAND_HANDLER_PAIR(mouseScroll),
-        COMMAND_HANDLER_PAIR(findImageRect),
-        COMMAND_HANDLER_PAIR(waitImageShown),
+        COMMAND_HANDLER_PAIR(kbdStr),
+        COMMAND_HANDLER_PAIR(mseMove),
+        COMMAND_HANDLER_PAIR(mseClick),
+        COMMAND_HANDLER_PAIR(mseDClick),
+        COMMAND_HANDLER_PAIR(mseDrag),
+        COMMAND_HANDLER_PAIR(mseRClick),
+        COMMAND_HANDLER_PAIR(mseDRClick),
+        COMMAND_HANDLER_PAIR(mseRDrag),
+        COMMAND_HANDLER_PAIR(mseScroll),
+        COMMAND_HANDLER_PAIR(imgFindRect),
+        COMMAND_HANDLER_PAIR(imgWaitShown),
     };
     unsigned int commandMapCount = sizeof(commandMap) / sizeof(commandMap[0]);
     unsigned int i;

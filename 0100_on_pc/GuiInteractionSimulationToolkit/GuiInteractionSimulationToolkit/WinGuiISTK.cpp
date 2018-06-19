@@ -69,7 +69,7 @@ WinGuiISTK::~WinGuiISTK()
 
 }
 
-void WinGuiISTK::delay(unsigned int milliSecond)
+void WinGuiISTK::Delay(unsigned int milliSecond)
 {
     LOG_GEN_PRINTF("milliSecond=%u\n", milliSecond);
 
@@ -143,7 +143,7 @@ bool WinGuiISTK::getMatchedWindows(std::vector<HWND> &winHandles, const ScreenIn
     return bSuc;
 }
 
-unsigned int WinGuiISTK::scnGetCount(const ScreenInfo &screenInfo)
+unsigned int WinGuiISTK::scnCount(const ScreenInfo &screenInfo)
 {
     unsigned int nScreenCount = 0;
     std::vector<HWND> winHandles;
@@ -335,7 +335,7 @@ bool WinGuiISTK::scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder)
     return bSuc;
 }
 
-bool WinGuiISTK::scnSaveAsPictures(const ScreenInfo &screenInfo, const std::string &pictureFilePath)
+bool WinGuiISTK::scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &pictureFilePath)
 {
     bool bSuc = true;
     std::string pictureFilePathTemplate;
@@ -382,7 +382,7 @@ bool WinGuiISTK::scnSaveAsPictures(const ScreenInfo &screenInfo, const std::stri
     return bSuc;
 }
 
-bool WinGuiISTK::scnSaveDesktopAsPicture(const std::string &pictureFilePath)
+bool WinGuiISTK::scnSaveDesktopAsPic(const std::string &pictureFilePath)
 {
     bool bSuc = true;
     HWND hWnd;
@@ -563,7 +563,7 @@ int WinGuiISTK::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
    return -1;  // Failure
 }
 
-bool WinGuiISTK::cbdPutString(const std::string &s)
+bool WinGuiISTK::cbdPutStr(const std::string &s)
 {
     bool bSuc = true;
     std::wstring ws;
@@ -605,7 +605,7 @@ bool WinGuiISTK::cbdPutString(const std::string &s)
     return bSuc;
 }
 
-bool WinGuiISTK::cbdGetString(std::string &s)
+bool WinGuiISTK::cbdGetStr(std::string &s)
 {
     bool bSuc = true;
     std::wstring ws;
@@ -745,7 +745,7 @@ void WinGuiISTK::kbdChar(char ch)
     delete[] keyinput;
 }
 
-void WinGuiISTK::kbdString(const std::string &s)
+void WinGuiISTK::kbdStr(const std::string &s)
 {
     std::wstring ws;
 
@@ -773,7 +773,7 @@ void WinGuiISTK::kbdString(const std::string &s)
     delete[] keyinput;
 }
 
-void WinGuiISTK::mouseMove(const Point &point, bool absolute /*= true*/)
+void WinGuiISTK::mseMove(const Point &point, bool absolute /*= true*/)
 {
     LOG_GEN_PRINTF("point=(%d,%d), absolute=%d\n", point.x, point.y, absolute);
 
@@ -784,7 +784,7 @@ void WinGuiISTK::mouseMove(const Point &point, bool absolute /*= true*/)
     }
 }
 
-void WinGuiISTK::mouseClick(const Point &point)
+void WinGuiISTK::mseClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
@@ -794,7 +794,7 @@ void WinGuiISTK::mouseClick(const Point &point)
     local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
-void WinGuiISTK::moustDoubleClick(const Point &point)
+void WinGuiISTK::mseDClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
@@ -807,7 +807,7 @@ void WinGuiISTK::moustDoubleClick(const Point &point)
     local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
-void WinGuiISTK::mouseDrag(const Point &srcPoint, const Point &dstPoint)
+void WinGuiISTK::mseDrag(const Point &srcPoint, const Point &dstPoint)
 {
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
@@ -817,7 +817,7 @@ void WinGuiISTK::mouseDrag(const Point &srcPoint, const Point &dstPoint)
     local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
 }
 
-void WinGuiISTK::mouseRightClick(const Point &point)
+void WinGuiISTK::mseRClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
@@ -826,7 +826,7 @@ void WinGuiISTK::mouseRightClick(const Point &point)
     local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
-void WinGuiISTK::moustDoubleRightClick(const Point &point)
+void WinGuiISTK::mseDRClick(const Point &point)
 {
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
@@ -839,7 +839,7 @@ void WinGuiISTK::moustDoubleRightClick(const Point &point)
     local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
 }
 
-void WinGuiISTK::mouseRightDrag(const Point &srcPoint, const Point &dstPoint)
+void WinGuiISTK::mseRDrag(const Point &srcPoint, const Point &dstPoint)
 {
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
@@ -849,7 +849,7 @@ void WinGuiISTK::mouseRightDrag(const Point &srcPoint, const Point &dstPoint)
     local_mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
 }
 
-void WinGuiISTK::mouseScroll(const Point &point, int steps)
+void WinGuiISTK::mseScroll(const Point &point, int steps)
 {
     LOG_GEN_PRINTF("point=(%d,%d), steps=%d\n", point.x, point.y, steps);
 
@@ -871,16 +871,16 @@ std::string WinGuiISTK::getImagesPaths(const std::vector<Image> &images)
     return sImagesPaths;
 }
 
-bool WinGuiISTK::findImageRect(const std::vector<Image> &images, Rect &rect, int &index)
+bool WinGuiISTK::imgFindRect(const std::vector<Image> &images, Rect &rect, int &index)
 {
     LOG_GEN_PRINTF("images=\"%s\"\n", 
         getImagesPaths(images).c_str()
     );
 
-    return findImageRect_impl(images, rect, index);
+    return imgFindRect_impl(images, rect, index);
 }
 
-bool WinGuiISTK::findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index)
+bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index)
 {
     bool bSuc = true;
     CBitmap *pDesktopWindowBitmap = NULL;
@@ -954,17 +954,17 @@ bool WinGuiISTK::findImageRect_impl(const std::vector<Image> &images, Rect &rect
     return bSuc;
 }
 
-bool WinGuiISTK::findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect)
+bool WinGuiISTK::imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect)
 {
     LOG_GEN_PRINTF("images=\"%s\", searchRect=(%d,%d,%u,%u)\n", 
         getImagesPaths(images).c_str(), 
         searchRect.x, searchRect.y, searchRect.width, searchRect.height
     );
 
-    return findImageRect_impl(images, rect, index, searchRect);
+    return imgFindRect_impl(images, rect, index, searchRect);
 }
 
-bool WinGuiISTK::findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect)
+bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect)
 {
     bool bSuc = true;
     CBitmap *pDesktopWindowBitmap = NULL;
@@ -1035,7 +1035,7 @@ bool WinGuiISTK::findImageRect_impl(const std::vector<Image> &images, Rect &rect
     return bSuc;
 }
 
-bool WinGuiISTK::findImageRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint)
+bool WinGuiISTK::imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint)
 {
 
     LOG_GEN_PRINTF("images=\"%s\", searchBeginningPoint=(%d,%d)\n", 
@@ -1043,10 +1043,10 @@ bool WinGuiISTK::findImageRect(const std::vector<Image> &images, Rect &rect, int
         searchBeginningPoint.x, searchBeginningPoint.y
     );
 
-    return findImageRect_impl(images, rect, index, searchBeginningPoint);
+    return imgFindRect_impl(images, rect, index, searchBeginningPoint);
 }
 
-bool WinGuiISTK::findImageRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint)
+bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint)
 {
     bool bSuc = true;
     CBitmap *pDesktopWindowBitmap = NULL;
@@ -1121,7 +1121,7 @@ bool WinGuiISTK::findImageRect_impl(const std::vector<Image> &images, Rect &rect
     return bSuc;
 }
 
-bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
@@ -1136,7 +1136,7 @@ bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, in
             break;
         }
 
-        bSuc = findImageRect_impl(images, rect, index);
+        bSuc = imgFindRect_impl(images, rect, index);
         if (bSuc) {
             break;
         }
@@ -1148,7 +1148,7 @@ bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, in
     return bSuc;
 }
 
-bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
@@ -1164,7 +1164,7 @@ bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, in
             break;
         }
 
-        bSuc = findImageRect_impl(images, rect, index, searchRect);
+        bSuc = imgFindRect_impl(images, rect, index, searchRect);
         if (bSuc) {
             break;
         }
@@ -1176,7 +1176,7 @@ bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, in
     return bSuc;
 }
 
-bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
+bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
@@ -1192,7 +1192,7 @@ bool WinGuiISTK::waitImageShown(const std::vector<Image> &images, Rect &rect, in
             break;
         }
 
-        bSuc = findImageRect_impl(images, rect, index, searchBeginningPoint);
+        bSuc = imgFindRect_impl(images, rect, index, searchBeginningPoint);
         if (bSuc) {
             break;
         }

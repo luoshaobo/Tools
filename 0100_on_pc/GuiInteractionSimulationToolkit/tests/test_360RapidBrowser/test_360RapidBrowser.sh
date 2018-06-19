@@ -12,16 +12,16 @@ function main
 	guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_FG
     guiistk scnResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,960,1080
 	
-	#guiistk delay 500
+	#guiistk Delay 500
 	   
     # guiistk kbdKeyDown VK_LWIN
     # guiistk kbdKeyDown VK_LEFT
     # guiistk kbdKeyUp VK_LEFT
     # guiistk kbdKeyUp VK_LWIN
 
-    guiistk delay 500
+    guiistk Delay 500
     
-    COUNT=`guiistk scnGetCount "$MOZILA_FIREFOX_TITLE" 0`
+    COUNT=`guiistk scnCount "$MOZILA_FIREFOX_TITLE" 0`
     if [ $? -ne 0 ]; then
         echo "*** Error: no screen with tiltle: \"$MOZILA_FIREFOX_TITLE\"" >&2
         return 1
@@ -34,7 +34,7 @@ function main
     #
     # to add a new page
     #
-    RECT=`guiistk findImageRect "pattern__add_new_page.PNG,pattern__add_new_page_2.PNG,pattern__add_new_page_3.PNG,pattern__add_new_page_4.PNG,pattern__add_new_page_5.PNG"`
+    RECT=`guiistk imgFindRect "pattern__add_new_page.PNG,pattern__add_new_page_2.PNG,pattern__add_new_page_3.PNG,pattern__add_new_page_4.PNG,pattern__add_new_page_5.PNG"`
     if [ $? -ne 0 ]; then
         echo "*** Error: the button \"add new page\" is not found!" >&2
         return 1
@@ -48,13 +48,13 @@ function main
     
     echo "$X $Y"
     
-    guiistk mouseClick $X,$Y
-    guiistk delay 100
+    guiistk mseClick $X,$Y
+    guiistk Delay 100
         
     #
     # to input the address then go
     #
-    RECT=`guiistk findImageRect "pattern__star_in_toolbar.PNG"`
+    RECT=`guiistk imgFindRect "pattern__star_in_toolbar.PNG"`
     if [ $? -ne 0 ]; then
         echo "*** Error: the button \"star in toolbar\" is not found!" >&2
 		return 1
@@ -68,10 +68,10 @@ function main
     
     echo "$X $Y"
     
-    guiistk mouseClick $X,$Y
+    guiistk mseClick $X,$Y
     guiistk kbdCtrlA
     guiistk kbdCtrlX
-    guiistk kbdString "http://www.baidu.com"
+    guiistk kbdStr "http://www.baidu.com"
     guiistk kbdKeyDown VK_RETURN
     guiistk kbdKeyUp VK_RETURN
         
