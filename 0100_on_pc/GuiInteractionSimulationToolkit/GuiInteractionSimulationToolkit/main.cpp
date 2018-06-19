@@ -937,6 +937,7 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     std::vector<GuiISTk::Image> images;
     GuiISTk::Rect rect;
     int index = -1;
+    int i;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
@@ -948,6 +949,16 @@ int CommandHandler_findImageRect1(const std::vector<Argument> &arguments, GuiIST
     if (nRet == 0) {
         if (!parseImagesFromStr(images, arguments[2].str)) {
             nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < (int)images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "findImageRect1", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
         }
     }
 
@@ -970,6 +981,7 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     GuiISTk::Rect rect;
     GuiISTk::Rect searchRect;
     int index = -1;
+    int i;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -981,6 +993,16 @@ int CommandHandler_findImageRect2(const std::vector<Argument> &arguments, GuiIST
     if (nRet == 0) {
         if (!parseImagesFromStr(images, arguments[2].str)) {
             nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < (int)images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "findImageRect2", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
         }
     }
 
@@ -1010,6 +1032,7 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     GuiISTk::Rect rect;
     GuiISTk::Point searchBeginningPoint;
     int index = -1;
+    int i;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -1021,6 +1044,16 @@ int CommandHandler_findImageRect3(const std::vector<Argument> &arguments, GuiIST
     if (nRet == 0) {
         if (!parseImagesFromStr(images, arguments[2].str)) {
             nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < (int)images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "findImageRect3", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
         }
     }
 
@@ -1065,6 +1098,7 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     unsigned int timeout = GuiISTk::INFINITE_TIME;
     GuiISTk::Rect rect;
     int index = -1;
+    int i;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
@@ -1076,6 +1110,16 @@ int CommandHandler_waitImageShown1(const std::vector<Argument> &arguments, GuiIS
     if (nRet == 0) {
         if (!parseImagesFromStr(images, arguments[2].str)) {
             nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < (int)images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "waitImageShown1", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
         }
     }
 
@@ -1104,6 +1148,7 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     unsigned int timeout = GuiISTk::INFINITE_TIME;
     GuiISTk::Rect rect;
     int index = -1;
+    int i;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -1115,6 +1160,16 @@ int CommandHandler_waitImageShown2(const std::vector<Argument> &arguments, GuiIS
     if (nRet == 0) {
         if (!parseImagesFromStr(images, arguments[2].str)) {
             nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < (int)images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "waitImageShown2", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
         }
     }
 
@@ -1150,6 +1205,7 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     unsigned int timeout = GuiISTk::INFINITE_TIME;
     GuiISTk::Rect rect;
     int index = -1;
+    int i;
 
     if (nRet == 0) {
         if (arguments.size() < 4) {
@@ -1161,6 +1217,16 @@ int CommandHandler_waitImageShown3(const std::vector<Argument> &arguments, GuiIS
     if (nRet == 0) {
         if (!parseImagesFromStr(images, arguments[2].str)) {
             nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < (int)images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "waitImageShown3", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
         }
     }
 
