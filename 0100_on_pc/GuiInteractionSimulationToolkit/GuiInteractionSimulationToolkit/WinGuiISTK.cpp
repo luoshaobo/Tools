@@ -191,9 +191,9 @@ bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
                 ::GetWindowPlacement(hWnd, &wndpl);
                 if (wndpl.showCmd == SW_SHOWMINIMIZED) {
                     ::ShowWindow(hWnd, SW_SHOWNORMAL);
+                    ::Sleep(200);
                 }
                 ::SetForegroundWindow(hWnd);
-                Sleep(500);
                 break;
             default:
                 ::ShowWindow(hWnd, SW_SHOWNORMAL);
@@ -244,7 +244,7 @@ bool WinGuiISTK::scnClose(const ScreenInfo &screenInfo)
     if (bSuc) {
         for (i = 0; i < winHandles.size(); ++i) {
             hWnd = winHandles[i];
-            ::CloseWindow(hWnd);
+            ::PostMessage(hWnd, WM_CLOSE, 0, 0);
         }
     }
 
@@ -364,9 +364,10 @@ bool WinGuiISTK::scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &
             ::GetWindowPlacement(hWnd, &wndpl);
             if (wndpl.showCmd == SW_SHOWMINIMIZED) {
                 ::ShowWindow(hWnd, SW_SHOWNORMAL);
+                ::Sleep(200);
             }
             ::SetForegroundWindow(hWnd);
-            ::Sleep(500);
+            ::Sleep(200);
 
             std::string path = pictureFilePath;
             if (winHandles.size() > 1) {
@@ -647,14 +648,14 @@ void WinGuiISTK::kbdKeyDown(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
-    keybd_event(vk,0,0,0);
+    keybd_event(vk, 0, 0, 0);
 }
 
 void WinGuiISTK::kbdKeyUp(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
-    keybd_event(vk,0,KEYEVENTF_KEYUP,0);
+    keybd_event(vk, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdKeyOn(unsigned char vk)
@@ -662,8 +663,8 @@ void WinGuiISTK::kbdKeyOn(unsigned char vk)
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     if (!GetKeyState(vk) & 0x1) {
-        keybd_event(vk,0,0,0);
-        keybd_event(vk,0,KEYEVENTF_KEYUP,0);
+        keybd_event(vk, 0, 0, 0);
+        keybd_event(vk, 0, KEYEVENTF_KEYUP, 0);
     }
 }
 
@@ -672,8 +673,8 @@ void WinGuiISTK::kbdKeyOff(unsigned char vk)
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     if (GetKeyState(vk) & 0x1) {
-        keybd_event(vk,0,0,0);
-        keybd_event(vk,0,KEYEVENTF_KEYUP,0);
+        keybd_event(vk, 0, 0, 0);
+        keybd_event(vk, 0, KEYEVENTF_KEYUP, 0);
     }
 }
 
@@ -681,40 +682,40 @@ void WinGuiISTK::kbdCtrlA()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL,0,0,0);
-    keybd_event('A',0,0,0);
-    keybd_event('A',0,KEYEVENTF_KEYUP,0);
-    keybd_event(VK_CONTROL,0,KEYEVENTF_KEYUP,0);
+    keybd_event(VK_CONTROL, 0, 0, 0);
+    keybd_event('A', 0, 0, 0);
+    keybd_event('A', 0, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdCtrlC()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL,0,0,0);
-    keybd_event('C',0,0,0);
-    keybd_event('C',0,KEYEVENTF_KEYUP,0);
-    keybd_event(VK_CONTROL,0,KEYEVENTF_KEYUP,0);
+    keybd_event(VK_CONTROL, 0, 0, 0);
+    keybd_event('C', 0, 0, 0);
+    keybd_event('C', 0, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdCtrlX()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL,0,0,0);
-    keybd_event('X',0,0,0);
-    keybd_event('X',0,KEYEVENTF_KEYUP,0);
-    keybd_event(VK_CONTROL,0,KEYEVENTF_KEYUP,0);
+    keybd_event(VK_CONTROL, 0, 0, 0);
+    keybd_event('X', 0, 0, 0);
+    keybd_event('X', 0, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdCtrlV()
 {
     LOG_GEN();
 
-    keybd_event(VK_CONTROL,0,0,0);
-    keybd_event('V',0,0,0);
-    keybd_event('V',0,KEYEVENTF_KEYUP,0);
-    keybd_event(VK_CONTROL,0,KEYEVENTF_KEYUP,0);
+    keybd_event(VK_CONTROL, 0, 0, 0);
+    keybd_event('V', 0, 0, 0);
+    keybd_event('V', 0, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdChar(char ch)
@@ -739,7 +740,7 @@ void WinGuiISTK::kbdChar(char ch)
         input.type = INPUT_KEYBOARD;
         input.ki = keyinput[i];
         ::SendInput(1, &input, sizeof(INPUT));
-        Sleep(50);
+        ::Sleep(50);
     }
     
     delete[] keyinput;
@@ -767,7 +768,7 @@ void WinGuiISTK::kbdStr(const std::string &s)
         input.type = INPUT_KEYBOARD;
         input.ki = keyinput[i];
         ::SendInput(1, &input, sizeof(INPUT));
-        Sleep(50);
+        ::Sleep(50);
     }
     
     delete[] keyinput;
