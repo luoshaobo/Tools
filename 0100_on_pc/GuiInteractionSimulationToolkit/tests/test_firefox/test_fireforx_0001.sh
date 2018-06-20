@@ -7,9 +7,9 @@ function main
     #
     # to show screen with title: $MOZILA_FIREFOX_TITLE
     #
-    guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MIN
-    guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MAX
-    #guiistk scnResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,800,600
+    guiistk wndshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MIN
+    guiistk wndshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MAX
+    #guiistk wndResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,800,600
     
     # guiistk kbdKeyDown VK_LWIN
     # guiistk kbdKeyDown VK_LEFT
@@ -18,7 +18,7 @@ function main
 
     guiistk Delay 100
     
-    COUNT=`guiistk scnCount "$MOZILA_FIREFOX_TITLE" 0`
+    COUNT=`guiistk wndCount "$MOZILA_FIREFOX_TITLE" 0`
     if [ $? -ne 0 ]; then
         echo "*** Error: no screen with tiltle: \"$MOZILA_FIREFOX_TITLE\"" >&2
         return 1
@@ -66,10 +66,10 @@ function main
     echo "$X $Y"
     
     guiistk mseClick $X,$Y
-    guiistk kbdCtrlA
-    guiistk kbdKeyClick VK_DELETE
+    guiistk kbdCombKey VK_CONTROL A 
+    guiistk kbdKey VK_DELETE
     guiistk kbdStr "http://www.baidu.com"
-    guiistk kbdKeyClick VK_RETURN
+    guiistk kbdKey VK_RETURN
     
     guiistk Delay 1000
     
@@ -91,10 +91,11 @@ function main
     echo "$X $Y"
     
     guiistk mseClick $X,$Y
-    guiistk kbdCtrlA
-    guiistk kbdKeyClick VK_DELETE
-    guiistk kbdStr "我的小书屋"
-    guiistk kbdKeyClick VK_RETURN    
+    guiistk kbdCombKey VK_CONTROL A
+    guiistk kbdKey VK_DELETE
+    guiistk cbdPutStr "我的小书屋"
+    guiistk kbdCombKey VK_CONTROL V
+    guiistk kbdKey VK_RETURN    
 }
 
 main

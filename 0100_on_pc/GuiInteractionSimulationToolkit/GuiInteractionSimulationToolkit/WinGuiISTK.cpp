@@ -162,7 +162,7 @@ bool WinGuiISTK::getMatchedWindows(std::vector<HWND> &winHandles, const ScreenIn
     return bSuc;
 }
 
-unsigned int WinGuiISTK::scnCount(const ScreenInfo &screenInfo)
+unsigned int WinGuiISTK::wndCount(const ScreenInfo &screenInfo)
 {
     unsigned int nScreenCount = 0;
     std::vector<HWND> winHandles;
@@ -175,7 +175,7 @@ unsigned int WinGuiISTK::scnCount(const ScreenInfo &screenInfo)
     return nScreenCount;
 }
 
-bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
+bool WinGuiISTK::wndShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -224,7 +224,7 @@ bool WinGuiISTK::scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode)
     return bSuc;
 }
 
-bool WinGuiISTK::scnHide(const ScreenInfo &screenInfo)
+bool WinGuiISTK::wndHide(const ScreenInfo &screenInfo)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -247,7 +247,7 @@ bool WinGuiISTK::scnHide(const ScreenInfo &screenInfo)
     return bSuc;
 }
 
-bool WinGuiISTK::scnClose(const ScreenInfo &screenInfo)
+bool WinGuiISTK::wndClose(const ScreenInfo &screenInfo)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -270,7 +270,7 @@ bool WinGuiISTK::scnClose(const ScreenInfo &screenInfo)
     return bSuc;
 }
 
-bool WinGuiISTK::scnMove(const ScreenInfo &screenInfo, const Point &point)
+bool WinGuiISTK::wndMove(const ScreenInfo &screenInfo, const Point &point)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -294,7 +294,7 @@ bool WinGuiISTK::scnMove(const ScreenInfo &screenInfo, const Point &point)
     return bSuc;
 }
 
-bool WinGuiISTK::scnResize(const ScreenInfo &screenInfo, const Rect &rect)
+bool WinGuiISTK::wndResize(const ScreenInfo &screenInfo, const Rect &rect)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -318,7 +318,7 @@ bool WinGuiISTK::scnResize(const ScreenInfo &screenInfo, const Rect &rect)
     return bSuc;
 }
 
-bool WinGuiISTK::scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder)
+bool WinGuiISTK::wndSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -354,23 +354,23 @@ bool WinGuiISTK::scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder)
     return bSuc;
 }
 
-bool WinGuiISTK::scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &pictureFilePath)
+bool WinGuiISTK::wndSaveAsPic(const ScreenInfo &screenInfo, const std::string &sPictureFilePath)
 {
     bool bSuc = true;
-    std::string pictureFilePathTemplate;
+    std::string sPictureFilePathTemplate;
     std::vector<HWND> winHandles;
     HWND hWnd;
     WINDOWPLACEMENT wndpl;
     unsigned int i;
 
-    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, pictureFilePath=\"%s\"\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, pictureFilePath.c_str());
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d, sPictureFilePath=\"%s\"\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched, sPictureFilePath.c_str());
 
     if (bSuc) {
         bSuc = getMatchedWindows(winHandles, screenInfo);
     }
 
     if (bSuc) {
-        if (!makeFilePathTemplateByIndex(pictureFilePathTemplate, pictureFilePath)) {
+        if (!makeFilePathTemplateByIndex(sPictureFilePathTemplate, sPictureFilePath)) {
             bSuc = false;
         }
     }
@@ -388,9 +388,9 @@ bool WinGuiISTK::scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &
             ::SetForegroundWindow(hWnd);
             ::Sleep(200);
 
-            std::string path = pictureFilePath;
+            std::string path = sPictureFilePath;
             if (winHandles.size() > 1) {
-                path = TK_Tools::FormatStr(pictureFilePathTemplate.c_str(), i + 1);
+                path = TK_Tools::FormatStr(sPictureFilePathTemplate.c_str(), i + 1);
             }
             if (!saveWindowAsPicture(hWnd, path)) {
                 bSuc = false;
@@ -402,16 +402,16 @@ bool WinGuiISTK::scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &
     return bSuc;
 }
 
-bool WinGuiISTK::scnSaveDesktopAsPic(const std::string &pictureFilePath)
+bool WinGuiISTK::wndSaveScreenAsPic(const std::string &sPictureFilePath)
 {
     bool bSuc = true;
     HWND hWnd;
 
-    LOG_GEN_PRINTF("pictureFilePath=\"%s\"\n", pictureFilePath.c_str());
+    LOG_GEN_PRINTF("sPictureFilePath=\"%s\"\n", sPictureFilePath.c_str());
 
     if (bSuc) {
         hWnd = ::GetDesktopWindow();
-        if (!saveWindowAsPicture(hWnd, pictureFilePath)) {
+        if (!saveWindowAsPicture(hWnd, sPictureFilePath)) {
             bSuc = false;
         }
     }
@@ -419,7 +419,7 @@ bool WinGuiISTK::scnSaveDesktopAsPic(const std::string &pictureFilePath)
     return bSuc;
 }
 
-void WinGuiISTK::scnGetDesktopSize(Size &size)
+void WinGuiISTK::wndGetScreenSize(Size &size)
 {
     bool bSuc = true;
     HWND hWnd = NULL;
@@ -443,6 +443,52 @@ void WinGuiISTK::scnGetDesktopSize(Size &size)
         size.width = rect.Width();
         size.height = rect.Height();
     }
+}
+
+bool WinGuiISTK::wndGetFgWnd(ScreenInfo &screenInfo)
+{
+    bool bSuc = true;
+    HWND hWnd = NULL;
+    HWND hWnd2 = NULL;
+    CString sWindowText;
+
+    if (bSuc) {
+        hWnd = ::GetForegroundWindow();
+        if (hWnd == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        CWnd::FromHandle(hWnd)->GetWindowText(sWindowText);
+        screenInfo.title = TK_Tools::wstr2str((LPCTSTR)sWindowText);
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point)
+{
+    bool bSuc = true;
+    HWND hWnd = NULL;
+    CString sWindowText;
+    POINT pt;
+
+    if (bSuc) {
+        pt.x = point.x;
+        pt.y = point.y;
+        hWnd = ::WindowFromPoint(pt);
+        if (hWnd == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        CWnd::FromHandle(hWnd)->GetWindowText(sWindowText);
+        screenInfo.title = TK_Tools::wstr2str((LPCTSTR)sWindowText);
+    }
+
+    return bSuc;
 }
 
 bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path)
@@ -689,12 +735,34 @@ bool WinGuiISTK::cbdGetStr(std::string &s)
     return bSuc;
 }
 
-void WinGuiISTK::kbdKeyClick(unsigned char vk)
+void WinGuiISTK::kbdKey(unsigned char vk)
 {
     LOG_GEN_PRINTF("vk=%u\n", vk);
 
     SendKeyboardEvent(vk, 0, 0, 0);
     SendKeyboardEvent(vk, 0, KEYEVENTF_KEYUP, 0);
+}
+
+void WinGuiISTK::kbdCombKey(std::vector<unsigned char> vks)
+{
+    int i;
+
+    LOG_GEN_PRINTF("vks=", );
+
+    for (i = 0; i < (int)vks.size(); ++i) {
+        if (i > 0) {
+            LOG_PRINTF(",");
+        }
+        LOG_PRINTF("%u(0x%02X)", vks[i], vks[i]);
+    }
+    LOG_PRINTF("\n");
+
+    for (i = 0; i < (int)vks.size(); ++i) {
+        SendKeyboardEvent(vks[i], 0, 0, 0);
+    }
+    for (i = vks.size() - 1; i >= 0; --i) {
+        SendKeyboardEvent(vks[i], 0, KEYEVENTF_KEYUP, 0);
+    }
 }
 
 void WinGuiISTK::kbdKeyDown(unsigned char vk)
@@ -729,46 +797,6 @@ void WinGuiISTK::kbdKeyOff(unsigned char vk)
         SendKeyboardEvent(vk, 0, 0, 0);
         SendKeyboardEvent(vk, 0, KEYEVENTF_KEYUP, 0);
     }
-}
-
-void WinGuiISTK::kbdCtrlA()
-{
-    LOG_GEN();
-
-    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
-    SendKeyboardEvent('A', 0, 0, 0);
-    SendKeyboardEvent('A', 0, KEYEVENTF_KEYUP, 0);
-    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
-}
-
-void WinGuiISTK::kbdCtrlC()
-{
-    LOG_GEN();
-
-    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
-    SendKeyboardEvent('C', 0, 0, 0);
-    SendKeyboardEvent('C', 0, KEYEVENTF_KEYUP, 0);
-    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
-}
-
-void WinGuiISTK::kbdCtrlX()
-{
-    LOG_GEN();
-
-    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
-    SendKeyboardEvent('X', 0, 0, 0);
-    SendKeyboardEvent('X', 0, KEYEVENTF_KEYUP, 0);
-    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
-}
-
-void WinGuiISTK::kbdCtrlV()
-{
-    LOG_GEN();
-
-    SendKeyboardEvent(VK_CONTROL, 0, 0, 0);
-    SendKeyboardEvent('V', 0, 0, 0);
-    SendKeyboardEvent('V', 0, KEYEVENTF_KEYUP, 0);
-    SendKeyboardEvent(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
 }
 
 void WinGuiISTK::kbdChar(char ch)

@@ -14,29 +14,28 @@ public:
 
     virtual void Delay(unsigned int milliSecond);
 
-    virtual unsigned int scnCount(const ScreenInfo &screenInfo);
-    virtual bool scnShow(const ScreenInfo &screenInfo, ScreenShowingMode mode);
-    virtual bool scnHide(const ScreenInfo &screenInfo);
-    virtual bool scnClose(const ScreenInfo &screenInfo);
-    virtual bool scnMove(const ScreenInfo &screenInfo, const Point &point);
-    virtual bool scnResize(const ScreenInfo &screenInfo, const Rect &rect);
-    virtual bool scnSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder);
-    virtual bool scnSaveAsPics(const ScreenInfo &screenInfo, const std::string &pictureFilePath);
-    virtual bool scnSaveDesktopAsPic(const std::string &pictureFilePath);
-    virtual void scnGetDesktopSize(Size &size);
+    virtual unsigned int wndCount(const ScreenInfo &screenInfo);
+    virtual bool wndShow(const ScreenInfo &screenInfo, ScreenShowingMode mode);
+    virtual bool wndHide(const ScreenInfo &screenInfo);
+    virtual bool wndClose(const ScreenInfo &screenInfo);
+    virtual bool wndMove(const ScreenInfo &screenInfo, const Point &point);
+    virtual bool wndResize(const ScreenInfo &screenInfo, const Rect &rect);
+    virtual bool wndSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder);
+    virtual bool wndSaveAsPic(const ScreenInfo &screenInfo, const std::string &sPictureFilePath);
+    virtual bool wndSaveScreenAsPic(const std::string &sPictureFilePath);
+    virtual void wndGetScreenSize(Size &size);
+    virtual bool wndGetFgWnd(ScreenInfo &screenInfo);
+    virtual bool wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point);
 
     virtual bool cbdPutStr(const std::string &s);
     virtual bool cbdGetStr(std::string &s);
     
-    virtual void kbdKeyClick(unsigned char vk);
+    virtual void kbdKey(unsigned char vk);
+    virtual void kbdCombKey(std::vector<unsigned char> vks);
     virtual void kbdKeyDown(unsigned char vk);
     virtual void kbdKeyUp(unsigned char vk);
     virtual void kbdKeyOn(unsigned char vk);
     virtual void kbdKeyOff(unsigned char vk);
-    virtual void kbdCtrlA();
-    virtual void kbdCtrlC();
-    virtual void kbdCtrlX();
-    virtual void kbdCtrlV();
     virtual void kbdChar(char ch);
     virtual void kbdStr(const std::string &s);
     

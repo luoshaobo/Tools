@@ -7,10 +7,10 @@ function main
     #
     # to show screen with title: $MOZILA_FIREFOX_TITLE
     #
-    #guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MIN
-    #guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MAX
-	guiistk scnshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_FG
-    guiistk scnResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,960,1080
+    #guiistk wndshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MIN
+    #guiistk wndshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_MAX
+	guiistk wndshow "$MOZILA_FIREFOX_TITLE" 0 0 SSM_FG
+    guiistk wndResize "$MOZILA_FIREFOX_TITLE" 0 0 0,0,960,1080
 	
 	#guiistk Delay 500
 	   
@@ -21,7 +21,7 @@ function main
 
     guiistk Delay 500
     
-    COUNT=`guiistk scnCount "$MOZILA_FIREFOX_TITLE" 0`
+    COUNT=`guiistk wndCount "$MOZILA_FIREFOX_TITLE" 0`
     if [ $? -ne 0 ]; then
         echo "*** Error: no screen with tiltle: \"$MOZILA_FIREFOX_TITLE\"" >&2
         return 1
