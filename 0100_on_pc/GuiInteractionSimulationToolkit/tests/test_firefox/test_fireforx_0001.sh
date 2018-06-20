@@ -3,6 +3,18 @@
 function main
 {
     MOZILA_FIREFOX_TITLE="Mozilla Firefox"
+    SCREEN_WIDTH=1920
+    SCREEN_HEIGHT=1080
+    
+    POINT=`guiistk wndGetScreenSize`
+    if [ $? -ne 0 ]; then
+        echo "*** Error: guiistk wndGetScreenSize is failed!" >&2
+        return 1
+    fi
+    echo "$POINT"
+    SCREEN_WIDTH=`echo $POINT | awk '{print $1}'`
+    SCREEN_HEIGHT=`echo $POINT | awk '{print $2}'`
+    echo "$SCREEN_WIDTH $SCREEN_HEIGHT"
 
     #
     # to show screen with title: $MOZILA_FIREFOX_TITLE
@@ -40,8 +52,8 @@ function main
     X=`echo $RECT | awk '{print $1}'`
     Y=`echo $RECT | awk '{print $2}'`
     
-    X=`expr $X \+ 0`
-    Y=`expr $Y \+ 0`
+    X=$((X+0))
+    Y=$((Y+0))
     
     echo "$X $Y"
     
@@ -51,7 +63,7 @@ function main
     #
     # to input the address then go
     #
-    RECT=`guiistk imgWaitShown "pattern__show_site_info_disabled.PNG"`
+    RECT=`guiistk imgWaitShown "pattern__show_site_info_disabled.PNG" 0,0,$SCREEN_WIDTH,$((SCREEN_HEIGHT/2))`
     if [ $? -ne 0 ]; then
         echo "*** Error: the button \"show_site_info_disabled\" with disabled state is not found!" >&2
         return 1
@@ -60,8 +72,8 @@ function main
     X=`echo $RECT | awk '{print $1}'`
     Y=`echo $RECT | awk '{print $2}'`
     
-    X=`expr $X \+ 50`
-    Y=`expr $Y \+ 10`
+    X=$((X+50))
+    Y=$((Y+10))
     
     echo "$X $Y"
     
@@ -76,7 +88,7 @@ function main
     #
     # to input the search keyword then go
     #
-    RECT=`guiistk imgWaitShown "pattern__camera_icon_on_right_of_keyword_input_box.PNG"`
+    RECT=`guiistk imgWaitShown "pattern__camera_icon_on_right_of_keyword_input_box.PNG" 0,0,$SCREEN_WIDTH,$((SCREEN_HEIGHT/2))`
     if [ $? -ne 0 ]; then
         echo "*** Error: the icon \"camera_icon_on_right_of_keyword_input_box\" with disabled state is not found!" >&2
         return 1
@@ -85,8 +97,8 @@ function main
     X=`echo $RECT | awk '{print $1}'`
     Y=`echo $RECT | awk '{print $2}'`
     
-    X=`expr $X - 10`
-    Y=`expr $Y \+ 5`
+    X=$((X-10))
+    Y=$((Y+5))
     
     echo "$X $Y"
     
