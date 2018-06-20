@@ -6,6 +6,7 @@
 #include "TK_Tools.h"
 
 #ifdef WIN32
+#include "Tchar.h"
 #define unlink _unlink
 #endif // WIN32
 
@@ -165,7 +166,7 @@ std::wstring FormatStr(const wchar_t *pFormat, ...)
     len = _vscwprintf(pFormat, args) + 1; // NOTE: _vscprintf doesn't count terminating '\0'
     buffer = (wchar_t*)malloc(len * sizeof(wchar_t));
     if (buffer != NULL) {
-        wvsprintf(buffer, pFormat, args);
+        wvsprintfW(buffer, pFormat, args);
         strRet = buffer;
         free(buffer);
     } else {
@@ -188,7 +189,7 @@ void FormatStr(std::wstring &strRet, const wchar_t *pFormat, ...)
     len = _vscwprintf(pFormat, args) + 1; // NOTE: _vscprintf doesn't count terminating '\0'
     buffer = (wchar_t*)malloc(len * sizeof(wchar_t));
     if (buffer != NULL) {
-        wvsprintf(buffer, pFormat, args);
+        wvsprintfW(buffer, pFormat, args);
         strRet = buffer;
         free(buffer);
     } else {
@@ -1667,9 +1668,9 @@ bool ParseCmdLine(std::vector<std::string> &arrRetArgs, const std::string &sCmdL
 }
 
 #ifdef WIN32
-std::wstring GetWin32ErrMsg(DWORD nErrCode /*= (DWORD)-1*/)
+std::tstring GetWin32ErrMsg(DWORD nErrCode /*= (DWORD)-1*/)
 {
-    std::wstring sResult = L"(unknown error)";
+    std::tstring sResult = TEXT("(unknown error)");
     LPVOID lpMsgBuf;
     LPVOID lpDisplayBuf;
 
@@ -1691,7 +1692,7 @@ std::wstring GetWin32ErrMsg(DWORD nErrCode /*= (DWORD)-1*/)
 
     lpDisplayBuf = (LPVOID)::LocalAlloc(LMEM_ZEROINIT,
         (lstrlen((LPCTSTR)lpMsgBuf)+40)*sizeof(TCHAR));
-    ::_snwprintf((LPTSTR)lpDisplayBuf,
+    ::_sntprintf((TCHAR *)lpDisplayBuf,
         LocalSize(lpDisplayBuf),
         TEXT("[nLastErrCode=%d]: %s"),
         nErrCode, lpMsgBuf);

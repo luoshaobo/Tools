@@ -182,7 +182,7 @@ bool GetLinesFromFile(const std::string &sFilePath, std::vector<std::wstring> &l
 
 #ifdef WIN32
 bool Execute(const std::string &sExePath, const std::string &sArgs, bool bWait);
-std::wstring GetWin32ErrMsg(DWORD nErrCode = (DWORD)-1);
+std::tstring GetWin32ErrMsg(DWORD nErrCode = (DWORD)-1);
 #endif // #ifdef WIN32
 bool LoadFile(const std::string &sFilePath, std::string &sFileContent);
 bool SaveToFile(const std::string &sFilePath, std::string &sFileContent);

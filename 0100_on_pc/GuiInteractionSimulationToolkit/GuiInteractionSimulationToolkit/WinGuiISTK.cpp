@@ -3,7 +3,7 @@
 #include "TK_Tools.h"
 #include "WinGuiISTK.h"
 
-#define THIS_PROG_BIN_NAME_DEF              L"guiistk"
+#define THIS_PROG_BIN_NAME_DEF              _T("guiistk")
 
 namespace GuiISTk {
 
@@ -73,7 +73,7 @@ WinGuiISTK::WinGuiISTK() : m_sExeFileName(), m_sEnvVarScreenPictureFilePath()
 
     ::GetModuleBaseName(::GetCurrentProcess(), NULL, szProcessName, sizeof(szProcessName));
     m_sExeFileName = szProcessName;
-    int nPos = m_sExeFileName.ReverseFind(L'.');
+    int nPos = m_sExeFileName.ReverseFind(_T('.'));
     if (nPos != -1) {
         m_sExeFileName = m_sExeFileName.Left(nPos);
     }
@@ -92,14 +92,14 @@ void WinGuiISTK::Delay(unsigned int milliSecond)
 {
     LOG_GEN_PRINTF("milliSecond=%u\n", milliSecond);
 
-    Sleep(milliSecond);
+    ::Sleep(milliSecond);
 }
 
 BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
     Arguments_getMatchedWindows_EnumWindowsProc &arguments = *(Arguments_getMatchedWindows_EnumWindowsProc *)lParam;
     WinGuiISTK *thiz = arguments.thiz;
-    CString sTitle(TK_Tools::str2wstr(arguments.screenInfo.title).c_str());
+    CString sTitle(TK_Tools::str2tstr(arguments.screenInfo.title).c_str());
     CWnd window;
     CString sWindowText;
     bool bMatched = false;
@@ -132,8 +132,8 @@ BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lP
         }
 
         LOG_GEN_PRINTF("sWindowText=\"%s\", exe=\"%s\"\n", 
-            TK_Tools::wstr2str(sWindowText.GetString()).c_str(),
-            TK_Tools::wstr2str(szProcessName).c_str()
+            TK_Tools::tstr2str(sWindowText.GetString()).c_str(),
+            TK_Tools::tstr2str(szProcessName).c_str()
         );
         arguments.winHandles.push_back(hwnd);
         if (!arguments.screenInfo.allMatched) {
@@ -461,7 +461,7 @@ bool WinGuiISTK::wndGetFgWnd(ScreenInfo &screenInfo)
 
     if (bSuc) {
         CWnd::FromHandle(hWnd)->GetWindowText(sWindowText);
-        screenInfo.title = TK_Tools::wstr2str((LPCTSTR)sWindowText);
+        screenInfo.title = TK_Tools::tstr2str((LPCTSTR)sWindowText);
     }
 
     return bSuc;
@@ -485,7 +485,7 @@ bool WinGuiISTK::wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point)
 
     if (bSuc) {
         CWnd::FromHandle(hWnd)->GetWindowText(sWindowText);
-        screenInfo.title = TK_Tools::wstr2str((LPCTSTR)sWindowText);
+        screenInfo.title = TK_Tools::tstr2str((LPCTSTR)sWindowText);
     }
 
     return bSuc;
