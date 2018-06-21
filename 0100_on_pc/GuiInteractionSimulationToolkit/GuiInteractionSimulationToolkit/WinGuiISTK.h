@@ -51,9 +51,9 @@ public:
     virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index);
     virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
     virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
-    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index);
-    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Rect &searchRect);
-    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Point &searchBeginningPoint);
+    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects);
+    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, const Rect &searchRect);
+    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, const Point &searchBeginningPoint);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);

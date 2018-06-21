@@ -52,6 +52,9 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sImagePath2[,...]]>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindAllRects <sImagePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindAllRects <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindAllRects <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
@@ -1288,6 +1291,157 @@ int CommandHandler_imgFindRect(const std::vector<Argument> &arguments, GuiISTk::
     }
 }
 
+int CommandHandler_imgFindAllRects1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    GuiISTk::Image image;
+    std::vector<GuiISTk::Rect> rects;
+    int index = -1;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 3) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgFindAllRects1");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        image.setPath(arguments[2].str);
+    }
+
+    if (nRet == 0) {
+        if (!TK_Tools::FileExists(image.getPath())) {
+            FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgFindAllRects1", image.getPath().c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (toolkit.imgFindAllRects(image, rects)) {
+            for (i = 0; i < rects.size(); ++i) {
+                FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+            }
+        } else {
+            nRet = 1;
+            FPRINTF(stderr, "not found!\n");
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_imgFindAllRects2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    GuiISTk::Image image;
+    std::vector<GuiISTk::Rect> rects;
+    GuiISTk::Rect searchRect;
+    int index = -1;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 4) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgFindAllRects2");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        image.setPath(arguments[2].str);
+    }
+
+    if (nRet == 0) {
+        if (!TK_Tools::FileExists(image.getPath())) {
+            FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgFindAllRects2", image.getPath().c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseRectFromStr(searchRect, arguments[3].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgFindAllRects2", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (toolkit.imgFindAllRects(image, rects, searchRect)) {
+            for (i = 0; i < rects.size(); ++i) {
+                FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+            }
+        } else {
+            nRet = 1;
+            FPRINTF(stderr, "not found!\n");
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_imgFindAllRects3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    GuiISTk::Image image;
+    std::vector<GuiISTk::Rect> rects;
+    GuiISTk::Point searchBeginningPoint;
+    int index = -1;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 4) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgFindAllRects3");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        image.setPath(arguments[2].str);
+    }
+
+    if (nRet == 0) {
+        if (!TK_Tools::FileExists(image.getPath())) {
+            FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgFindAllRects3", image.getPath().c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parsePointFromStr(searchBeginningPoint, arguments[3].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgFindAllRects3", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (toolkit.imgFindAllRects(image, rects, searchBeginningPoint)) {
+            for (i = 0; i < rects.size(); ++i) {
+                FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+            }
+        } else {
+            nRet = 1;
+            FPRINTF(stderr, "not found!\n");
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_imgFindAllRects(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    if (arguments.size() < 4) {
+        return CommandHandler_imgFindAllRects1(arguments, toolkit);
+    } else {
+        if (arguments[3].strArray.size() == 4) {
+            return CommandHandler_imgFindAllRects2(arguments, toolkit);
+        } else if (arguments[3].strArray.size() == 2) {
+            return CommandHandler_imgFindAllRects3(arguments, toolkit);
+        } else {
+            return CommandHandler_imgFindAllRects1(arguments, toolkit);
+        }
+    }
+}
+
 int CommandHandler_imgWaitShown1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
@@ -1991,6 +2145,7 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(mseRDrag),
         COMMAND_HANDLER_PAIR(mseScroll),
         COMMAND_HANDLER_PAIR(imgFindRect),
+        COMMAND_HANDLER_PAIR(imgFindAllRects),
         COMMAND_HANDLER_PAIR(imgWaitShown),
     };
     unsigned int commandMapCount = sizeof(commandMap) / sizeof(commandMap[0]);

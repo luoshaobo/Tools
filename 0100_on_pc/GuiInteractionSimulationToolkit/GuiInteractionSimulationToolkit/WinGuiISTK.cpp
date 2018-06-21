@@ -1259,26 +1259,71 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
     return bSuc;
 }
 
-bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index)
+bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects)
 {
     bool bSuc = true;
+    std::vector<Image> images;
+    int index;
 
+    LOG_GEN_PRINTF("image=\"%s\"\n", 
+        image.getPath().c_str()
+    );
+
+    if (bSuc) {
+        images.push_back(image);
+    }
+
+    if (bSuc) {
+        if (!imgFindRect_impl(images, rects, index, true)) {
+            bSuc = false;
+        }
+    }
 
     return bSuc;
 }
 
-bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Rect &searchRect)
+bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, const Rect &searchRect)
 {
     bool bSuc = true;
+    std::vector<Image> images;
+    int index;
 
+    LOG_GEN_PRINTF("image=\"%s\"\n", 
+        image.getPath().c_str()
+    );
+
+    if (bSuc) {
+        images.push_back(image);
+    }
+
+    if (bSuc) {
+        if (!imgFindRect_impl(images, rects, index, searchRect, true)) {
+            bSuc = false;
+        }
+    }
 
     return bSuc;
 }
 
-bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Point &searchBeginningPoint)
+bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, const Point &searchBeginningPoint)
 {
     bool bSuc = true;
+    std::vector<Image> images;
+    int index;
 
+    LOG_GEN_PRINTF("image=\"%s\"\n", 
+        image.getPath().c_str()
+    );
+
+    if (bSuc) {
+        images.push_back(image);
+    }
+
+    if (bSuc) {
+        if (!imgFindRect_impl(images, rects, index, searchBeginningPoint, true)) {
+            bSuc = false;
+        }
+    }
 
     return bSuc;
 }
