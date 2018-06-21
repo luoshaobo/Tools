@@ -872,8 +872,8 @@ void WinGuiISTK::mseClick(const Point &point)
 
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTUP, 0, 0, 0, NULL);
 }
 
 void WinGuiISTK::mseDClick(const Point &point)
@@ -882,11 +882,11 @@ void WinGuiISTK::mseDClick(const Point &point)
 
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTUP, 0, 0, 0, NULL);
 
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTUP, 0, 0, 0, NULL);
 }
 
 void WinGuiISTK::mseDrag(const Point &srcPoint, const Point &dstPoint)
@@ -894,9 +894,9 @@ void WinGuiISTK::mseDrag(const Point &srcPoint, const Point &dstPoint)
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, NULL);
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_LEFTUP, 0, 0, 0, NULL);
 }
 
 void WinGuiISTK::mseRClick(const Point &point)
@@ -904,8 +904,8 @@ void WinGuiISTK::mseRClick(const Point &point)
     LOG_GEN_PRINTF("point=(%d,%d)\n", point.x, point.y);
 
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTUP, 0, 0, 0, NULL);
 }
 
 void WinGuiISTK::mseDRClick(const Point &point)
@@ -914,11 +914,11 @@ void WinGuiISTK::mseDRClick(const Point &point)
 
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
 
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTUP, 0, 0, 0, NULL);
 
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(point.x), sy(point.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(point.x), sy(point.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTUP, 0, 0, 0, NULL);
 }
 
 void WinGuiISTK::mseRDrag(const Point &srcPoint, const Point &dstPoint)
@@ -926,15 +926,16 @@ void WinGuiISTK::mseRDrag(const Point &srcPoint, const Point &dstPoint)
     LOG_GEN_PRINTF("srcPoint=(%d,%d), destPoint=(%d,%d)\n", srcPoint.x, srcPoint.y, dstPoint.x, dstPoint.y);
 
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN, sx(srcPoint.x), sy(srcPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, NULL);
     SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
-    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTUP, sx(dstPoint.x), sy(dstPoint.y), 0, NULL);
+    SendMouseEvent(MOUSEEVENTF_RIGHTUP, 0, 0, 0, NULL);
 }
 
 void WinGuiISTK::mseScroll(const Point &point, int steps)
 {
     LOG_GEN_PRINTF("point=(%d,%d), steps=%d\n", point.x, point.y, steps);
 
+    SendMouseEvent(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, sx(point.x), sy(point.y), 0, NULL);
     SendMouseEvent(MOUSEEVENTF_WHEEL, 0, 0, steps, NULL);
 }
 
