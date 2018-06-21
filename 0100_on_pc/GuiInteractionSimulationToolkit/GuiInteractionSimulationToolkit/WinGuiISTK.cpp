@@ -1499,6 +1499,30 @@ bool WinGuiISTK::fixBitmapAlphaBits(const BITMAP &bitmapInfo)
 bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap)
 {
     bool bSuc = true;
+    std::vector<Rect> matchedRects;
+
+    if (bSuc) {
+        if (!findBitmapInBitmap(matchedRects, searchRect, partBitmap, wholeBitmap, false)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (matchedRects.size() != 1) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        matchedRect = matchedRects[0];
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::findBitmapInBitmap(std::vector<Rect> &matchedRects, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap, bool findAll)
+{
+    bool bSuc = true;
     BITMAP partBitmapInfo;
     BITMAP wholeBitmapInfo;
     Rect searchRectNormalized = searchRect;
@@ -1557,7 +1581,7 @@ bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, C
     }
 
     if (bSuc) {
-        bSuc = findBitmapInBitmap_unsafe(matchedRect, searchRectNormalized, partBitmapInfo, wholeBitmapInfo);
+        bSuc = findBitmapInBitmap_unsafe(matchedRects, searchRectNormalized, partBitmapInfo, wholeBitmapInfo, findAll);
     } 
     
     if (partBitmapInfo.bmBits != NULL) {
@@ -1573,17 +1597,17 @@ bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, C
     return bSuc;
 }
 
-bool WinGuiISTK::findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo)
+bool WinGuiISTK::findBitmapInBitmap_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll)
 {
     bool bSuc = true;
 
     if (bSuc) {
         if (partBitmapInfo.bmBitsPixel == 32 && wholeBitmapInfo.bmBitsPixel == 32) {
-            bSuc = findBitmapInBitmap_bytes_unsafe<4>(matchedRect, searchRect, partBitmapInfo, wholeBitmapInfo);
+            bSuc = findBitmapInBitmap_bytes_unsafe<4>(matchedRects, searchRect, partBitmapInfo, wholeBitmapInfo, findAll);
         } else if (partBitmapInfo.bmBitsPixel == 24 && wholeBitmapInfo.bmBitsPixel == 24) {
-            bSuc = findBitmapInBitmap_bytes_unsafe<3>(matchedRect, searchRect, partBitmapInfo, wholeBitmapInfo);
-        } else if (partBitmapInfo.bmBitsPixel == 16 && wholeBitmapInfo.bmBitsPixel == 24) {
-            bSuc = findBitmapInBitmap_bytes_unsafe<2>(matchedRect, searchRect, partBitmapInfo, wholeBitmapInfo);
+            bSuc = findBitmapInBitmap_bytes_unsafe<3>(matchedRects, searchRect, partBitmapInfo, wholeBitmapInfo, findAll);
+        } else if (partBitmapInfo.bmBitsPixel == 16 && wholeBitmapInfo.bmBitsPixel == 16) {
+            bSuc = findBitmapInBitmap_bytes_unsafe<2>(matchedRects, searchRect, partBitmapInfo, wholeBitmapInfo, findAll);
         } else {
             bSuc = false;
         }
@@ -1593,7 +1617,7 @@ bool WinGuiISTK::findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& search
 }
 
 template <unsigned int BYTES_PER_PIXEL>
-bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo)
+bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll)
 {
     bool bSuc = false;
     unsigned int bytesPerPixel = BYTES_PER_PIXEL;
@@ -1601,6 +1625,9 @@ bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& 
     unsigned int x, y;
     unsigned char i;
     unsigned char *pSrc, *pDst;
+    Rect matchedRect;
+
+    matchedRects.clear();
 
     for (y = searchRect.y; y <= searchRect.y + searchRect.height - partBitmapInfo.bmHeight; ++y) {
         for (x = searchRect.x; x <= searchRect.x + searchRect.width - partBitmapInfo.bmWidth; ++x) {
@@ -1626,11 +1653,17 @@ bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& 
                     matchedRect.y = y;
                     matchedRect.width = partBitmapInfo.bmWidth;
                     matchedRect.height = partBitmapInfo.bmHeight;
+                    matchedRects.push_back(matchedRect);
+
+                    if (!findAll) {
+                        goto END;
+                    }
                 }
             }
         }
     }
 
+END:
     return bSuc;
 }
 

@@ -59,9 +59,9 @@ private:
     CBitmap *getDesktopWindowAsBitmap();
     CBitmap *loadImageAsBitmap(const std::string &imageFilePath);
     bool findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap);
-    bool findBitmapInBitmap_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
-    template <unsigned int BYTES_PER_PIXEL>
-    bool findBitmapInBitmap_bytes_unsafe(Rect &matchedRect, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo);
+    bool findBitmapInBitmap(std::vector<Rect> &matchedRects, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap, bool findAll);
+    bool findBitmapInBitmap_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll);
+    template <unsigned int BYTES_PER_PIXEL> bool findBitmapInBitmap_bytes_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll);
     bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index);
     bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
     bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
