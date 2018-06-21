@@ -152,6 +152,10 @@ public:
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME) = 0;
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, const Rect &searchRect, unsigned int timeout = INFINITE_TIME) = 0;
+    virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME) = 0;
+
 };
 
 } // namespace GuiISTk {

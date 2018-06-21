@@ -58,6 +58,9 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
 
     FPRINTF(stdout, "Note:\n");
     FPRINTF(stdout, "1) The environment variables REMOTE_SERVER_IP and REMOTE_SERVER_PORT can be set to run in remote client mode.\n");
@@ -1620,6 +1623,187 @@ int CommandHandler_imgWaitShown(const std::vector<Argument> &arguments, GuiISTk:
     }
 }
 
+int CommandHandler_imgWaitAllShown1(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::vector<GuiISTk::Image> images;
+    unsigned int timeout = GuiISTk::INFINITE_TIME;
+    std::vector<GuiISTk::Rect> rects;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 3) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgWaitAllShown1");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgWaitAllShown1", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
+        }
+    }
+
+    if (nRet == 0) {
+        if (arguments.size() >= 4) {
+            timeout = (unsigned int)TK_Tools::StrToUL(arguments[3].str);
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.imgWaitAllShown(images, rects, timeout)) {
+            nRet = 1;
+        } else {
+            for (i = 0; i < rects.size(); ++i) {
+                FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+            }
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_imgWaitAllShown2(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::vector<GuiISTk::Image> images;
+    GuiISTk::Rect searchRect;
+    unsigned int timeout = GuiISTk::INFINITE_TIME;
+    std::vector<GuiISTk::Rect> rects;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 4) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgWaitAllShown2");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgWaitAllShown2", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseRectFromStr(searchRect, arguments[3].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgWaitAllShown2", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (arguments.size() >= 5) {
+            timeout = (unsigned int)TK_Tools::StrToUL(arguments[4].str);
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.imgWaitAllShown(images, rects, searchRect, timeout)) {
+            nRet = 1;
+        } else {
+            for (i = 0; i < rects.size(); ++i) {
+                FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+            }
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_imgWaitAllShown3(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::vector<GuiISTk::Image> images;
+    GuiISTk::Point searchBeginningPoint;
+    unsigned int timeout = GuiISTk::INFINITE_TIME;
+    std::vector<GuiISTk::Rect> rects;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 4) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "imgWaitAllShown3");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseImagesFromStr(images, arguments[2].str)) {
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < images.size(); ++i) {
+            if (!TK_Tools::FileExists(images[i].getPath())) {
+                FPRINTF(stderr, "*** Error: %s: the file does not exist: %s\n", "imgWaitAllShown3", images[i].getPath().c_str());
+                nRet = 1;
+                break;
+            }
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parsePointFromStr(searchBeginningPoint, arguments[3].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "imgWaitAllShown3", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (arguments.size() >= 5) {
+            timeout = (unsigned int)TK_Tools::StrToUL(arguments[4].str);
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.imgWaitAllShown(images, rects, searchBeginningPoint, timeout)) {
+            nRet = 1;
+        } else {
+            for (i = 0; i < rects.size(); ++i) {
+                FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
+            }
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_imgWaitAllShown(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    if (arguments.size() < 4) {
+        return CommandHandler_imgWaitAllShown1(arguments, toolkit);
+    } else {
+        if (arguments[3].strArray.size() == 4) {
+            return CommandHandler_imgWaitAllShown2(arguments, toolkit);
+        } else if (arguments[3].strArray.size() == 2) {
+            return CommandHandler_imgWaitAllShown3(arguments, toolkit);
+        } else {
+            return CommandHandler_imgWaitAllShown1(arguments, toolkit);
+        }
+    }
+}
+
 int CommandHandler_wndCount(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
@@ -2147,6 +2331,7 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(imgFindRect),
         COMMAND_HANDLER_PAIR(imgFindAllRects),
         COMMAND_HANDLER_PAIR(imgWaitShown),
+        COMMAND_HANDLER_PAIR(imgWaitAllShown),
     };
     unsigned int commandMapCount = sizeof(commandMap) / sizeof(commandMap[0]);
     unsigned int i;
