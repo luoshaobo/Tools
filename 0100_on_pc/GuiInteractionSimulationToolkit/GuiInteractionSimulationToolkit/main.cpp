@@ -49,18 +49,18 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s mseDRClick <x,y>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s mseRDrag <xSrc,ySrc> <xDst,yDst>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s mseScroll <x,y> <nSteps>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sImagePath2[,...]]>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sOrImagePath2[,...]]>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sOrImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgFindRect <sImagePath1[,sOrImagePath2[,...]]> <xBeginning,yBeginning>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgFindAllRects <sImagePath>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgFindAllRects <sImagePath> <xRegion,yRegion,wRegion,hRegion>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s imgFindAllRects <sImagePath> <xBeginning,yBeginning>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sOrImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sOrImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitShown <sImagePath1[,sOrImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sAndImagePath2[,...]]> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sAndImagePath2[,...]]> <xRegion,yRegion,wRegion,hRegion> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s imgWaitAllShown <sImagePath1[,sAndImagePath2[,...]]> <xBeginning,yBeginning> [<nTimeoutMilliseconds>=-1]\n", basename(argv[0]));
 
     FPRINTF(stdout, "Note:\n");
     FPRINTF(stdout, "1) The environment variables REMOTE_SERVER_IP and REMOTE_SERVER_PORT can be set to run in remote client mode.\n");
