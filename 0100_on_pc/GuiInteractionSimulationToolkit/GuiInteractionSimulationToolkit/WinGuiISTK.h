@@ -51,6 +51,9 @@ public:
     virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index);
     virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
     virtual bool imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
+    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index);
+    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Rect &searchRect);
+    virtual bool imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Point &searchBeginningPoint);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
@@ -58,13 +61,12 @@ public:
 private:
     CBitmap *getDesktopWindowAsBitmap();
     CBitmap *loadImageAsBitmap(const std::string &imageFilePath);
-    bool findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap);
     bool findBitmapInBitmap(std::vector<Rect> &matchedRects, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap, bool findAll);
     bool findBitmapInBitmap_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll);
     template <unsigned int BYTES_PER_PIXEL> bool findBitmapInBitmap_bytes_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll);
-    bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index);
-    bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect);
-    bool imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint);
+    bool imgFindRect_impl(const std::vector<Image> &images, std::vector<Rect> &rects, int &index, bool findAll);
+    bool imgFindRect_impl(const std::vector<Image> &images, std::vector<Rect> &rects, int &index, const Rect &searchRect, bool findAll);
+    bool imgFindRect_impl(const std::vector<Image> &images, std::vector<Rect> &rects, int &index, const Point &searchBeginningPoint, bool findAll);
     bool fixBitmapAlphaBits(const BITMAP &bitmapInfo);
 
     struct Arguments_getMatchedWindows_EnumWindowsProc {

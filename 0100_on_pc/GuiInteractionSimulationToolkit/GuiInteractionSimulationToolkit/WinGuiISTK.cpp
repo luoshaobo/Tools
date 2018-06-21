@@ -955,14 +955,33 @@ std::string WinGuiISTK::getImagesPaths(const std::vector<Image> &images)
 
 bool WinGuiISTK::imgFindRect(const std::vector<Image> &images, Rect &rect, int &index)
 {
+    bool bSuc = true;
+    std::vector<Rect> rects;
+
     LOG_GEN_PRINTF("images=\"%s\"\n", 
         getImagesPaths(images).c_str()
     );
 
-    return imgFindRect_impl(images, rect, index);
+    if (bSuc) {
+        if (!imgFindRect_impl(images, rects, index, false)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (rects.size() != 1) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        rect = rects[0];
+    }
+
+    return bSuc;
 }
 
-bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index)
+bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<Rect> &rects, int &index, bool findAll)
 {
     bool bSuc = true;
     CBitmap *pDesktopWindowBitmap = NULL;
@@ -1007,7 +1026,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, 
                 searchRectNormalized.y = 0;
                 searchRectNormalized.width = wholeBitmapInfo.bmWidth;
                 searchRectNormalized.height = wholeBitmapInfo.bmHeight;
-                bSuc = findBitmapInBitmap(rect, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap);
+                bSuc = findBitmapInBitmap(rects, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap, findAll);
             }
 
             if (pImageBitmap != NULL) {
@@ -1038,15 +1057,34 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, 
 
 bool WinGuiISTK::imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect)
 {
+    bool bSuc = true;
+    std::vector<Rect> rects;
+
     LOG_GEN_PRINTF("images=\"%s\", searchRect=(%d,%d,%u,%u)\n", 
         getImagesPaths(images).c_str(), 
         searchRect.x, searchRect.y, searchRect.width, searchRect.height
     );
 
-    return imgFindRect_impl(images, rect, index, searchRect);
+    if (bSuc) {
+        if (!imgFindRect_impl(images, rects, index, searchRect, false)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (rects.size() != 1) {
+            bSuc = false;
+        }
+    }
+    
+    if (bSuc) {
+        rect = rects[0];
+    }
+
+    return bSuc;
 }
 
-bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect)
+bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<Rect> &rects, int &index, const Rect &searchRect, bool findAll)
 {
     bool bSuc = true;
     CBitmap *pDesktopWindowBitmap = NULL;
@@ -1088,7 +1126,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, 
 
             if (bSuc) {
                 searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
-                bSuc = findBitmapInBitmap(rect, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap);
+                bSuc = findBitmapInBitmap(rects, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap, findAll);
             }
 
             if (pImageBitmap != NULL) {
@@ -1119,16 +1157,34 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, 
 
 bool WinGuiISTK::imgFindRect(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint)
 {
+    bool bSuc = true;
+    std::vector<Rect> rects;
 
     LOG_GEN_PRINTF("images=\"%s\", searchBeginningPoint=(%d,%d)\n", 
         getImagesPaths(images).c_str(), 
         searchBeginningPoint.x, searchBeginningPoint.y
     );
 
-    return imgFindRect_impl(images, rect, index, searchBeginningPoint);
+    if (bSuc) {
+        if (!imgFindRect_impl(images, rects, index, searchBeginningPoint, false)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (rects.size() != 1) {
+            bSuc = false;
+        }
+    }
+    
+    if (bSuc) {
+        rect = rects[0];
+    }
+
+    return bSuc;
 }
 
-bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint)
+bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<Rect> &rects, int &index, const Point &searchBeginningPoint, bool findAll)
 {
     bool bSuc = true;
     CBitmap *pDesktopWindowBitmap = NULL;
@@ -1174,7 +1230,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, 
                 searchRectNormalized.width = wholeBitmapInfo.bmWidth;
                 searchRectNormalized.height = wholeBitmapInfo.bmHeight;
                 searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
-                bSuc = findBitmapInBitmap(rect, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap);
+                bSuc = findBitmapInBitmap(rects, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap, findAll);
             }
 
             if (pImageBitmap != NULL) {
@@ -1203,10 +1259,35 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, Rect &rect, 
     return bSuc;
 }
 
+bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index)
+{
+    bool bSuc = true;
+
+
+    return bSuc;
+}
+
+bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Rect &searchRect)
+{
+    bool bSuc = true;
+
+
+    return bSuc;
+}
+
+bool WinGuiISTK::imgFindAllRects(const Image &image, std::vector<Rect> &rects, int &index, const Point &searchBeginningPoint)
+{
+    bool bSuc = true;
+
+
+    return bSuc;
+}
+
 bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout /*= INFINITE_TIME*/)
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
+    std::vector<Rect> rects;
 
     LOG_GEN_PRINTF("images=\"%s\", timeout=%u\n", 
         getImagesPaths(images).c_str(), 
@@ -1218,9 +1299,12 @@ bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int 
             break;
         }
 
-        bSuc = imgFindRect_impl(images, rect, index);
+        bSuc = imgFindRect_impl(images, rects, index, false);
         if (bSuc) {
-            break;
+            if (rects.size() == 1) {
+                rect = rects[0];
+                break;
+            }
         }
 
         elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
@@ -1234,6 +1318,7 @@ bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int 
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
+    std::vector<Rect> rects;
 
     LOG_GEN_PRINTF("images=\"%s\", searchRect=(%d,%d,%u,%u), timeout=%u\n", 
         getImagesPaths(images).c_str(), 
@@ -1246,9 +1331,12 @@ bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int 
             break;
         }
 
-        bSuc = imgFindRect_impl(images, rect, index, searchRect);
+        bSuc = imgFindRect_impl(images, rects, index, searchRect, false);
         if (bSuc) {
-            break;
+            if (rects.size() == 1) {
+                rect = rects[0];
+                break;
+            }
         }
 
         elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
@@ -1262,6 +1350,7 @@ bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int 
 {
     bool bSuc = false;
     unsigned int elapsedTime = 0;
+    std::vector<Rect> rects;
 
     LOG_GEN_PRINTF("images=\"%s\", searchBeginningPoint=(%d,%d), timeout=%u\n", 
         getImagesPaths(images).c_str(), 
@@ -1274,9 +1363,12 @@ bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int 
             break;
         }
 
-        bSuc = imgFindRect_impl(images, rect, index, searchBeginningPoint);
+        bSuc = imgFindRect_impl(images, rects, index, searchBeginningPoint, false);
         if (bSuc) {
-            break;
+            if (rects.size() == 1) {
+                rect = rects[0];
+                break;
+            }
         }
 
         elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
@@ -1491,30 +1583,6 @@ bool WinGuiISTK::fixBitmapAlphaBits(const BITMAP &bitmapInfo)
                 pColor++;
             }
         }
-    }
-
-    return bSuc;
-}
-
-bool WinGuiISTK::findBitmapInBitmap(Rect &matchedRect, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap)
-{
-    bool bSuc = true;
-    std::vector<Rect> matchedRects;
-
-    if (bSuc) {
-        if (!findBitmapInBitmap(matchedRects, searchRect, partBitmap, wholeBitmap, false)) {
-            bSuc = false;
-        }
-    }
-
-    if (bSuc) {
-        if (matchedRects.size() != 1) {
-            bSuc = false;
-        }
-    }
-
-    if (bSuc) {
-        matchedRect = matchedRects[0];
     }
 
     return bSuc;
