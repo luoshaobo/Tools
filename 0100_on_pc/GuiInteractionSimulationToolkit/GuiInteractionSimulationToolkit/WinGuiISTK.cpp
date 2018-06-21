@@ -1884,7 +1884,7 @@ bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(std::vector<Rect> &matchedRects
 {
     bool bSuc = false;
     unsigned int bytesPerPixel = BYTES_PER_PIXEL;
-    unsigned int bytesPerLine = bytesPerPixel * partBitmapInfo.bmWidth;
+    unsigned int partBitmapBytesPerLine = bytesPerPixel * partBitmapInfo.bmWidth;
     unsigned int x, y;
     unsigned char i;
     unsigned char *pSrc, *pDst;
@@ -1896,14 +1896,14 @@ bool WinGuiISTK::findBitmapInBitmap_bytes_unsafe(std::vector<Rect> &matchedRects
         for (x = searchRect.x; x <= searchRect.x + searchRect.width - partBitmapInfo.bmWidth; ++x) {
             pSrc = (unsigned char *)partBitmapInfo.bmBits;
             pDst = (unsigned char *)wholeBitmapInfo.bmBits + wholeBitmapInfo.bmWidthBytes * y + bytesPerPixel * x;
-            if (memcmp(pDst, pSrc, bytesPerLine) != 0) {
+            if (memcmp(pDst, pSrc, partBitmapBytesPerLine) != 0) {
                 continue;
             } else {
                 bool matched = true;
                 for (i = 1; i < partBitmapInfo.bmHeight; ++i) {
                     pSrc += partBitmapInfo.bmWidthBytes;
                     pDst += wholeBitmapInfo.bmWidthBytes;
-                    if (memcmp(pDst, pSrc, bytesPerLine) != 0) {
+                    if (memcmp(pDst, pSrc, partBitmapBytesPerLine) != 0) {
                         matched = false;
                         break;
                     }
