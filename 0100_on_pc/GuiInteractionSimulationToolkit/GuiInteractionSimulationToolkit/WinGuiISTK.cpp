@@ -1064,7 +1064,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 bSuc = false;
             }
         } else {
-            pDesktopWindowBitmap = getVirtualDesktopWindowAsBitmap(virtualDesktopRect);
+            pDesktopWindowBitmap = getVirtualDesktopAsBitmap(virtualDesktopRect);
             if (pDesktopWindowBitmap == NULL) {
                 bSuc = false;
             }
@@ -1175,7 +1175,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 bSuc = false;
             }
         } else {
-            pDesktopWindowBitmap = getVirtualDesktopWindowAsBitmap(virtualDesktopRect);
+            pDesktopWindowBitmap = getVirtualDesktopAsBitmap(virtualDesktopRect);
             if (pDesktopWindowBitmap == NULL) {
                 bSuc = false;
             }
@@ -1283,7 +1283,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 bSuc = false;
             }
         } else {
-            pDesktopWindowBitmap = getVirtualDesktopWindowAsBitmap(virtualDesktopRect);
+            pDesktopWindowBitmap = getVirtualDesktopAsBitmap(virtualDesktopRect);
             if (pDesktopWindowBitmap == NULL) {
                 bSuc = false;
             }
@@ -1680,7 +1680,7 @@ DWORD WinGuiISTK::sy(DWORD y)
     return result;
 }
 
-CBitmap *WinGuiISTK::getDesktopWindowAsBitmap()
+CBitmap *WinGuiISTK::getPrimaryDesktopAsBitmap()
 {
     bool bSuc = true;
     CBitmap *pBitmap = NULL;
@@ -1748,7 +1748,7 @@ CBitmap *WinGuiISTK::getDesktopWindowAsBitmap()
     return pBitmap;
 }
 
-CBitmap *WinGuiISTK::getVirtualDesktopWindowAsBitmap(Rect &virtualDesktopRect)
+CBitmap *WinGuiISTK::getVirtualDesktopAsBitmap(Rect &virtualDesktopRect)
 {
     bool bSuc = true;
     CBitmap *pBitmap = NULL;

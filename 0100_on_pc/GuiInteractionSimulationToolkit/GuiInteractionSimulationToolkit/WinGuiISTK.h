@@ -66,8 +66,8 @@ public:
     virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
 
 private:
-    CBitmap *getDesktopWindowAsBitmap();
-    CBitmap *getVirtualDesktopWindowAsBitmap(Rect &virtualDesktopRect);
+    CBitmap *getPrimaryDesktopAsBitmap();
+    CBitmap *getVirtualDesktopAsBitmap(Rect &virtualDesktopRect);
     CBitmap *loadImageAsBitmap(const std::string &imageFilePath);
     bool findBitmapInBitmap(std::vector<Rect> &matchedRects, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap, bool findAll);
     bool findBitmapInBitmap_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll);
