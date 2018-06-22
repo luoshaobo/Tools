@@ -31,7 +31,7 @@ struct Rect
     Rect(int a_x, int a_y, int a_width, int a_height) : x(a_x), y(a_y), width(a_width), height(a_height) {}
     Rect &operator =(const Rect &other) { x = other.x; y = other.y; width = other.width; height = other.height; return *this; }
 
-    void intersect(const Rect &other)
+    void Intersect(const Rect &other)
     {
         int nTwiceCenterXDelta = (x + (x + width)) - (other.x + (other.x + other.width));
         nTwiceCenterXDelta = nTwiceCenterXDelta >= 0 ? nTwiceCenterXDelta : -nTwiceCenterXDelta;
@@ -56,6 +56,26 @@ struct Rect
             width = 0;
             height = 0;
         }
+    }
+
+    void Union(const Rect &other)
+    {
+        int resultX1, resultY1, resultX2, resultY2;
+        resultX1 = x < other.x ? x : other.x;
+        resultY1 = y < other.y ? y : other.y;
+        resultX2 = (x + width) > (other.x + other.width) ? (x + width) : (other.x + other.width);
+        resultY2 = (y + height) > (other.y + other.height) ? (y + height) : (other.y + other.height);
+
+        x = resultX1;
+        y = resultY1;
+        width = resultX2 - resultX1;
+        height = resultY2 - resultY1;
+    }
+
+    void Offset(int dx, int dy)
+    {
+        x += dx;
+        y += dy;
     }
 
     int x;
@@ -114,13 +134,17 @@ public:
     virtual bool wndHide(const ScreenInfo &screenInfo) = 0;
     virtual bool wndClose(const ScreenInfo &screenInfo) = 0;
     virtual bool wndMove(const ScreenInfo &screenInfo, const Point &point) = 0;
-    virtual bool wndResize(const ScreenInfo &screenInfo, const Rect &rect) = 0;
+    virtual bool wndSetSize(const ScreenInfo &screenInfo, const Rect &rect) = 0;
+    virtual bool wndGetSize(const ScreenInfo &screenInfo, std::vector<Rect> &rects) = 0;
     virtual bool wndSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder) = 0;
     virtual bool wndSaveAsPic(const ScreenInfo &screenInfo, const std::string &sPictureFilePath) = 0;
-    virtual bool wndSaveScreenAsPic(const std::string &sPictureFilePath) = 0;
-    virtual void wndGetScreenSize(Size &size) = 0;
     virtual bool wndGetFgWnd(ScreenInfo &screenInfo) = 0;
     virtual bool wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point) = 0;
+
+    virtual bool dspSavePrimaryAsPic(const std::string &sPictureFilePath) = 0;
+    virtual void dspGetPrimaryRect(Rect &rect) = 0;
+    virtual bool dspSaveVirtualAsPic(const std::string &sPictureFilePath) = 0;
+    virtual void dspGetVirtualRect(Rect &rect) = 0;
 
     virtual bool cbdPutStr(const std::string &s) = 0;
     virtual bool cbdGetStr(std::string &s) = 0;

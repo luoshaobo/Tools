@@ -19,13 +19,17 @@ public:
     virtual bool wndHide(const ScreenInfo &screenInfo);
     virtual bool wndClose(const ScreenInfo &screenInfo);
     virtual bool wndMove(const ScreenInfo &screenInfo, const Point &point);
-    virtual bool wndResize(const ScreenInfo &screenInfo, const Rect &rect);
+    virtual bool wndSetSize(const ScreenInfo &screenInfo, const Rect &rect);
+    virtual bool wndGetSize(const ScreenInfo &screenInfo, std::vector<Rect> &rects);
     virtual bool wndSetZorder(const ScreenInfo &screenInfo, ScreenZorder zorder);
     virtual bool wndSaveAsPic(const ScreenInfo &screenInfo, const std::string &sPictureFilePath);
-    virtual bool wndSaveScreenAsPic(const std::string &sPictureFilePath);
-    virtual void wndGetScreenSize(Size &size);
     virtual bool wndGetFgWnd(ScreenInfo &screenInfo);
     virtual bool wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point);
+
+    virtual bool dspSavePrimaryAsPic(const std::string &sPictureFilePath);
+    virtual void dspGetPrimaryRect(Rect &rect);
+    virtual bool dspSaveVirtualAsPic(const std::string &sPictureFilePath);
+    virtual void dspGetVirtualRect(Rect &rect);
 
     virtual bool cbdPutStr(const std::string &s);
     virtual bool cbdGetStr(std::string &s);
@@ -63,6 +67,7 @@ public:
 
 private:
     CBitmap *getDesktopWindowAsBitmap();
+    CBitmap *getVirtualDesktopWindowAsBitmap(Rect &virtualDesktopRect);
     CBitmap *loadImageAsBitmap(const std::string &imageFilePath);
     bool findBitmapInBitmap(std::vector<Rect> &matchedRects, const Rect& searchRect, CBitmap *partBitmap, CBitmap *wholeBitmap, bool findAll);
     bool findBitmapInBitmap_unsafe(std::vector<Rect> &matchedRects, const Rect& searchRect, const BITMAP &partBitmapInfo, const BITMAP &wholeBitmapInfo, bool findAll);
@@ -82,7 +87,15 @@ private:
     bool getMatchedWindows(std::vector<HWND> &winHandles, const ScreenInfo &screenInfo);
     static BOOL CALLBACK getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
-    bool saveWindowAsPicture(HWND hWnd, const std::string &path);
+    bool getVirtualDesktopRect(CRect &virtualDesktopRect);
+    struct Arguments_getVirtualDesktopRect_MonitorEnumProc {
+        WinGuiISTK *thiz;
+        CRect &virtualDesktopRect;
+    };
+    static BOOL CALLBACK getVirtualDesktopRect_MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
+
+
+    bool saveWindowAsPicture(HWND hWnd, const std::string &path, const CRect *rect = NULL);
     bool getImageGetEncoderFormPath(CLSID &encoderClsId, const std::string &path);
     int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
     bool makeFilePathTemplateByIndex(std::string &pathTemplate, const std::string &path);

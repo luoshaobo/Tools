@@ -49,21 +49,6 @@ VOID SendKeyboardEvent(
     ::SendInput(1, &input, sizeof(INPUT));
 }
 
-#if 0
-void Rect::intersect(const Rect &other)
-{
-    CRect rect1(x, y, x + width, y + height);
-    CRect rect2(other.x, other.y, other.x + other.width, other.y + other.height);
-    CRect resultRect;
-    resultRect.IntersectRect(&rect1, &rect2);
-
-    x = resultRect.left;
-    y = resultRect.top;
-    width = resultRect.Width();
-    height = resultRect.Height();
-}
-#endif // #if 0
-
 WinGuiISTK::WinGuiISTK() : m_sExeFileName(), m_sEnvVarScreenPictureFilePath()
 {
     TCHAR szProcessName[MAX_PATH] = {0};
@@ -294,7 +279,7 @@ bool WinGuiISTK::wndMove(const ScreenInfo &screenInfo, const Point &point)
     return bSuc;
 }
 
-bool WinGuiISTK::wndResize(const ScreenInfo &screenInfo, const Rect &rect)
+bool WinGuiISTK::wndSetSize(const ScreenInfo &screenInfo, const Rect &rect)
 {
     bool bSuc = true;
     std::vector<HWND> winHandles;
@@ -312,6 +297,36 @@ bool WinGuiISTK::wndResize(const ScreenInfo &screenInfo, const Rect &rect)
             hWnd = winHandles[i];
          
             ::SetWindowPos(hWnd, NULL, rect.x, rect.y, rect.width, rect.height, SWP_ASYNCWINDOWPOS|SWP_NOZORDER|SWP_SHOWWINDOW);
+        }
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::wndGetSize(const ScreenInfo &screenInfo, std::vector<Rect> &rects)
+{
+    bool bSuc = true;
+    std::vector<HWND> winHandles;
+    HWND hWnd;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("title=\"%s\", fullMatched=%d, allMatched=%d\n", screenInfo.title.c_str(), (int)screenInfo.fullMatched, (int)screenInfo.allMatched);
+
+    if (bSuc) {
+        bSuc = getMatchedWindows(winHandles, screenInfo);
+    }
+
+    if (bSuc) {
+        for (i = 0; i < winHandles.size(); ++i) {
+            hWnd = winHandles[i];
+         
+            CRect rectTmp;
+            if (!::GetWindowRect(hWnd, (LPRECT)rectTmp)) {
+                bSuc = false;
+                break;
+            }
+
+            rects.push_back(Rect(rectTmp.left, rectTmp.top, rectTmp.Width(), rectTmp.Height()));
         }
     }
 
@@ -402,7 +417,7 @@ bool WinGuiISTK::wndSaveAsPic(const ScreenInfo &screenInfo, const std::string &s
     return bSuc;
 }
 
-bool WinGuiISTK::wndSaveScreenAsPic(const std::string &sPictureFilePath)
+bool WinGuiISTK::dspSavePrimaryAsPic(const std::string &sPictureFilePath)
 {
     bool bSuc = true;
     HWND hWnd;
@@ -419,29 +434,72 @@ bool WinGuiISTK::wndSaveScreenAsPic(const std::string &sPictureFilePath)
     return bSuc;
 }
 
-void WinGuiISTK::wndGetScreenSize(Size &size)
+void WinGuiISTK::dspGetPrimaryRect(Rect &rect)
 {
     bool bSuc = true;
     HWND hWnd = NULL;
-    CRect rect;
+    CRect rectTmp;
 
     LOG_GEN_PRINTF("\n");
 
     if (bSuc) {
-        size.width = 0;
-        size.height = 0;
-    }
-
-    if (bSuc) {
         hWnd = ::GetDesktopWindow();
-        if (!::GetWindowRect(hWnd, (RECT *)rect)) {
+        if (!::GetWindowRect(hWnd, (LPRECT)rectTmp)) {
             bSuc = false;
         }
     }
 
     if (bSuc) {
-        size.width = rect.Width();
-        size.height = rect.Height();
+        rect.x = 0;
+        rect.y = 0;
+        rect.width = rectTmp.Width();
+        rect.height = rectTmp.Height();
+    }
+}
+
+bool WinGuiISTK::dspSaveVirtualAsPic(const std::string &sPictureFilePath)
+{
+    bool bSuc = true;
+    HWND hWnd;
+    CRect virtualDesktopRect;
+
+    LOG_GEN_PRINTF("sPictureFilePath=\"%s\"\n", sPictureFilePath.c_str());
+
+    if (bSuc) {
+        if (!getVirtualDesktopRect(virtualDesktopRect)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        hWnd = ::GetDesktopWindow();
+        if (!saveWindowAsPicture(hWnd, sPictureFilePath, &virtualDesktopRect)) {
+            bSuc = false;
+        }
+    }
+
+    return bSuc;
+}
+
+void WinGuiISTK::dspGetVirtualRect(Rect &rect)
+{
+    bool bSuc = true;
+    HWND hWnd = NULL;
+    CRect virtualDesktopRect;
+
+    LOG_GEN_PRINTF("\n");
+
+    if (bSuc) {
+        if (!getVirtualDesktopRect(virtualDesktopRect)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        rect.x = virtualDesktopRect.left;
+        rect.y = virtualDesktopRect.top;
+        rect.width = virtualDesktopRect.Width();
+        rect.height = virtualDesktopRect.Height();
     }
 }
 
@@ -491,7 +549,7 @@ bool WinGuiISTK::wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point)
     return bSuc;
 }
 
-bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path)
+bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path, const CRect *rect /*= NULL*/)
 {
     bool bSuc = true;
     CLSID encoderClsId;
@@ -506,8 +564,12 @@ bool WinGuiISTK::saveWindowAsPicture(HWND hWnd, const std::string &path)
     }
 
     if (bSuc) {
-        if (!::GetWindowRect(hWnd, (LPRECT)windowRect)) {
-            bSuc = false;
+        if (rect != NULL) {
+            windowRect = *rect;
+        } else {
+            if (!::GetWindowRect(hWnd, (LPRECT)windowRect)) {
+                bSuc = false;
+            }
         }
     }
 
@@ -989,7 +1051,8 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
     CBitmap *pImageBitmap = NULL;
     Rect searchRectNormalized;
     BITMAP wholeBitmapInfo;
-    unsigned int i = 0;
+    unsigned int i, j;
+    Rect virtualDesktopRect;
 
     rects.clear();
     index = -1;
@@ -1001,7 +1064,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 bSuc = false;
             }
         } else {
-            pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+            pDesktopWindowBitmap = getVirtualDesktopWindowAsBitmap(virtualDesktopRect);
             if (pDesktopWindowBitmap == NULL) {
                 bSuc = false;
             }
@@ -1029,6 +1092,12 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 searchRectNormalized.width = wholeBitmapInfo.bmWidth;
                 searchRectNormalized.height = wholeBitmapInfo.bmHeight;
                 bSuc = findBitmapInBitmap(rects, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap, findAll);
+            }
+
+            if (bSuc) {
+                for (j = 0; j < rects.size(); ++j) {
+                    rects[j].Offset(virtualDesktopRect.x, virtualDesktopRect.y);
+                }
             }
 
             if (pImageBitmap != NULL) {
@@ -1093,7 +1162,8 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
     CBitmap *pImageBitmap = NULL;
     BITMAP wholeBitmapInfo;
     Rect searchRectNormalized = searchRect;
-    unsigned int i = 0;
+    unsigned int i, j;
+    Rect virtualDesktopRect;
 
     rects.clear();
     index = -1;
@@ -1105,7 +1175,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 bSuc = false;
             }
         } else {
-            pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+            pDesktopWindowBitmap = getVirtualDesktopWindowAsBitmap(virtualDesktopRect);
             if (pDesktopWindowBitmap == NULL) {
                 bSuc = false;
             }
@@ -1128,8 +1198,14 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
             }
 
             if (bSuc) {
-                searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
+                searchRectNormalized.Intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
                 bSuc = findBitmapInBitmap(rects, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap, findAll);
+            }
+
+            if (bSuc) {
+                for (j = 0; j < rects.size(); ++j) {
+                    rects[j].Offset(virtualDesktopRect.x, virtualDesktopRect.y);
+                }
             }
 
             if (pImageBitmap != NULL) {
@@ -1194,7 +1270,8 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
     CBitmap *pImageBitmap = NULL;
     Rect searchRectNormalized;
     BITMAP wholeBitmapInfo;
-    unsigned int i = 0;
+    unsigned int i, j;
+    Rect virtualDesktopRect;
 
     rects.clear();
     index = -1;
@@ -1206,7 +1283,7 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 bSuc = false;
             }
         } else {
-            pDesktopWindowBitmap = getDesktopWindowAsBitmap();
+            pDesktopWindowBitmap = getVirtualDesktopWindowAsBitmap(virtualDesktopRect);
             if (pDesktopWindowBitmap == NULL) {
                 bSuc = false;
             }
@@ -1233,8 +1310,14 @@ bool WinGuiISTK::imgFindRect_impl(const std::vector<Image> &images, std::vector<
                 searchRectNormalized.y = searchBeginningPoint.y;
                 searchRectNormalized.width = wholeBitmapInfo.bmWidth;
                 searchRectNormalized.height = wholeBitmapInfo.bmHeight;
-                searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
+                searchRectNormalized.Intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
                 bSuc = findBitmapInBitmap(rects, searchRectNormalized, pImageBitmap, pDesktopWindowBitmap, findAll);
+            }
+
+            if (bSuc) {
+                for (j = 0; j < rects.size(); ++j) {
+                    rects[j].Offset(virtualDesktopRect.x, virtualDesktopRect.y);
+                }
             }
 
             if (pImageBitmap != NULL) {
@@ -1665,6 +1748,119 @@ CBitmap *WinGuiISTK::getDesktopWindowAsBitmap()
     return pBitmap;
 }
 
+CBitmap *WinGuiISTK::getVirtualDesktopWindowAsBitmap(Rect &virtualDesktopRect)
+{
+    bool bSuc = true;
+    CBitmap *pBitmap = NULL;
+    CWnd* pDesktopWnd = NULL;
+    CDC *pDesktopDC = NULL;
+    CRect desktopWndRect;
+    CDC bitmapDC;
+    CBitmap* pOldBitmap = NULL;
+
+    if (bSuc) {
+        pDesktopWnd = CWnd::GetDesktopWindow();
+        if (pDesktopWnd == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!getVirtualDesktopRect(desktopWndRect)) {
+            bSuc = false;
+        } else {
+            virtualDesktopRect.x = desktopWndRect.left;
+            virtualDesktopRect.y = desktopWndRect.top;
+            virtualDesktopRect.width = desktopWndRect.Width();
+            virtualDesktopRect.height = desktopWndRect.Height();
+        }
+    }
+
+    if (bSuc) {
+        pDesktopDC = pDesktopWnd->GetWindowDC();
+        if (pDesktopDC == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pBitmap = new CBitmap();
+        if (pBitmap == NULL) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!bitmapDC.CreateCompatibleDC(pDesktopDC)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!pBitmap->CreateCompatibleBitmap(pDesktopDC, desktopWndRect.Width(), desktopWndRect.Height())) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        pOldBitmap = bitmapDC.SelectObject(pBitmap);
+        if (!bitmapDC.BitBlt(0, 0, desktopWndRect.Width(), desktopWndRect.Height(), pDesktopDC, desktopWndRect.left, desktopWndRect.top, SRCCOPY)) {
+            bSuc = false;
+        }
+        bitmapDC.SelectObject(pOldBitmap);
+    }
+
+    if (pDesktopWnd != NULL && pDesktopDC != NULL) {
+        pDesktopWnd->ReleaseDC(pDesktopDC);
+        pDesktopDC = NULL;
+    }
+
+    if (!bSuc) {
+        delete pBitmap;
+        pBitmap = NULL;
+    }
+
+    return pBitmap;
+}
+
+bool WinGuiISTK::getVirtualDesktopRect(CRect &virtualDesktopRect)
+{
+    bool bSuc = true;
+
+    if (bSuc) {
+        Arguments_getVirtualDesktopRect_MonitorEnumProc arguments = { this, virtualDesktopRect };
+        if (!::EnumDisplayMonitors(NULL, NULL, &getVirtualDesktopRect_MonitorEnumProc, (LPARAM)&arguments)) {
+            bSuc = false;
+        }
+    }
+
+    return bSuc;
+}
+
+BOOL CALLBACK WinGuiISTK::getVirtualDesktopRect_MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+{
+    BOOL bSuc = TRUE;
+    Arguments_getVirtualDesktopRect_MonitorEnumProc &arguments = *(Arguments_getVirtualDesktopRect_MonitorEnumProc *)dwData;
+    MONITORINFOEX mi;
+
+    memset(&mi, 0, sizeof(MONITORINFOEX));
+
+    if (bSuc) {
+        mi.cbSize = sizeof(MONITORINFOEX);
+        if (!::GetMonitorInfo(hMonitor, &mi)) {
+            bSuc = FALSE;
+        }
+    }
+
+    if (bSuc) {
+        CRect rectTmp;
+        rectTmp.UnionRect((LPCRECT)arguments.virtualDesktopRect, &mi.rcMonitor);
+        arguments.virtualDesktopRect = rectTmp;
+    }
+
+    return bSuc;
+}
+
 CBitmap *WinGuiISTK::loadImageAsBitmap(const std::string &imageFilePath)
 {
     bool bSuc = true;
@@ -1837,7 +2033,7 @@ bool WinGuiISTK::findBitmapInBitmap(std::vector<Rect> &matchedRects, const Rect&
     }
 
     if (bSuc) {
-        searchRectNormalized.intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
+        searchRectNormalized.Intersect(Rect(0, 0, wholeBitmapInfo.bmWidth, wholeBitmapInfo.bmHeight));
         if (searchRectNormalized.width == 0 || searchRectNormalized.height == 0) {
             bSuc = false;
         }

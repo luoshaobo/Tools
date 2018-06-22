@@ -23,13 +23,16 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s wndHide <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndClose <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndMove <sTitle> <bFullMatched> <bAllMatched> <x,y>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s wndResize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s wndSetSize <sTitle> <bFullMatched> <bAllMatched> <x,y,w,h>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s wndGetSize <sTitle> <bFullMatched> <bAllMatched>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndSetZorder <sTitle> <bFullMatched> <bAllMatched> SZO_BOTTOM|SZO_TOP\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndSaveAsPic <sTitle> <bFullMatched> <bAllMatched> <sPictureFilePath>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s wndSaveScreenAsPic <sPictureFilePath>\n", basename(argv[0]));
-    FPRINTF(stdout, "  %s wndGetScreenSize\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndGetFgWnd\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndGetWndAtPoint <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s dspSavePrimaryAsPic <sPictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s dspGetPrimaryRect\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s dspSaveVirtualAsPic <sPictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s dspGetVirtualRect\n", basename(argv[0]));
     FPRINTF(stdout, "  %s cbdPutStr <sString>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s cbdGetStr\n", basename(argv[0]));
     FPRINTF(stdout, "  %s kbdVkList\n", basename(argv[0]));
@@ -2017,7 +2020,7 @@ int CommandHandler_wndMove(const std::vector<Argument> &arguments, GuiISTk::IToo
     return nRet;
 }
 
-int CommandHandler_wndResize(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_wndSetSize(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string sTitle;
@@ -2027,7 +2030,7 @@ int CommandHandler_wndResize(const std::vector<Argument> &arguments, GuiISTk::IT
 
     if (nRet == 0) {
         if (arguments.size() < 6) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "wndResize");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "wndSetSize");
             nRet = 1;
         }
     }
@@ -2038,28 +2041,77 @@ int CommandHandler_wndResize(const std::vector<Argument> &arguments, GuiISTk::IT
     
     if (nRet == 0) {
         if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndResize", arguments[3].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndSetSize", arguments[3].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseBoolFromStr(allMatched, arguments[4].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndResize", arguments[4].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndSetSize", arguments[4].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
         if (!parseRectFromStr(rect, arguments[5].str)) {
-            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndResize", arguments[5].str.c_str());
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndSetSize", arguments[5].str.c_str());
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        if (!toolkit.wndResize(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), rect)) {
+        if (!toolkit.wndSetSize(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), rect)) {
             nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_wndGetSize(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sTitle;
+    bool bFullMatched = false;
+    bool allMatched = false;
+    std::vector<GuiISTk::Rect> rects;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 5) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "wndGetSize");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sTitle = arguments[2].str;
+    }
+    
+    if (nRet == 0) {
+        if (!parseBoolFromStr(bFullMatched, arguments[3].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndGetSize", arguments[3].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!parseBoolFromStr(allMatched, arguments[4].str)) {
+            FPRINTF(stderr, "*** Error: %s: wrong format of argument: %s\n", "wndGetSize", arguments[4].str.c_str());
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.wndGetSize(GuiISTk::ScreenInfo(sTitle, bFullMatched, allMatched), rects)) {
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        for (i = 0; i < rects.size(); ++i) {
+            FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
         }
     }
 
@@ -2161,14 +2213,14 @@ int CommandHandler_wndSaveAsPic(const std::vector<Argument> &arguments, GuiISTk:
     return nRet;
 }
 
-int CommandHandler_wndSaveScreenAsPic(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_dspSavePrimaryAsPic(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
     std::string sPictureFilePath;
 
     if (nRet == 0) {
         if (arguments.size() < 3) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "wndSaveScreenAsPic");
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "dspSavePrimaryAsPic");
             nRet = 1;
         }
     }
@@ -2178,7 +2230,7 @@ int CommandHandler_wndSaveScreenAsPic(const std::vector<Argument> &arguments, Gu
     }
 
     if (nRet == 0) {
-        if (!toolkit.wndSaveScreenAsPic(sPictureFilePath)) {
+        if (!toolkit.dspSavePrimaryAsPic(sPictureFilePath)) {
             nRet = 1;
         }
     }
@@ -2186,21 +2238,66 @@ int CommandHandler_wndSaveScreenAsPic(const std::vector<Argument> &arguments, Gu
     return nRet;
 }
 
-int CommandHandler_wndGetScreenSize(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+int CommandHandler_dspSaveVirtualAsPic(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
-    GuiISTk::Size size;
+    std::string sPictureFilePath;
 
     if (nRet == 0) {
-        if (arguments.size() < 2) {
-            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "wndSaveScreenAsPic");
+        if (arguments.size() < 3) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "dspSaveVirtualAsPic");
             nRet = 1;
         }
     }
 
     if (nRet == 0) {
-        toolkit.wndGetScreenSize(size);
-        FPRINTF(stdout, "%u %u\n", size.width, size.height);
+        sPictureFilePath = arguments[2].str;
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.dspSaveVirtualAsPic(sPictureFilePath)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_dspGetPrimaryRect(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    GuiISTk::Rect rect;
+
+    if (nRet == 0) {
+        if (arguments.size() < 2) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "dspSavePrimaryAsPic");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        toolkit.dspGetPrimaryRect(rect);
+        FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
+    }
+
+    return nRet;
+}
+
+int CommandHandler_dspGetVirtualRect(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    GuiISTk::Rect rect;
+
+    if (nRet == 0) {
+        if (arguments.size() < 2) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "dspGetVirtualRect");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        toolkit.dspGetVirtualRect(rect);
+        FPRINTF(stdout, "%d %d %u %u\n", rect.x, rect.y, rect.width, rect.height);
     }
 
     return nRet;
@@ -2302,13 +2399,16 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(wndHide),
         COMMAND_HANDLER_PAIR(wndClose),
         COMMAND_HANDLER_PAIR(wndMove),
-        COMMAND_HANDLER_PAIR(wndResize),
+        COMMAND_HANDLER_PAIR(wndSetSize),
+        COMMAND_HANDLER_PAIR(wndGetSize),
         COMMAND_HANDLER_PAIR(wndSetZorder),
         COMMAND_HANDLER_PAIR(wndSaveAsPic),
-        COMMAND_HANDLER_PAIR(wndSaveScreenAsPic),
-        COMMAND_HANDLER_PAIR(wndGetScreenSize),
         COMMAND_HANDLER_PAIR(wndGetFgWnd),
         COMMAND_HANDLER_PAIR(wndGetWndAtPoint),
+        COMMAND_HANDLER_PAIR(dspSavePrimaryAsPic),
+        COMMAND_HANDLER_PAIR(dspGetPrimaryRect),
+        COMMAND_HANDLER_PAIR(dspSaveVirtualAsPic),
+        COMMAND_HANDLER_PAIR(dspGetVirtualRect),
         COMMAND_HANDLER_PAIR(cbdPutStr),
         COMMAND_HANDLER_PAIR(cbdGetStr),
         COMMAND_HANDLER_PAIR(kbdVkList),
