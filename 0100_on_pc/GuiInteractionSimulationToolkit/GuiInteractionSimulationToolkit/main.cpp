@@ -29,6 +29,8 @@ void help(int argc, char* argv[])
     FPRINTF(stdout, "  %s wndSaveAsPic <sTitle> <bFullMatched> <bAllMatched> <sPictureFilePath>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndGetFgWnd\n", basename(argv[0]));
     FPRINTF(stdout, "  %s wndGetWndAtPoint <x,y>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s dspSaveAllAsPics <sPictureFilePath>\n", basename(argv[0]));
+    FPRINTF(stdout, "  %s dspGetAllRects\n", basename(argv[0]));
     FPRINTF(stdout, "  %s dspSavePrimaryAsPic <sPictureFilePath>\n", basename(argv[0]));
     FPRINTF(stdout, "  %s dspGetPrimaryRect\n", basename(argv[0]));
     FPRINTF(stdout, "  %s dspSaveVirtualAsPic <sPictureFilePath>\n", basename(argv[0]));
@@ -2213,6 +2215,31 @@ int CommandHandler_wndSaveAsPic(const std::vector<Argument> &arguments, GuiISTk:
     return nRet;
 }
 
+int CommandHandler_dspSaveAllAsPics(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::string sPictureFilePath;
+
+    if (nRet == 0) {
+        if (arguments.size() < 3) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "dspSaveAllAsPics");
+            nRet = 1;
+        }
+    }
+
+    if (nRet == 0) {
+        sPictureFilePath = arguments[2].str;
+    }
+
+    if (nRet == 0) {
+        if (!toolkit.dspSaveAllAsPics(sPictureFilePath)) {
+            nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
 int CommandHandler_dspSavePrimaryAsPic(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
 {
     int nRet = 0;
@@ -2257,6 +2284,29 @@ int CommandHandler_dspSaveVirtualAsPic(const std::vector<Argument> &arguments, G
     if (nRet == 0) {
         if (!toolkit.dspSaveVirtualAsPic(sPictureFilePath)) {
             nRet = 1;
+        }
+    }
+
+    return nRet;
+}
+
+int CommandHandler_dspGetAllRects(const std::vector<Argument> &arguments, GuiISTk::IToolkit &toolkit)
+{
+    int nRet = 0;
+    std::vector<GuiISTk::Rect> rects;
+    unsigned int i;
+
+    if (nRet == 0) {
+        if (arguments.size() < 2) {
+            FPRINTF(stderr, "*** Error: %s: too few argument!\n", "dspGetAllRects");
+            nRet = 1;
+        }
+    }
+    
+    if (nRet == 0) {
+        toolkit.dspGetAllRects(rects);
+        for (i = 0; i < rects.size(); ++i) {
+            FPRINTF(stdout, "%d %d %u %u\n", rects[i].x, rects[i].y, rects[i].width, rects[i].height);
         }
     }
 
@@ -2405,6 +2455,8 @@ int main_local(int argc, char* argv[])
         COMMAND_HANDLER_PAIR(wndSaveAsPic),
         COMMAND_HANDLER_PAIR(wndGetFgWnd),
         COMMAND_HANDLER_PAIR(wndGetWndAtPoint),
+        COMMAND_HANDLER_PAIR(dspSaveAllAsPics),
+        COMMAND_HANDLER_PAIR(dspGetAllRects),
         COMMAND_HANDLER_PAIR(dspSavePrimaryAsPic),
         COMMAND_HANDLER_PAIR(dspGetPrimaryRect),
         COMMAND_HANDLER_PAIR(dspSaveVirtualAsPic),

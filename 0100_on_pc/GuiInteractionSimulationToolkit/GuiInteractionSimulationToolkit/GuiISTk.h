@@ -141,6 +141,8 @@ public:
     virtual bool wndGetFgWnd(ScreenInfo &screenInfo) = 0;
     virtual bool wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point) = 0;
 
+    virtual bool dspSaveAllAsPics(const std::string &sPictureFilePath) = 0;
+    virtual void dspGetAllRects(std::vector<Rect> &rects) = 0;
     virtual bool dspSavePrimaryAsPic(const std::string &sPictureFilePath) = 0;
     virtual void dspGetPrimaryRect(Rect &rect) = 0;
     virtual bool dspSaveVirtualAsPic(const std::string &sPictureFilePath) = 0;

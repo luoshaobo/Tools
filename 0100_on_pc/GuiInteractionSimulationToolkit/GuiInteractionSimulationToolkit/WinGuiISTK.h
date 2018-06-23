@@ -26,6 +26,8 @@ public:
     virtual bool wndGetFgWnd(ScreenInfo &screenInfo);
     virtual bool wndGetWndAtPoint(ScreenInfo &screenInfo, const Point &point);
 
+    virtual bool dspSaveAllAsPics(const std::string &sPictureFilePath);
+    virtual void dspGetAllRects(std::vector<Rect> &rects);
     virtual bool dspSavePrimaryAsPic(const std::string &sPictureFilePath);
     virtual void dspGetPrimaryRect(Rect &rect);
     virtual bool dspSaveVirtualAsPic(const std::string &sPictureFilePath);
@@ -88,11 +90,12 @@ private:
     static BOOL CALLBACK getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
     bool getVirtualDesktopRect(CRect &virtualDesktopRect);
-    struct Arguments_getVirtualDesktopRect_MonitorEnumProc {
+    bool getDesktopRects(std::vector<Rect> &rects);
+    struct Arguments_getDesktopRects_MonitorEnumProc {
         WinGuiISTK *thiz;
-        CRect &virtualDesktopRect;
+        std::vector<Rect> &rects;
     };
-    static BOOL CALLBACK getVirtualDesktopRect_MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
+    static BOOL CALLBACK getDesktopRects_MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
 
 
     bool saveWindowAsPicture(HWND hWnd, const std::string &path, const CRect *rect = NULL);

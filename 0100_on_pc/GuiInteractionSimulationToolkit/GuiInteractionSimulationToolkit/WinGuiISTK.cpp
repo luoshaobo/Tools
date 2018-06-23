@@ -417,6 +417,60 @@ bool WinGuiISTK::wndSaveAsPic(const ScreenInfo &screenInfo, const std::string &s
     return bSuc;
 }
 
+bool WinGuiISTK::dspSaveAllAsPics(const std::string &sPictureFilePath)
+{
+    bool bSuc = true;
+    std::string sPictureFilePathTemplate;
+    std::vector<Rect> rects;
+    unsigned int i;
+
+    LOG_GEN_PRINTF("sPictureFilePath=\"%s\"\n", sPictureFilePath.c_str());
+
+    if (bSuc) {
+        if (!makeFilePathTemplateByIndex(sPictureFilePathTemplate, sPictureFilePath)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        if (!getDesktopRects(rects)) {
+            bSuc = false;
+        }
+    }
+
+    if (bSuc) {
+        for (i = 0; i < rects.size(); ++i) {
+            std::string path = sPictureFilePath;
+            if (rects.size() > 1) {
+                path = TK_Tools::FormatStr(sPictureFilePathTemplate.c_str(), i + 1);
+            }
+
+            CRect rectTmp(rects[i].x, rects[i].y, rects[i].x + rects[i].width, rects[i].y + rects[i].height);
+            if (!saveWindowAsPicture(::GetDesktopWindow(), path, &rectTmp)) {
+                bSuc = false;
+                break;
+            }
+        }
+    }
+
+    return bSuc;
+}
+
+void WinGuiISTK::dspGetAllRects(std::vector<Rect> &rects)
+{
+    bool bSuc = true;
+
+    LOG_GEN_PRINTF("\n");
+
+    rects.clear();
+
+    if (bSuc) {
+        if (!getDesktopRects(rects)) {
+            bSuc = false;
+        }
+    }
+}
+
 bool WinGuiISTK::dspSavePrimaryAsPic(const std::string &sPictureFilePath)
 {
     bool bSuc = true;
@@ -441,6 +495,8 @@ void WinGuiISTK::dspGetPrimaryRect(Rect &rect)
     CRect rectTmp;
 
     LOG_GEN_PRINTF("\n");
+
+    rect = Rect();
 
     if (bSuc) {
         hWnd = ::GetDesktopWindow();
@@ -488,6 +544,8 @@ void WinGuiISTK::dspGetVirtualRect(Rect &rect)
     CRect virtualDesktopRect;
 
     LOG_GEN_PRINTF("\n");
+
+    rect = Rect();
 
     if (bSuc) {
         if (!getVirtualDesktopRect(virtualDesktopRect)) {
@@ -1828,8 +1886,22 @@ bool WinGuiISTK::getVirtualDesktopRect(CRect &virtualDesktopRect)
     bool bSuc = true;
 
     if (bSuc) {
-        Arguments_getVirtualDesktopRect_MonitorEnumProc arguments = { this, virtualDesktopRect };
-        if (!::EnumDisplayMonitors(NULL, NULL, &getVirtualDesktopRect_MonitorEnumProc, (LPARAM)&arguments)) {
+        virtualDesktopRect.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
+        virtualDesktopRect.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
+        virtualDesktopRect.right = virtualDesktopRect.left + GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        virtualDesktopRect.bottom = virtualDesktopRect.top + GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::getDesktopRects(std::vector<Rect> &rects)
+{
+    bool bSuc = true;
+
+    if (bSuc) {
+        Arguments_getDesktopRects_MonitorEnumProc arguments = { this, rects };
+        if (!::EnumDisplayMonitors(NULL, NULL, &getDesktopRects_MonitorEnumProc, (LPARAM)&arguments)) {
             bSuc = false;
         }
     }
@@ -1837,10 +1909,10 @@ bool WinGuiISTK::getVirtualDesktopRect(CRect &virtualDesktopRect)
     return bSuc;
 }
 
-BOOL CALLBACK WinGuiISTK::getVirtualDesktopRect_MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+BOOL CALLBACK WinGuiISTK::getDesktopRects_MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
     BOOL bSuc = TRUE;
-    Arguments_getVirtualDesktopRect_MonitorEnumProc &arguments = *(Arguments_getVirtualDesktopRect_MonitorEnumProc *)dwData;
+    Arguments_getDesktopRects_MonitorEnumProc &arguments = *(Arguments_getDesktopRects_MonitorEnumProc *)dwData;
     MONITORINFOEX mi;
 
     memset(&mi, 0, sizeof(MONITORINFOEX));
@@ -1853,9 +1925,9 @@ BOOL CALLBACK WinGuiISTK::getVirtualDesktopRect_MonitorEnumProc(HMONITOR hMonito
     }
 
     if (bSuc) {
-        CRect rectTmp;
-        rectTmp.UnionRect((LPCRECT)arguments.virtualDesktopRect, &mi.rcMonitor);
-        arguments.virtualDesktopRect = rectTmp;
+        CRect rectTmp(mi.rcMonitor);
+        Rect rect(rectTmp.left, rectTmp.top, rectTmp.Width(), rectTmp.Height());
+        arguments.rects.push_back(rect);
     }
 
     return bSuc;
