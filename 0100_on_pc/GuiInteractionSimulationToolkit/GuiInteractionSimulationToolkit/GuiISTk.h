@@ -1,5 +1,5 @@
-#ifndef GUISTK_H
-#define GUISTK_H
+#ifndef GUIISTK_H
+#define GUIISTK_H
 
 #include <string>
 
@@ -186,4 +186,4 @@ public:
 
 } // namespace GuiISTk {
 
-#endif // #ifndef GUISTK_H
+#endif // #ifndef GUIISTK_H
