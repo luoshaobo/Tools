@@ -8,7 +8,7 @@ if [ $# -ge 1 ]; then
     fi
 fi
 
-HMI_BIN_REMOTE_PATH__BASE="/home/uidv4956/build_temp/13.18.10.01/131/build_hmi_app"
+HMI_BIN_REMOTE_PATH__BASE="/home/uidv4956/build_temp/10.18.24.01/131/build_hmi_app"
 HMI_BIN_REMOTE_PATH="$HMI_BIN_REMOTE_PATH__BASE/hmi-application/hmi-application"
 HMI_BIN_UIKIT_DYC_PATH="$HMI_BIN_REMOTE_PATH__BASE/deps/cleanroom-uikit/lib/libuikit_universe_DYC.so"
 HMI_BIN_UIKIT_AOC_PATH="$HMI_BIN_REMOTE_PATH__BASE/deps/cleanroom-uikit/lib/libuikit_universe_AOC.so"
