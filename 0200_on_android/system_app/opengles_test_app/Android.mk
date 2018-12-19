@@ -16,6 +16,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libskia \
     libEGL \
     libGLESv1_CM \
+    libGLESv2 \
     libgui
 
 LOCAL_C_INCLUDES := \
