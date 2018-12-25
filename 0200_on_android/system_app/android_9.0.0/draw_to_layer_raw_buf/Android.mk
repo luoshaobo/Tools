@@ -1,14 +1,15 @@
 LOCAL_PATH:= $(call my-dir)
 
-
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:=               \
         main.cpp               \
 
 LOCAL_SHARED_LIBRARIES := \
-	libstagefright liblog libutils libbinder libstagefright_foundation \
-        libmedia libmedia_native libgui libcutils libui
+	liblog libutils libbinder  \
+          libgui libcutils libui
+        
+    # libstagefright libstagefright_foundation libmedia libmedia_native 
 
 LOCAL_C_INCLUDES:= \
 	frameworks/av/media/libstagefright \

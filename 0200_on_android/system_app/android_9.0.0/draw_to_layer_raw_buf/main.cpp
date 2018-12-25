@@ -1,4 +1,3 @@
-//#define LOG_NDEBUG 0
 #define LOG_TAG "codec"
 #include <utils/Log.h>
 #include <binder/IServiceManager.h>
@@ -6,7 +5,7 @@
 #include <system/window.h>
 #include <gui/ISurfaceComposer.h>
 #include <gui/SurfaceComposerClient.h>
-#include <gui/ISurfaceTexture.h>
+#include <gui/Surface.h>
 #include <ui/DisplayInfo.h>
 #include <ui/GraphicBufferMapper.h>
 #include <media/stagefright/foundation/ABuffer.h>
@@ -14,6 +13,11 @@
 #include <media/stagefright/foundation/ALooper.h>
 #include <media/stagefright/foundation/AMessage.h>
 #include <media/stagefright/foundation/AString.h>
+
+#define UNUSED(v) (&v);
+
+#undef CHECK_EQ
+#define CHECK_EQ(a1,a2) if ((a1) != (a2)) { abort(); }
 
 using namespace android;
 
@@ -34,11 +38,11 @@ void RenderFrame(sp<ANativeWindow> nativeWindow, int32_t width, int32_t height, 
 
     Rect bounds(width, height);
 
-    void *dst;
+    void *dst = 0;
     CHECK_EQ(0, mapper.lock(buf->handle, GRALLOC_USAGE_SW_WRITE_OFTEN, bounds, &dst));
     
-    for (unsigned int i = 0; i < height; i++) {
-        for (unsigned int j = 0; j < width; j++) {
+    for (int32_t i = 0; i < height; i++) {
+        for (int32_t j = 0; j < width; j++) {
             ColorRGBA *pPixel = (ColorRGBA *)((unsigned char *)dst + width * 4 * i + 4 * j);
             pPixel->r = colorHint;
             pPixel->g = 0;
@@ -57,6 +61,9 @@ void RenderFrame(sp<ANativeWindow> nativeWindow, int32_t width, int32_t height, 
 
 int main(int argc, char **argv)
 {
+    UNUSED(argc);
+    UNUSED(argv);
+    
     //////////////////////////////////////////////////////////////////////////////////////
     // 1. Create a window instance.
     //
@@ -77,26 +84,20 @@ int main(int argc, char **argv)
             0);
     CHECK(surfaceControl != NULL);
     CHECK(surfaceControl->isValid());
-
-    SurfaceComposerClient::openGlobalTransaction();
-    CHECK_EQ(surfaceControl->setLayer(INT_MAX), (status_t)OK);
-    CHECK_EQ(surfaceControl->show(), (status_t)OK);
-    SurfaceComposerClient::closeGlobalTransaction();
+    
+    SurfaceComposerClient::Transaction{}
+         .setLayer(surfaceControl, INT_MAX)
+         .show(surfaceControl)
+         .apply();
 
     sp<Surface> surface = surfaceControl->getSurface();
     CHECK(surface != NULL);
-    
-    sp<ISurfaceTexture> surfaceTexture = surface->getSurfaceTexture();
-    CHECK(surfaceTexture != NULL);
-    
-    sp<SurfaceTextureClient> surfaceTextureClient = new SurfaceTextureClient(surfaceTexture);
-    CHECK(surfaceTextureClient != NULL);
     
     //////////////////////////////////////////////////////////////////////////////////////
     // 2. Initialize the window.
     //
     int nativeWindowApi = NATIVE_WINDOW_API_MEDIA;                                        // ?
-    CHECK_EQ(native_window_api_connect(surfaceTextureClient.get(), nativeWindowApi), (status_t)OK);
+    CHECK_EQ(native_window_api_connect(surface.get(), nativeWindowApi), (status_t)OK);
     
     int halFormat;
     size_t bufWidth, bufHeight;
@@ -105,7 +106,7 @@ int main(int argc, char **argv)
     bufWidth = displayWidth;
     bufHeight = displayHeight;
     
-    sp<ANativeWindow> nativeWindow(surfaceTextureClient);
+    sp<ANativeWindow> nativeWindow(surface.get());
 #ifdef EXYNOS4_ENHANCEMENTS
     CHECK_EQ(0,
             native_window_set_usage(
@@ -126,10 +127,13 @@ int main(int argc, char **argv)
             nativeWindow.get(),
             NATIVE_WINDOW_SCALING_MODE_SCALE_TO_WINDOW));
 
-    CHECK_EQ(0, native_window_set_buffers_geometry(
+    CHECK_EQ(0, native_window_set_buffers_dimensions(
                 nativeWindow.get(),
                 bufWidth,
-                bufHeight,
+                bufHeight));
+                
+    CHECK_EQ(0, native_window_set_buffers_format(
+                nativeWindow.get(),
                 halFormat));
 
     uint32_t transform = 0;
@@ -152,7 +156,7 @@ int main(int argc, char **argv)
     //////////////////////////////////////////////////////////////////////////////////////
     // 4. Finalize the window.
     //    
-    CHECK_EQ(native_window_api_disconnect(surfaceTextureClient.get(), nativeWindowApi), (status_t)OK);
+    CHECK_EQ(native_window_api_disconnect(nativeWindow.get(), nativeWindowApi), (status_t)OK);
 
     return 0;
 }

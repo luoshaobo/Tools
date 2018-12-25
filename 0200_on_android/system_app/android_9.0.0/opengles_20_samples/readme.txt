@@ -1,6 +1,6 @@
 The source code should be put to:
     $ANDROID_SRC_ROOT/frameworks/base/cmds/
-in Android 9.0.0_rc1 source tree.
+in Android 9.0.0_rc2 source tree.
 
 Execute the command lines as below:
     cd $ANDROID_SRC_ROOT
