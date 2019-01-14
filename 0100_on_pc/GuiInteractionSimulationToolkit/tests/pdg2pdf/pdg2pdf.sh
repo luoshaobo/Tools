@@ -84,15 +84,15 @@ function convert_pdg_to_pdf
     # guiistk kbdKeyUp VK_LEFT
     # guiistk kbdKeyUp VK_LWIN
 
-    guiistk Delay 500
+    guiistk Delay 100
     
     COUNT=`guiistk wndCount "$UNICORNVIEWER_WND_TITLE" 0`
     if [ $? -ne 0 ]; then
-        echo "*** Error: no screen with tiltle: \"$UNICORNVIEWER_WND_TITLE\"" >&2
+        echo "*** ERROR: no screen with tiltle: \"$UNICORNVIEWER_WND_TITLE\"" >&2
         return 1
     fi
     if [ $COUNT -ne 1 ]; then
-        echo "*** Error: too may screens with tiltle: \"$UNICORNVIEWER_WND_TITLE\"" >&2
+        echo "*** ERROR: too may screens with tiltle: \"$UNICORNVIEWER_WND_TITLE\"" >&2
         return 1
     fi
     
@@ -100,16 +100,16 @@ function convert_pdg_to_pdf
     #
     # to close all of the documents in the window $UNICORNVIEWER_WND_TITLE
     #
-    echo "@@@ to close all of the documents in the window $UNICORNVIEWER_WND_TITLE"
+    echo "@@@ to close all of the documents in the window \"$UNICORNVIEWER_WND_TITLE\""
     close_all_documents_in_unicornviewer
 
     #
-    # to find the open file toolbar button
+    # to find the open file toolbar button, and click on it
     #
-    echo "@@@ to find the open file toolbar button"
+    echo "@@@ to find the open file toolbar button, and click on it"
     RECT=`guiistk imgWaitShown "open_file_icon_on_toolbar.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"open_file_icon_on_toolbar.png\" is not found!" >&2
+        echo "*** ERROR: the button \"open_file_icon_on_toolbar.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -125,12 +125,12 @@ function convert_pdg_to_pdf
     guiistk Delay 100
     
     #
-    # to find the input box in the open file dialog and set cursor in it, then input the input file path
+    # to find the input box in the open file dialog, set cursor in it, then input the source file path
     #
-    echo "@@@ to find the input box in the open file dialog and set cursor in it, then input the input file path"
+    echo "@@@ to find the input box in the open file dialog, set cursor in it, then input the source file path"
     RECT=`guiistk imgWaitShown "input_box_in_open_file_dialog-en.png","input_box_in_open_file_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"input_box_in_open_file_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"input_box_in_open_file_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -151,12 +151,12 @@ function convert_pdg_to_pdf
     guiistk Delay 100
     
     #
-    # to find the open button in the open file dialog and click on it
+    # to find the open button in the open file dialog, and click on it
     #
-    echo "@@@ to find the open button in the open file dialog and click on it"
+    echo "@@@ to find the open button in the open file dialog, and click on it"
     RECT=`guiistk imgWaitShown "open_button_in_open_file_dialog-en.png","open_button_in_open_file_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"open_button_in_open_file_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"open_button_in_open_file_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -177,7 +177,7 @@ function convert_pdg_to_pdf
     echo "@@@ to find the image process button in the toolbar, and click it"
     RECT=`guiistk imgWaitShown "image_proc_button_on_toolbar.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"image_proc_button_on_toolbar.png\" is not found!" >&2
+        echo "*** ERROR: the button \"image_proc_button_on_toolbar.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -193,12 +193,12 @@ function convert_pdg_to_pdf
     guiistk Delay 100
     
     #
-    # to find the contrast bar in the image process dialog, drag it to the end of the right side
+    # to find the contrast bar in the image process dialog, and drag it to the end of the right side
     #
-    echo "@@@ to find the contrast bar in the image process dialog, drag it to the end of the right side"
+    echo "@@@ to find the contrast bar in the image process dialog, and drag it to the end of the right side"
     RECT=`guiistk imgWaitShown "contrast_bar_in_image_proc_dialog-en.png","contrast_bar_in_image_proc_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"contrast_bar_in_image_proc_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"contrast_bar_in_image_proc_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -218,7 +218,7 @@ function convert_pdg_to_pdf
     guiistk.exe mseMove $X,$Y
     guiistk Delay 100
     guiistk.exe mseDrag $X,$Y $X1,$Y1
-    guiistk Delay 500
+    guiistk Delay 200
     
     #
     # to find the OK button in the image process dialog, and click it
@@ -226,7 +226,7 @@ function convert_pdg_to_pdf
     echo "@@@ to find the OK button in the image process dialog, and click it"
     RECT=`guiistk imgWaitShown "ok_button_in_image_proc_dialog-en.png","ok_button_in_image_proc_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"ok_button_in_image_proc_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"ok_button_in_image_proc_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -247,7 +247,7 @@ function convert_pdg_to_pdf
     echo "@@@ to find the printer button in the toolbar, and click it"
     RECT=`guiistk imgWaitShown "print_button_in_open_file_dialog.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"print_button_in_open_file_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"print_button_in_open_file_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -268,7 +268,7 @@ function convert_pdg_to_pdf
     echo "@@@ to find the pdf printer info in the printer dialog"
     RECT=`guiistk imgWaitShown "pdf_printer_in_printer_dialog-cn-1.png","pdf_printer_in_printer_dialog-cn-2.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"pdf_printer_in_printer_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"pdf_printer_in_printer_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -289,7 +289,7 @@ function convert_pdg_to_pdf
     echo "@@@ to find the print button in the printer dialog"
     RECT=`guiistk imgWaitShown "print_button_in_printer_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"print_button_in_printer_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"print_button_in_printer_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -305,13 +305,12 @@ function convert_pdg_to_pdf
     guiistk Delay 100
     
     #
-    # to find the saved file input box in the saving dialog and set cursor in it, select all, then input the output file path
+    # to find the saved file input box in the saving dialog, set cursor in it, select all, then input the generated file path
     #
-    echo "@@@ to find the saved file input box in the saving dialog and set cursor in it, select all, then input the output file path"
-    echo "to find input_box_in_open_file_dialog.png ..."
+    echo "@@@ to find the saved file input box in the saving dialog, set cursor in it, select all, then input the generated file path"
     RECT=`guiistk imgWaitShown "saved_file_inputbox_in_saving_dialog-en.png","saved_file_inputbox_in_saving_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"saved_file_inputbox_in_saving_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"saved_file_inputbox_in_saving_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -333,14 +332,13 @@ function convert_pdg_to_pdf
     guiistk kbdCombKey VK_CONTROL V
     guiistk Delay 100
     
-    
     #
-    # to find the saved button box in the saving dialog, then click it
+    # to find the saved button box in the saving dialog, and click on it
     #
-    echo "@@@ to find the saved button box in the saving dialog, then click it"
+    echo "@@@ to find the saved button box in the saving dialog, and click on it"
     RECT=`guiistk imgWaitShown "saved_button_in_saving_dialog-en.png","saved_button_in_saving_dialog-cn.png"`
     if [ $? -ne 0 ]; then
-        echo "*** Error: the button \"saved_button_in_saving_dialog.png\" is not found!" >&2
+        echo "*** ERROR: the button \"saved_button_in_saving_dialog.png\" is not found!" >&2
         return 1
     fi
     echo "$RECT"
@@ -356,11 +354,11 @@ function convert_pdg_to_pdf
     guiistk Delay 100
     
     #
-    # to find the save as dialog, click OK button on it
+    # if possible, to find the save as dialog, click OK button on it
     #
-    echo "@@@ to find the save as dialog, click OK button on it"
+    echo "@@@ if possible, to find the save as dialog, click OK button on it"
     while [ 1 -eq 1 ]; do
-        RECT=`guiistk imgWaitShown "confirm_title_in_save_as_dialog-en.png","confirm_title_in_save_as_dialog-cn.png" 1000`
+        RECT=`guiistk imgWaitShown "confirm_title_in_save_as_dialog-en.png","confirm_title_in_save_as_dialog-cn.png" 500`
         if [ $? -ne 0 ]; then
             break
         fi
@@ -376,10 +374,9 @@ function convert_pdg_to_pdf
         #guiistk mseClick $X,$Y
         guiistk Delay 100
         
-        
         RECT=`guiistk imgWaitShown "ok_button_in_save_as_dialog-en.png","ok_button_in_save_as_dialog-cn.png"`
         if [ $? -ne 0 ]; then
-            echo "*** Error: the button \"ok_button_in_save_as_dialog.png\" is not found!" >&2
+            echo "*** ERROR: the button \"ok_button_in_save_as_dialog.png\" is not found!" >&2
             return 1
         fi
         echo "$RECT"
@@ -407,7 +404,7 @@ function convert_pdg_to_pdf
     #
     # to close all of the documents in the window $UNICORNVIEWER_WND_TITLE
     #
-    echo "@@@ to close all of the documents in the window $UNICORNVIEWER_WND_TITLE"
+    echo "@@@ to close all of the documents in the window \"$UNICORNVIEWER_WND_TITLE\""
     close_all_documents_in_unicornviewer
     
     return 0
@@ -415,15 +412,14 @@ function convert_pdg_to_pdf
 
 . ./config.inc
 
-cat "$FILE_LIST_FILE" | while read -r FILE_PATH; do
-    FIRST_CHAR="${FILE_LIST_FILE:0:1}"
+cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
+    FIRST_CHAR="${FILE_PATH:0:1}"
     if [ "$FIRST_CHAR" = "#" ]; then
         continue
     fi
 
-    FILE_PATH_LIST=`echo "$FILE_PATH_LIST" | tr "[^]" "[ ]"`
-    SRC_FULL_FILE_PATH="$SRC_FILE_DIR_BASE$FILE_PATH"
-    DST_FULL_FILE_PATH_TMP="$DST_FILE_DIR_BASE$FILE_PATH"
+    SRC_FULL_FILE_PATH="$CFG_SRC_FILE_DIR_BASE$FILE_PATH"
+    DST_FULL_FILE_PATH_TMP="$CFG_DST_FILE_DIR_BASE$FILE_PATH"
     
     DST_FULL_FILE_PATH__DIR=`dirname "$DST_FULL_FILE_PATH_TMP"`
     DST_FULL_FILE_PATH__BASE=`basename "$DST_FULL_FILE_PATH_TMP"`
@@ -434,7 +430,7 @@ cat "$FILE_LIST_FILE" | while read -r FILE_PATH; do
     echo "\$DST_FULL_FILE_PATH=$DST_FULL_FILE_PATH"
         
     if [ ! -f "$SRC_FULL_FILE_PATH" ]; then
-        echo "*** ERROR: file not exist: \"$SRC_FULL_FILE_PATH\""
+        echo "*** ERROR: file not exist: \"$SRC_FULL_FILE_PATH\"" >&2
         continue
     fi
     
@@ -448,8 +444,11 @@ cat "$FILE_LIST_FILE" | while read -r FILE_PATH; do
             continue
         fi
     fi
-        
+    
+    echo
+    echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
     echo "@@@ convert_pdg_to_pdf \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
+    echo "@@@"
     convert_pdg_to_pdf "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"
     
     if [ $? -ne 0 ]; then
