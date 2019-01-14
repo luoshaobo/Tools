@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function wait_for_printing_to_finish
+function wait_for_printing_to_finish_1
 {
     local I
     local RECT
@@ -17,6 +17,22 @@ function wait_for_printing_to_finish
         fi
         
         DELAY_TIME=200
+        I=$((I+1))
+    done
+}
+
+function wait_for_printing_to_finish
+{
+    local I
+    
+    I=0
+    while [ $I -lt 3 ]; do
+        guiistk imgWaitHidden "in_printing-en.png","in_printing-cn.png"
+        if [ $? -ne 0 ]; then
+            I=0
+            continue
+        fi
+        
         I=$((I+1))
     done
 }

@@ -63,6 +63,9 @@ public:
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitShown(const std::vector<Image> &images, Rect &rect, int &index, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
+    virtual bool imgWaitHidden(const std::vector<Image> &images, unsigned int timeout = INFINITE_TIME);
+    virtual bool imgWaitHidden(const std::vector<Image> &images, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
+    virtual bool imgWaitHidden(const std::vector<Image> &images, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, const Rect &searchRect, unsigned int timeout = INFINITE_TIME);
     virtual bool imgWaitAllShown(const std::vector<Image> &images, std::vector<Rect> &rects, const Point &searchBeginningPoint, unsigned int timeout = INFINITE_TIME);

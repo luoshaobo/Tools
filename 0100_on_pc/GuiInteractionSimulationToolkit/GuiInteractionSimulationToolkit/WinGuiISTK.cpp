@@ -8,6 +8,7 @@
 namespace GuiISTk {
 
 const unsigned int WAIT_IMAGE_SHOWN_INTERVAL = 500;
+const unsigned int WAIT_IMAGE_HIDDEN_INTERVAL = 2000;
 
 VOID SendMouseEvent(
     DWORD dwFlags,
@@ -1565,6 +1566,101 @@ bool WinGuiISTK::imgWaitShown(const std::vector<Image> &images, Rect &rect, int 
         }
 
         elapsedTime += WAIT_IMAGE_SHOWN_INTERVAL;
+        Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::imgWaitHidden(const std::vector<Image> &images, unsigned int timeout /*= INFINITE_TIME*/)
+{
+    bool bSuc = false;
+    unsigned int elapsedTime = 0;
+    std::vector<Rect> rects;
+    int index;
+
+    LOG_GEN_PRINTF("images=\"%s\", timeout=%u\n", 
+        getImagesPaths(images).c_str(), 
+        timeout
+    );
+
+    for (;;) {
+        if (timeout != INFINITE_TIME && elapsedTime > timeout) {
+            bSuc = false;
+            break;
+        }
+
+        bSuc = imgFindRect_impl(images, rects, index, false);
+        if (!bSuc) {
+            bSuc = true;
+            break;
+        }
+
+        elapsedTime += WAIT_IMAGE_HIDDEN_INTERVAL;
+        Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::imgWaitHidden(const std::vector<Image> &images, const Rect &searchRect, unsigned int timeout /*= INFINITE_TIME*/)
+{
+    bool bSuc = false;
+    unsigned int elapsedTime = 0;
+    std::vector<Rect> rects;
+    int index;
+
+    LOG_GEN_PRINTF("images=\"%s\", searchRect=(%d,%d,%u,%u), timeout=%u\n", 
+        getImagesPaths(images).c_str(), 
+        searchRect.x, searchRect.y, searchRect.width, searchRect.height,
+        timeout
+    );
+
+    for (;;) {
+        if (timeout != INFINITE_TIME && elapsedTime > timeout) {
+            bSuc = false;
+            break;
+        }
+
+        bSuc = imgFindRect_impl(images, rects, index, searchRect, false);
+        if (bSuc) {
+            bSuc = true;
+            break;
+        }
+
+        elapsedTime += WAIT_IMAGE_HIDDEN_INTERVAL;
+        Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
+    }
+
+    return bSuc;
+}
+
+bool WinGuiISTK::imgWaitHidden(const std::vector<Image> &images, const Point &searchBeginningPoint, unsigned int timeout /*= INFINITE_TIME*/)
+{
+    bool bSuc = false;
+    unsigned int elapsedTime = 0;
+    std::vector<Rect> rects;
+    int index;
+
+    LOG_GEN_PRINTF("images=\"%s\", searchBeginningPoint=(%d,%d), timeout=%u\n", 
+        getImagesPaths(images).c_str(), 
+        searchBeginningPoint.x, searchBeginningPoint.y, 
+        timeout
+    );
+
+    for (;;) {
+        if (timeout != INFINITE_TIME && elapsedTime > timeout) {
+            bSuc = false;
+            break;
+        }
+
+        bSuc = imgFindRect_impl(images, rects, index, searchBeginningPoint, false);
+        if (bSuc) {
+            bSuc = true;
+            break;
+        }
+
+        elapsedTime += WAIT_IMAGE_HIDDEN_INTERVAL;
         Sleep(WAIT_IMAGE_SHOWN_INTERVAL);
     }
 
