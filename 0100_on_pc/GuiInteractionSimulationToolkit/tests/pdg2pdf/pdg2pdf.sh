@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function hide_all_screens
+{
+    echo "************************************ hide_all_screens"
+}
+
 function wait_for_printing_to_finish_1
 {
     local I
@@ -465,9 +470,18 @@ cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
     echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
     echo "@@@ convert_pdg_to_pdf \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
     echo "@@@"
-    convert_pdg_to_pdf "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"
+    convert_pdg_to_pdf "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"   
+    SESSION_ERRNO=$?
     
-    if [ $? -ne 0 ]; then
-        exit $?
+    if [ $SESSION_ERRNO -ne 0 ]; then
+        if [ $OPT_WHEN_ERROR_TO_GO_NEXT -e 1 ]; then
+            :
+        else
+            exit $SESSION_ERRNO
+        fi
+    fi
+    
+    if [ $SESSION_ERRNO -ne 0 -o ! -f "$DST_FULL_FILE_PATH" ]; then
+        hide_all_screens
     fi
 done
