@@ -117,9 +117,14 @@ BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lP
             }
         }
 
-        LOG_GEN_PRINTF("sWindowText=\"%s\", exe=\"%s\"\n", 
+        DWORD dwWndStyle = ::GetWindowLong(hwnd, GWL_STYLE);
+        DWORD dwWndExStyle = ::GetWindowLong(hwnd, GWL_EXSTYLE);
+
+        LOG_GEN_PRINTF("sWindowText=\"%s\", exe=\"%s\", bVisible=%s, bTopMost=%s\n", 
             TK_Tools::tstr2str(sWindowText.GetString()).c_str(),
-            TK_Tools::tstr2str(szProcessName).c_str()
+            TK_Tools::tstr2str(szProcessName).c_str(),
+            ::IsWindowVisible(hwnd) ? "true" : "false",
+            (dwWndExStyle & WS_EX_TOPMOST) ? "true" : "false"
         );
         arguments.winHandles.push_back(hwnd);
         if (!arguments.screenInfo.allMatched) {
