@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW=10000
+CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING=500
+
 function hide_all_screens
 {
     echo "************************************ hide_all_screens"
@@ -49,7 +52,7 @@ function close_all_documents_in_unicornviewer
     local Y
     
     while [ 1 -eq 1 ]; do
-        RECT=`guiistk imgWaitShown "min_max_close_buttons_for_doc.png","min_max_close_buttons_for_doc-2.png" 500`
+        RECT=`guiistk imgWaitShown "min_max_close_buttons_for_doc-3.png","min_max_close_buttons_for_doc.png","min_max_close_buttons_for_doc-2.png" $CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING`
         if [ $? -ne 0 ]; then
             break
         fi
@@ -128,7 +131,7 @@ function convert_pdg_to_pdf
     # to find the open file toolbar button, and click on it
     #
     echo "@@@ to find the open file toolbar button, and click on it"
-    RECT=`guiistk imgWaitShown "open_file_icon_on_toolbar.png"`
+    RECT=`guiistk imgWaitShown "open_file_icon_on_toolbar.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"open_file_icon_on_toolbar.png\" is not found!" >&2
         return 1
@@ -149,7 +152,7 @@ function convert_pdg_to_pdf
     # to find the input box in the open file dialog, set cursor in it, then input the source file path
     #
     echo "@@@ to find the input box in the open file dialog, set cursor in it, then input the source file path"
-    RECT=`guiistk imgWaitShown "input_box_in_open_file_dialog-en.png","input_box_in_open_file_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "input_box_in_open_file_dialog-en.png","input_box_in_open_file_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"input_box_in_open_file_dialog.png\" is not found!" >&2
         return 1
@@ -175,7 +178,7 @@ function convert_pdg_to_pdf
     # to find the open button in the open file dialog, and click on it
     #
     echo "@@@ to find the open button in the open file dialog, and click on it"
-    RECT=`guiistk imgWaitShown "open_button_in_open_file_dialog-en.png","open_button_in_open_file_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "open_button_in_open_file_dialog-en.png","open_button_in_open_file_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"open_button_in_open_file_dialog.png\" is not found!" >&2
         return 1
@@ -193,10 +196,52 @@ function convert_pdg_to_pdf
     guiistk Delay 100
     
     #
+    # to find whethter the file is failed to open, and close the failure dialog if possible
+    #
+    echo "@@@ to find whethter the file is failed to open, and close the failure dialog if possible"
+    while [ 1 -e 1 ]; do
+        RECT=`guiistk imgWaitShown "infor_in_open_failure_dailog-en.png","infor_in_open_failure_dailog-cn.png" $CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING`
+        if [ $? -ne 0 ]; then
+            break
+        fi
+        echo "$RECT"
+        X=`echo $RECT | awk '{print $1}'`
+        Y=`echo $RECT | awk '{print $2}'`
+        
+        X=$((X+3))
+        Y=$((Y+3))
+        
+        echo "$X $Y"
+        
+        guiistk Delay 100
+        
+        echo "*** ERROR: the file can't be openned by UnicornViewer: \'$INPUT_BOOK_PATH\'" >&2        
+        
+        RECT=`guiistk imgWaitShown "ok_button_in_open_failure_dailog-en.png","ok_button_in_open_failure_dailog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
+        if [ $? -ne 0 ]; then
+            echo "*** ERROR: the button \"ok_button_in_open_failure_dailog.png\" is not found!" >&2
+            return 1
+        fi
+        echo "$RECT"
+        X=`echo $RECT | awk '{print $1}'`
+        Y=`echo $RECT | awk '{print $2}'`
+        
+        X=$((X+3))
+        Y=$((Y+3))
+        
+        echo "$X $Y"
+        
+        guiistk mseClick $X,$Y
+        guiistk Delay 100
+        
+        break
+    do
+    
+    #
     # to find the image process button in the toolbar, and click it
     #
     echo "@@@ to find the image process button in the toolbar, and click it"
-    RECT=`guiistk imgWaitShown "image_proc_button_on_toolbar.png"`
+    RECT=`guiistk imgWaitShown "image_proc_button_on_toolbar.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"image_proc_button_on_toolbar.png\" is not found!" >&2
         return 1
@@ -217,7 +262,7 @@ function convert_pdg_to_pdf
     # to find the contrast bar in the image process dialog, and drag it to the end of the right side
     #
     echo "@@@ to find the contrast bar in the image process dialog, and drag it to the end of the right side"
-    RECT=`guiistk imgWaitShown "contrast_bar_in_image_proc_dialog-en.png","contrast_bar_in_image_proc_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "contrast_bar_in_image_proc_dialog-en.png","contrast_bar_in_image_proc_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"contrast_bar_in_image_proc_dialog.png\" is not found!" >&2
         return 1
@@ -245,7 +290,7 @@ function convert_pdg_to_pdf
     # to find the OK button in the image process dialog, and click it
     #
     echo "@@@ to find the OK button in the image process dialog, and click it"
-    RECT=`guiistk imgWaitShown "ok_button_in_image_proc_dialog-en.png","ok_button_in_image_proc_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "ok_button_in_image_proc_dialog-en.png","ok_button_in_image_proc_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"ok_button_in_image_proc_dialog.png\" is not found!" >&2
         return 1
@@ -266,7 +311,7 @@ function convert_pdg_to_pdf
     # to find the printer button in the toolbar, and click it
     #
     echo "@@@ to find the printer button in the toolbar, and click it"
-    RECT=`guiistk imgWaitShown "print_button_in_open_file_dialog.png"`
+    RECT=`guiistk imgWaitShown "print_button_in_open_file_dialog.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"print_button_in_open_file_dialog.png\" is not found!" >&2
         return 1
@@ -287,7 +332,7 @@ function convert_pdg_to_pdf
     # to find the pdf printer info in the printer dialog
     #
     echo "@@@ to find the pdf printer info in the printer dialog"
-    RECT=`guiistk imgWaitShown "pdf_printer_in_printer_dialog-cn-1.png","pdf_printer_in_printer_dialog-cn-2.png"`
+    RECT=`guiistk imgWaitShown "pdf_printer_in_printer_dialog-cn-1.png","pdf_printer_in_printer_dialog-cn-2.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"pdf_printer_in_printer_dialog.png\" is not found!" >&2
         return 1
@@ -308,7 +353,7 @@ function convert_pdg_to_pdf
     # to find the print button in the printer dialog
     #
     echo "@@@ to find the print button in the printer dialog"
-    RECT=`guiistk imgWaitShown "print_button_in_printer_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "print_button_in_printer_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"print_button_in_printer_dialog.png\" is not found!" >&2
         return 1
@@ -329,7 +374,7 @@ function convert_pdg_to_pdf
     # to find the saved file input box in the saving dialog, set cursor in it, select all, then input the generated file path
     #
     echo "@@@ to find the saved file input box in the saving dialog, set cursor in it, select all, then input the generated file path"
-    RECT=`guiistk imgWaitShown "saved_file_inputbox_in_saving_dialog-en.png","saved_file_inputbox_in_saving_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "saved_file_inputbox_in_saving_dialog-en.png","saved_file_inputbox_in_saving_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"saved_file_inputbox_in_saving_dialog.png\" is not found!" >&2
         return 1
@@ -357,7 +402,7 @@ function convert_pdg_to_pdf
     # to find the saved button box in the saving dialog, and click on it
     #
     echo "@@@ to find the saved button box in the saving dialog, and click on it"
-    RECT=`guiistk imgWaitShown "saved_button_in_saving_dialog-en.png","saved_button_in_saving_dialog-cn.png"`
+    RECT=`guiistk imgWaitShown "saved_button_in_saving_dialog-en.png","saved_button_in_saving_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
     if [ $? -ne 0 ]; then
         echo "*** ERROR: the button \"saved_button_in_saving_dialog.png\" is not found!" >&2
         return 1
@@ -379,7 +424,7 @@ function convert_pdg_to_pdf
     #
     echo "@@@ if possible, to find the save as dialog, click OK button on it"
     while [ 1 -eq 1 ]; do
-        RECT=`guiistk imgWaitShown "confirm_title_in_save_as_dialog-en.png","confirm_title_in_save_as_dialog-cn.png" 500`
+        RECT=`guiistk imgWaitShown "confirm_title_in_save_as_dialog-en.png","confirm_title_in_save_as_dialog-cn.png" $CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING`
         if [ $? -ne 0 ]; then
             break
         fi
@@ -395,7 +440,7 @@ function convert_pdg_to_pdf
         #guiistk mseClick $X,$Y
         guiistk Delay 100
         
-        RECT=`guiistk imgWaitShown "ok_button_in_save_as_dialog-en.png","ok_button_in_save_as_dialog-cn.png"`
+        RECT=`guiistk imgWaitShown "ok_button_in_save_as_dialog-en.png","ok_button_in_save_as_dialog-cn.png" $CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW`
         if [ $? -ne 0 ]; then
             echo "*** ERROR: the button \"ok_button_in_save_as_dialog.png\" is not found!" >&2
             return 1
@@ -431,57 +476,113 @@ function convert_pdg_to_pdf
     return 0
 }
 
-. ./config.inc
+function main
+{
+    local FILES_COUNT
+    local CURRENT_FILE_I
+    local FIRST_CHAR
+    local SRC_FULL_FILE_PATH
+    local DST_FULL_FILE_PATH_TMP
+    local DST_FULL_FILE_PATH__DIR
+    local DST_FULL_FILE_PATH__BASE
+    local DST_FULL_FILE_PATH__EXT
+    local DST_FULL_FILE_PATH
+    local DST_FILE_BASE_DIR
+    local SESSION_ERRNO
 
-cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
-    FIRST_CHAR="${FILE_PATH:0:1}"
-    if [ "$FIRST_CHAR" = "#" ]; then
-        continue
-    fi
+    . ./config.inc
 
-    SRC_FULL_FILE_PATH="$CFG_SRC_FILE_DIR_BASE$FILE_PATH"
-    DST_FULL_FILE_PATH_TMP="$CFG_DST_FILE_DIR_BASE$FILE_PATH"
-    
-    DST_FULL_FILE_PATH__DIR=`dirname "$DST_FULL_FILE_PATH_TMP"`
-    DST_FULL_FILE_PATH__BASE=`basename "$DST_FULL_FILE_PATH_TMP"`
-    DST_FULL_FILE_PATH__BASE=`echo "$DST_FULL_FILE_PATH__BASE" | sed 's/\.[^.]*$/.pdf/g'`
-    DST_FULL_FILE_PATH="$DST_FULL_FILE_PATH__DIR\\$DST_FULL_FILE_PATH__BASE"
-    
-    echo "\$SRC_FULL_FILE_PATH=$SRC_FULL_FILE_PATH"
-    echo "\$DST_FULL_FILE_PATH=$DST_FULL_FILE_PATH"
-        
-    if [ ! -f "$SRC_FULL_FILE_PATH" ]; then
-        echo "*** ERROR: file not exist: \"$SRC_FULL_FILE_PATH\"" >&2
-        continue
-    fi
-    
-    DST_FILE_BASE_DIR=`dirname "$DST_FULL_FILE_PATH"`
-    echo "mkdir -p \"$DST_FILE_BASE_DIR\""
-    mkdir -p "$DST_FILE_BASE_DIR"
-    
-    if [ $OPT_NOT_TO_REWRITE_EXISTING_FILE -eq 1 ]; then
-        if [ -f "$DST_FULL_FILE_PATH" ]; then
-            echo "### INFO: file already exist: \"$DST_FULL_FILE_PATH\""
+    FILES_COUNT=`wc -l $CFG_FILE_LIST_FILE`
+    CURRENT_FILE_I=0
+
+    cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
+        CURRENT_FILE_I=$((CURRENT_FILE_I+1))
+
+        #
+        # ignore the line beginning with '#'
+        #
+        FIRST_CHAR="${FILE_PATH:0:1}"
+        if [ "$FIRST_CHAR" = "#" ]; then
             continue
         fi
-    fi
-    
-    echo
-    echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-    echo "@@@ convert_pdg_to_pdf \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
-    echo "@@@"
-    convert_pdg_to_pdf "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"   
-    SESSION_ERRNO=$?
-    
-    if [ $SESSION_ERRNO -ne 0 ]; then
-        if [ $OPT_WHEN_ERROR_TO_GO_NEXT -e 1 ]; then
-            :
-        else
-            exit $SESSION_ERRNO
+
+        SRC_FULL_FILE_PATH="$CFG_SRC_FILE_DIR_BASE$FILE_PATH"
+        DST_FULL_FILE_PATH_TMP="$CFG_DST_FILE_DIR_BASE$FILE_PATH"
+        
+        DST_FULL_FILE_PATH__DIR=`dirname "$DST_FULL_FILE_PATH_TMP"`
+        DST_FULL_FILE_PATH__BASE=`basename "$DST_FULL_FILE_PATH_TMP"`
+        DST_FULL_FILE_PATH__BASE=`echo "$DST_FULL_FILE_PATH__BASE" | sed 's/\.[^.]*$/.pdf/g'`
+        DST_FULL_FILE_PATH__EXT=`echo "$DST_FULL_FILE_PATH__BASE" | sed 's/^.*\.\([^.]*\)$/\1/g' | tr '[A-Z]' '[a-z]'`
+
+        DST_FULL_FILE_PATH="$DST_FULL_FILE_PATH__DIR\\$DST_FULL_FILE_PATH__BASE"
+        
+        echo "\$SRC_FULL_FILE_PATH=$SRC_FULL_FILE_PATH"
+        echo "\$DST_FULL_FILE_PATH=$DST_FULL_FILE_PATH"
+        
+        #
+        # ignore the source file that does not exist
+        #    
+        if [ ! -f "$SRC_FULL_FILE_PATH" ]; then
+            echo "*** ERROR: file not exist: \"$SRC_FULL_FILE_PATH\"" >&2
+            continue
         fi
-    fi
-    
-    if [ $SESSION_ERRNO -ne 0 -o ! -f "$DST_FULL_FILE_PATH" ]; then
-        hide_all_screens
-    fi
-done
+        
+        #
+        # create the destination dir
+        #
+        DST_FILE_BASE_DIR=`dirname "$DST_FULL_FILE_PATH"`
+        echo "mkdir -p \"$DST_FILE_BASE_DIR\""
+        mkdir -p "$DST_FILE_BASE_DIR"
+        
+        #
+        # handle the case that the desitination file has already existed
+        #
+        if [ $OPT_NOT_TO_REWRITE_EXISTING_FILE -eq 1 ]; then
+            if [ -f "$DST_FULL_FILE_PATH" ]; then
+                echo "### INFO: file already exist: \"$DST_FULL_FILE_PATH\""
+                continue
+            fi
+        fi
+        
+        echo
+        echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+        echo "@@@ [$CURRENT_FILE_I/$FILES_COUNT] convert_pdg_to_pdf \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
+        echo "@@@"
+        
+        #
+        # when the type of the source file is pdf, copy it to the destination file directly 
+        #
+        if [ "$DST_FULL_FILE_PATH__EXT" = "pdf" ]; then
+            echo "cp -f \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
+            cp -f "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"
+            continue
+        fi
+        
+        #
+        # convert one file 
+        #
+        convert_pdg_to_pdf "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"   
+        SESSION_ERRNO=$?
+        
+        #
+        # handle how to handle the next file when error occurs
+        #
+        if [ $SESSION_ERRNO -ne 0 ]; then
+            if [ $OPT_WHEN_ERROR_TO_GO_NEXT -e 1 ]; then
+                :
+            else
+                exit $SESSION_ERRNO
+            fi
+        fi
+        
+        #
+        # try to minimize all of the windows when error occurs
+        #
+        if [ $SESSION_ERRNO -ne 0 -o ! -f "$DST_FULL_FILE_PATH" ]; then
+            hide_all_screens
+        fi
+    done
+}
+
+main
+
