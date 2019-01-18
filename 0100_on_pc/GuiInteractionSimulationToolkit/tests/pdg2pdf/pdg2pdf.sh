@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW=10000
+CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW=30000
 CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING=500
 
 function hide_all_screens
@@ -199,7 +199,7 @@ function convert_pdg_to_pdf
     # to find whethter the file is failed to open, and close the failure dialog if possible
     #
     echo "@@@ to find whethter the file is failed to open, and close the failure dialog if possible"
-    while [ 1 -e 1 ]; do
+    while [ 1 -eq 1 ]; do
         RECT=`guiistk imgWaitShown "infor_in_open_failure_dailog-en.png","infor_in_open_failure_dailog-cn.png" $CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING`
         if [ $? -ne 0 ]; then
             break
@@ -234,8 +234,8 @@ function convert_pdg_to_pdf
         guiistk mseClick $X,$Y
         guiistk Delay 100
         
-        break
-    do
+        return 1
+    done
     
     #
     # to find the image process button in the toolbar, and click it
@@ -509,6 +509,8 @@ function main
         SRC_FULL_FILE_PATH="$CFG_SRC_FILE_DIR_BASE$FILE_PATH"
         DST_FULL_FILE_PATH_TMP="$CFG_DST_FILE_DIR_BASE$FILE_PATH"
         
+        SRC_FULL_FILE_PATH__EXT=`echo "$SRC_FULL_FILE_PATH" | sed 's/^.*\.\([^.]*\)$/\1/g' | tr '[A-Z]' '[a-z]'`
+        
         DST_FULL_FILE_PATH__DIR=`dirname "$DST_FULL_FILE_PATH_TMP"`
         DST_FULL_FILE_PATH__BASE=`basename "$DST_FULL_FILE_PATH_TMP"`
         DST_FULL_FILE_PATH__BASE=`echo "$DST_FULL_FILE_PATH__BASE" | sed 's/\.[^.]*$/.pdf/g'`
@@ -552,7 +554,7 @@ function main
         #
         # when the type of the source file is pdf, copy it to the destination file directly 
         #
-        if [ "$DST_FULL_FILE_PATH__EXT" = "pdf" ]; then
+        if [ "$SRC_FULL_FILE_PATH__EXT" = "pdf" ]; then
             echo "cp -f \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
             cp -f "$SRC_FULL_FILE_PATH" "$DST_FULL_FILE_PATH"
             continue
@@ -568,7 +570,7 @@ function main
         # handle how to handle the next file when error occurs
         #
         if [ $SESSION_ERRNO -ne 0 ]; then
-            if [ $OPT_WHEN_ERROR_TO_GO_NEXT -e 1 ]; then
+            if [ $OPT_WHEN_ERROR_TO_GO_NEXT -eq 1 ]; then
                 :
             else
                 exit $SESSION_ERRNO
