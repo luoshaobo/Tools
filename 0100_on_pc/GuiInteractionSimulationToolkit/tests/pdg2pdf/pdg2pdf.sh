@@ -3,9 +3,13 @@
 CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW=30000
 CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING=500
 
+UNICORNVIEWER_WND_TITLE="UnicornViewer"
+
 function hide_all_screens
 {
-    echo "************************************ hide_all_screens"
+    echo "************************************ hide_all_screens ************************************"
+    guiistk wndshow "$UNICORNVIEWER_WND_TITLE" 0 1 SSM_MIN
+    guiistk Delay 1000
 }
 
 function wait_for_printing_to_finish_1
@@ -74,7 +78,6 @@ function convert_pdg_to_pdf
 {
     local INPUT_BOOK_PATH
     local OUTPUT_BOOK_PATH
-    local UNICORNVIEWER_WND_TITLE
     local COUNT
     local RECT
     local X
@@ -489,10 +492,11 @@ function main
     local DST_FULL_FILE_PATH
     local DST_FILE_BASE_DIR
     local SESSION_ERRNO
+    local CURRENT_TIME
 
     . ./config.inc
 
-    FILES_COUNT=`wc -l $CFG_FILE_LIST_FILE`
+    FILES_COUNT=`cat "$CFG_FILE_LIST_FILE" | wc -l`
     CURRENT_FILE_I=0
 
     cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
@@ -546,9 +550,10 @@ function main
             fi
         fi
         
+        CURRENT_TIME=`date +"%Y-%m-%d %H:%M:%S"`
         echo
         echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        echo "@@@ [$CURRENT_FILE_I/$FILES_COUNT] convert_pdg_to_pdf \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
+        echo "@@@ [$CURRENT_TIME][$CURRENT_FILE_I/$FILES_COUNT] convert_pdg_to_pdf \"$SRC_FULL_FILE_PATH\" \"$DST_FULL_FILE_PATH\""
         echo "@@@"
         
         #
