@@ -91,8 +91,6 @@ function convert_pdg_to_pdf
     echo "$$INPUT_BOOK_PATH=$INPUT_BOOK_PATH"
     echo "$$OUTPUT_BOOK_PATH=$OUTPUT_BOOK_PATH"
 
-    UNICORNVIEWER_WND_TITLE="UnicornViewer"
-
     #
     # to show screen with title: $UNICORNVIEWER_WND_TITLE
     #
