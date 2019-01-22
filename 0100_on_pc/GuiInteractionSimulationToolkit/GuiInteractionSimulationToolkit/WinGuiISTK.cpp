@@ -98,7 +98,9 @@ BOOL CALLBACK WinGuiISTK::getMatchedWindows_EnumWindowsProc(HWND hwnd, LPARAM lP
             bMatched = true;
         }
     } else {
-        if (sWindowText.Find(sTitle) != -1) {
+        if (sTitle.IsEmpty()) {
+            bMatched = true;
+        } else if (sWindowText.Find(sTitle) != -1) {
             if (sWindowText.Find(thiz->m_sExeFileName) == -1) {
                 bMatched = true;
             }
