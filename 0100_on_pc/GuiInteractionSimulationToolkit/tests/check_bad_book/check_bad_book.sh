@@ -226,19 +226,37 @@ function main
 
     . ./config.inc
     
-    > "$CFG_BAD_FILE_LIST"
+    #> "$CFG_BAD_FILE_LIST"
 
     FILES_COUNT=`cat "$CFG_FILE_LIST_FILE" | wc -l`
     CURRENT_FILE_I=0
 
     cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
         CURRENT_FILE_I=$((CURRENT_FILE_I+1))
+        
+        #
+        # ignore empty line
+        #
+        if [ -z "$FILE_PATH" ]; then
+            continue
+        fi
 
         #
         # ignore the line beginning with '#'
         #
         FIRST_CHAR="${FILE_PATH:0:1}"
         if [ "$FIRST_CHAR" = "#" ]; then
+            continue
+        fi
+        
+        
+        CHECKED_TAG_FILE_PATH="$CFG_CHECKED_TAG_FILE_DIR_BASE$FILE_PATH"
+        CHECKED_TAG_FILE_DIR=`dirname "$CHECKED_TAG_FILE_PATH"`
+        CHECKED_TAG_FILE_BASE=`basename "$CHECKED_TAG_FILE_PATH"`
+        #
+        # check whether checked
+        #
+        if [ -f "$CHECKED_TAG_FILE_PATH" ]; then
             continue
         fi
 
@@ -276,6 +294,9 @@ function main
                 exit $SESSION_ERRNO
             fi
         fi
+        
+        mkdir -p "$CHECKED_TAG_FILE_DIR"
+        touch "$CHECKED_TAG_FILE_PATH"
         
         #
         # try to minimize all of the windows when error occurs

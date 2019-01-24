@@ -499,6 +499,13 @@ function main
 
     cat "$CFG_FILE_LIST_FILE" | while read -r FILE_PATH; do
         CURRENT_FILE_I=$((CURRENT_FILE_I+1))
+        
+        #
+        # ignore empty line
+        #
+        if [ -z "$FILE_PATH" ]; then
+            continue
+        fi
 
         #
         # ignore the line beginning with '#'

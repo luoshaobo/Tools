@@ -1,6 +1,12 @@
 a 0\bad.uvz
+a 0\bad.pdf
 a 0\学习OpenCV.pdf
+
+#a 0\a 0 b1\AUTOSAR_SWS_MemoryMapping.pdf
+#a 0\a 0 b1\AUTOSAR_SWS_NVRAMManager.pdf
+#a 0\a 0 b1\AUTOSAR_SWS_RAMTest.pdf
+
 # a 1\a 1  b 1\史记 一_12352069.zip
 # a 2\a 2 b 1\史记 二_12352070.zip
 # a 3\a 3 b 3\a 3 b 3 好 的\四部備要·第015冊（史記）.uvz
-a 4\20157.点校本二十四史精装版.宋史.一二.卷一六一至卷一七二.志[元]脱脱撰.中华书局2013.uvz
+#a 4\20157.点校本二十四史精装版.宋史.一二.卷一六一至卷一七二.志[元]脱脱撰.中华书局2013.uvz
