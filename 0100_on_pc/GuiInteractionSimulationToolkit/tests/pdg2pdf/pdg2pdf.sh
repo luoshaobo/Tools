@@ -2,6 +2,7 @@
 
 CONST_MAX_WAITING_TIME_FOR_IMAGE_TO_SHOW=30000
 CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING=500
+CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING_FOR_OPEN_FAILURE=15000
 
 UNICORNVIEWER_WND_TITLE="UnicornViewer"
 
@@ -201,6 +202,7 @@ function convert_pdg_to_pdf
     #
     echo "@@@ to find whethter the file is failed to open, and close the failure dialog if possible"
     while [ 1 -eq 1 ]; do
+        RECT=`guiistk imgWaitShown "infor_in_open_failure_dailog-en.png","infor_in_open_failure_dailog-cn.png","min_max_close_buttons_for_doc-3.png","min_max_close_buttons_for_doc.png","min_max_close_buttons_for_doc-2.png" $CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING_FOR_OPEN_FAILURE`        
         RECT=`guiistk imgWaitShown "infor_in_open_failure_dailog-en.png","infor_in_open_failure_dailog-cn.png" $CONST_MAX_WAITING_TIME_TO_CHECK_IMAGE_EXISTING`
         if [ $? -ne 0 ]; then
             break

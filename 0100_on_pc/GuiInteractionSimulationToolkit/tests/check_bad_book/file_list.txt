@@ -1,10 +1,11 @@
 a 0\bad.uvz
 a 0\bad.pdf
 a 0\学习OpenCV.pdf
+a 0\not_existing.pdf
 
 #a 0\a 0 b1\AUTOSAR_SWS_MemoryMapping.pdf
-#a 0\a 0 b1\AUTOSAR_SWS_NVRAMManager.pdf
-#a 0\a 0 b1\AUTOSAR_SWS_RAMTest.pdf
+a 0\a 0 b1\AUTOSAR_SWS_NVRAMManager.pdf
+a 0\a 0 b1\AUTOSAR_SWS_RAMTest.pdf
 
 # a 1\a 1  b 1\史记 一_12352069.zip
 # a 2\a 2 b 1\史记 二_12352070.zip
