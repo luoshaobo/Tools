@@ -462,7 +462,7 @@ SMF_PlatformMsgQHandler *SMF_PlatformMsgQImpl::GetMsgQHandler()
 {
     SMF_PlatformMsgQHandler *pMsgQHandler = m_pApi;
 
-    if (pMsgQHandler != NULL) {
+    if (m_pMsgQHandler != NULL) {
         pMsgQHandler = m_pMsgQHandler;
     }
 
