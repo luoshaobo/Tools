@@ -246,9 +246,9 @@ public:
         startStatemachine(m_pBSServiceSM, 0);
 
         for (nIndex = 0; nIndex < nJobs; nIndex++) {
-            BSServiceSM *pBSServiceSM = new BSServiceSM(m_nMasterIndex, nIndex, this, this, getNewStatemachineId(), 0);
-            m_BSJobSMs.push_back(pBSServiceSM);
-            startStatemachine(pBSServiceSM, 0);
+            BSJobSM *pBSJobSM = new BSJobSM(m_nMasterIndex, nIndex, this, this, getNewStatemachineId(), 0);
+            m_BSJobSMs.push_back(pBSJobSM);
+            startStatemachine(pBSJobSM, 0);
         }
     }
 
@@ -290,9 +290,9 @@ public:
                 m_pBSServiceSM->OnBSEvent(pEvent);
             }
         } else if (nStatemachineIndex < m_BSJobSMs.size()) {
-            BSServiceSM *pBSServiceSM = m_BSJobSMs[nStatemachineIndex];
-            if (pBSServiceSM != NULL) {
-                pBSServiceSM->OnBSEvent(pEvent);
+            BSJobSM *pBSJobSM = m_BSJobSMs[nStatemachineIndex];
+            if (pBSJobSM != NULL) {
+                pBSJobSM->OnBSEvent(pEvent);
             }
         } else {
 
@@ -312,7 +312,7 @@ private:
     unsigned int m_nMasterIndex;
     ThreadEventQueue *m_pThreadEventQueue;
     BSServiceSM *m_pBSServiceSM;
-    std::vector<BSServiceSM *> m_BSJobSMs;
+    std::vector<BSJobSM *> m_BSJobSMs;
 };
 
 unsigned int BSStatemachineMaster::m_nCurrentMasterIndex = 0;
