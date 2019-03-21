@@ -21,9 +21,10 @@ public:
     }
 
 public:
-    unsigned int GetMasterIndex () const { return m_nMasterIndex; }
-    unsigned int GetStatemachineIndex () const { return m_nStatemachineIndex; }
-    unsigned int GetEventIndex () const { return m_nEventIndex; }
+    unsigned int GetMasterIndex() const { return m_nMasterIndex; }
+    unsigned int GetStatemachineIndex() const { return m_nStatemachineIndex; }
+    unsigned int GetEventIndex() const { return m_nEventIndex; }
+    SharedPtr<BSEventDataBase> GetData() const { return m_data; }
 
 public:
     virtual const char* getName() const
@@ -47,6 +48,8 @@ class BSServiceSM : public IStatemachine
 {
 public:
     enum {
+        BSSSM_EI_USER_BASE = 0,
+        BSSSM_EI_SYS_BASE = 100000,
         BSSSM_EI_EVENT1,
         BSSSM_EI_EVENT2,
         BSSSM_EI_TIMER1,
@@ -73,10 +76,15 @@ public:
         fireEvent(*pBSEvent);
     }
 
-    void StartTimer(TimeElapse::Difference timeoutMicroSeconds, unsigned int nEventIndex, SharedPtr<BSEventDataBase> data = 0)
+    Timer StartTimer(TimeElapse::Difference timeoutMicroSeconds, unsigned int nEventIndex, SharedPtr<BSEventDataBase> data = 0)
     {
         BSEvent bsEvent(m_nMasterIndex, m_nStatemachineIndex, nEventIndex, data);
-        startTimer(timeoutMicroSeconds, bsEvent);
+        return startTimer(timeoutMicroSeconds, bsEvent);
+    }
+
+    void StopTimer(Timer &timer)
+    {
+        stopTimer(timer.getId());
     }
 
 private:
@@ -143,6 +151,8 @@ class BSJobSM : public IStatemachine
 {
 public:
     enum {
+        BSJSM_EI_USER_BASE = 0,
+        BSJSM_EI_SYS_BASE = 100000,
         BSJSM_EI_EVENT1,
         BSJSM_EI_EVENT2,
         BSJSM_EI_TIMER1,
@@ -170,10 +180,15 @@ public:
         fireEvent(*pBSEvent);
     }
 
-    void StartTimer(TimeElapse::Difference timeoutMicroSeconds, unsigned int nEventIndex, SharedPtr<BSEventDataBase> data = 0)
+    Timer StartTimer(TimeElapse::Difference timeoutMicroSeconds, unsigned int nEventIndex, SharedPtr<BSEventDataBase> data = 0)
     {
         BSEvent bsEvent(m_nMasterIndex, m_nStatemachineIndex, nEventIndex, data);
-        startTimer(timeoutMicroSeconds, bsEvent);
+        return startTimer(timeoutMicroSeconds, bsEvent);
+    }
+
+    void StopTimer(Timer &timer)
+    {
+        stopTimer(timer.getId());
     }
 
 private:
