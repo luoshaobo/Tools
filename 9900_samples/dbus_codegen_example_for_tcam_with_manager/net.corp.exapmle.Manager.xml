@@ -1,0 +1,16 @@
+<node>
+  <interface name="net.corp.exapmle.Manager">
+    <method name="SayHelloWorld">
+      <arg name="greeting" direction="in" type="s"/>
+      <arg name="response" direction="out" type="s"/>
+    </method>
+
+    <signal name="NotifyInfoChanged">
+      <arg name="icon_blob" type="ay"/>
+      <arg name="height" type="i"/>
+      <arg name="messages" type="as"/>
+    </signal>
+
+    <property name="Verbose" type="b" access="readwrite"/>
+  </interface>
+</node>
