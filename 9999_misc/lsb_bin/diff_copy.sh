@@ -2,8 +2,8 @@
 
 DIFF_RESULT_FILE="patch.diff"
 RESULT_ROOT="./diff_copy_result"
-RESULT_SRC_ROOT="$RESULT_ROOT/00_SRC"
-RESULT_DST_ROOT="$RESULT_ROOT/01_DST"
+RESULT_SRC_ROOT="$RESULT_ROOT/00_NEW"
+RESULT_DST_ROOT="$RESULT_ROOT/01_OLD"
 
 ARG_SRC_DIR="/tmp/unknown_dir"
 ARG_DST_DIR="/tmp/unknown_dir"
@@ -14,7 +14,7 @@ DEF_EXCLUDE_FILE="./def_exclude_file.lst"
 function usage()
 {
     echo "Usage:"
-    echo "    `basename $0` <src_dir> <dst_dir> [<exclude_file>]"
+    echo "    `basename $0` <new_dir> <old_dir> [<exclude_file>]"
     echo "        <exclude_file>: "
     echo "            -: for default exclude file."
     echo ""
@@ -23,7 +23,17 @@ function usage()
 function create_def_exclude_file()
 {
     cat >"$DEF_EXCLUDE_FILE" <<EOF
+.git
 .svn
+.d
+generated
+gen
+*.generated
+*.o
+*.a
+*.lib
+*.so
+*.log
 EOF
 
 # *.obj
@@ -194,6 +204,6 @@ for LINE in $LINES; do
     fi
 done
 
-mv "$RESULT_SRC_ROOT" "$RESULT_ROOT/00_old"
-mv "$RESULT_DST_ROOT" "$RESULT_ROOT/01_new"
+mv "$RESULT_SRC_ROOT" "$RESULT_ROOT/01_new"
+mv "$RESULT_DST_ROOT" "$RESULT_ROOT/00_old"
 
