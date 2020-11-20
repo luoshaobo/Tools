@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: libfsm_transfermanager
+Description: Foundation Service Manager / transfer manager library
+Version: 1.0
+Requires: comaclient libfsm_persist_data_mgr sqlite3
+Libs.private: -lstdc++
+Libs: -L${libdir} -lfsm_transfermanager -lfsm_persist_data_mgr -lsqlite3
+Cflags: -I${includedir}/fsm_transfermanager

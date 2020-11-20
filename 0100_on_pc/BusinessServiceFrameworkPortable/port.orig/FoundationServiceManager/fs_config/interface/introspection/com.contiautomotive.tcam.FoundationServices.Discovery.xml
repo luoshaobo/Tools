@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Author: Iulian Sirghi -->
+
+<node name="/com/contiautomotive/tcam/FoundationServices/Discovery"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Discovery
+         @short_description: Foundation Services Discovery
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Discovery">
+
+        <!--
+            Resources:
+                The list of all feature resources.
+        -->
+        <property name="Resources" type="ao" access="readwrite" />
+
+        <!--
+            CloudConnectionStatus:
+               Structure:
+                        certificateValidityStatus           (byte)
+                        lastConnectionStatusCN              (byte)
+                        centralNodeServerURI                (string)
+                        lastConnectionDateTimeCN            (string)
+                        lastConnectionStatusRN              (byte)
+                        regionalNodeServerURI               (string)
+                        lastConnectionDateTimeRN            (string)
+
+               The cloud connection status details.
+        -->
+        <property name="CloudConnectionStatus" type="(yyssyss)" access="readwrite" />
+
+    </interface>
+</node>

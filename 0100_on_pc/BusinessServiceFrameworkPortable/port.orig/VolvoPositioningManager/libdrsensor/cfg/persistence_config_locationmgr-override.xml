@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- Copyright (c) 2016 Continental AG and subsidiaries                  -->
+<!--                                                                     -->
+<!-- The copyright notice above does not evidence any actual             -->
+<!-- or intended publication of such source code.                        -->
+<!-- The code contains Continental Confidential Proprietary Information. -->
+
+
+<!-- TP Persistence XML resource configuration file -->
+<!-- This file specifies the persistent data that Location Manager Service uses -->
+<!--*
+
+	@file persistence_config_locationmgr.xml
+		@addtogroup Config Platform Configuration
+		@{
+
+		@addtogroup RunConfig Run Time Configuration
+		@{
+			This module contains the Telematics Platform run time configuration options.
+
+			@ref PersLmConfig
+		@}
+		@}
+
+
+		@addtogroup LM Location Manager (LM)
+		@{
+
+		@defgroup PersLmConfig Location Manager Persistence Configuration
+		@{
+				This module contains run time persistent configuration options for Location Manager.
+
+-->
+
+<PERSISTENCE_CONFIG>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* 32 bits bitmap to select the NMEA sentences for a specified GNSS system(s)
+			 <br/>
+			  63 =>Defaults to All GNSS systems: GPS, GLONASS, Galileo
+			  <br/>
+			  unit: None
+			  <br/>
+			  range:0 - MAX INT32 -->
+		<name>lm_nmea_gnss_system</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>integer</data_type>
+		<default>63</default>
+		<default_size>4</default_size>
+		<max_data_size>4</max_data_size>
+	</resource>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* Default Value to enable Location Manager Position History
+			 <br/>
+			  1 => Position History is enabled
+			  <br/>
+			  unit: None
+			  <br/>
+			  range: 0 or 1 -->
+		<name>lm_position_history_enable</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>integer</data_type>
+		<default>1</default>
+		<default_size>4</default_size>
+		<max_data_size>4</max_data_size>
+	</resource>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* Heading threshold for position history. Position is cached in position history when
+			 the heading exceeds the specified threshold.
+			  <br/>
+			  30 => Configured as Default Value
+			  <br/>
+			  unit: Degrees
+			  <br/>
+			  range: None -->
+		<name>lm_position_history_heading_threshold</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>integer</data_type>
+		<default>30</default>
+		<default_size>4</default_size>
+		<max_data_size>4</max_data_size>
+	</resource>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* Distance threshold for position history. Position is cached in position history when
+			the distance exceeds the specified threshold
+			  <br/>
+			  100 => Configured as Default Distance Threshold
+			  <br/>
+			  unit: Meters
+			  <br/>
+			  range: None -->
+		<name>lm_position_history_distance_threshold</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>integer</data_type>
+		<default>100</default>
+		<default_size>4</default_size>
+		<max_data_size>4</max_data_size>
+	</resource>
+
+	<resource>
+		<res_type>file</res_type>
+		<!--* This is encrypted binary file containing the position history.
+			 <br/>
+			  binary => Configured as binary data type. This is local for only Location Manager read/writes-->
+		<name>lm-position-history</name>
+		<application>locationmgr</application>
+		<storage_type>local</storage_type>
+		<permission>rw</permission>
+		<policy>secure</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>binary</data_type>
+		<default_size>1024</default_size>
+		<max_data_size>1024</max_data_size>
+	</resource>
+
+	<resource>
+		<res_type>file</res_type>
+		<!--* This is the plugin configuration XML file
+			 <br/>
+			  binary => Configured as binary data type.-->
+		<name>locationmgr_plugins_config.xml.pers-override</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>ro</permission>
+		<policy>cached</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>binary</data_type>
+		<default_size>4096</default_size>
+		<max_data_size>4096</max_data_size>
+		<allow_override>1</allow_override>
+	</resource>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* This key holds the plugin priority schemes definitions.
+			  <br/>
+			  string => LM_SCHEME_DEFAULT=qmi. Default scheme will contain only the QMI plugin -->
+		<name>lm_priority_schemes</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>string</data_type>
+		<default>LM_SCHEME_DEFAULT=qmi</default>
+		<default_size>1024</default_size>
+		<max_data_size>1024</max_data_size>
+		<allow_override>1</allow_override>
+	</resource>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* Default Value to enable for the GNSS start type. mapping to (#tpLM_StartType_t) enum
+			 <br/>
+			  COLD = 1 WARM = 2 HOT = 3
+			  <br/>
+			  COLD => Configured as Default Value
+			  <br/>
+			  unit: None
+			  <br/>
+			  range: 1 to 3 -->
+		<name>lm_gnss_start_type</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>integer</data_type>
+		<default>1</default>
+		<default_size>4</default_size>
+		<max_data_size>4</max_data_size>
+	</resource>
+
+	<resource>
+		<res_type>key-value</res_type>
+		<!--* Default Value to enable for the GNSS horizontal accuracy. mapping to (#tpLM_HorizontalAccuracy_t) enum
+			 <br/>
+			  LOW = 1 MEDIUM = 2 HIGH = 3
+			  <br/>
+			  LOW => Configured as Default Value
+			  <br/>
+			  unit: None
+			  <br/>
+			  range: 1 to 3 -->
+		<name>lm_gnss_horizontal_accuracy</name>
+		<application>locationmgr</application>
+		<storage_type>group</storage_type>
+		<permission>rw</permission>
+		<policy>write-through</policy>
+		<user>location</user>
+		<group>location</group>
+		<data_type>integer</data_type>
+		<default>1</default>
+		<default_size>4</default_size>
+		<max_data_size>4</max_data_size>
+	</resource>
+
+</PERSISTENCE_CONFIG>

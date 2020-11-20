@@ -1,0 +1,36 @@
+#TESTING WITH INJECTED SIGNALS USING MANUAL SIGNAL INJECTION#
+
+The setup below describes how to use the manual signal injection mechanism
+to test the VolvoOnCall application. In the described setup the DUT performs
+service discovery towards the cloud mock based on SoapUi and then waits for
+signals that are injected manually, through the command line.
+
+1. Setup the cloud mock and the device as described in
+   package/vcc-tcam/FoundationServiceManager/mock_cloud:
+   a) Use the default local configuration
+   b) Make sure that the ethernet data links work in both directions (e.g. ping)
+   c) Make sure to push associated certificates and custom tcam.config file
+      to point to the local cloud mock
+   d) Stop and start the fssdd to make it re-read the configuration
+   e) Make sure that device's date is in line with the certificates' validity
+
+2. Build the VOC application with the signal injection enabled:
+   make VV=1 CAS_TARGET_HW=vcc-tcam ENABLE_SIGNAL_INJECTION=true  VolvoOnCall
+
+3. Push VolvoOnCall app to /data, make it executable, and run it:
+   adb push voc /data
+   adb shell
+   cd /data
+   chmod 777 voc
+   ./voc
+   The VOC app will initiate, preform service discovery and then wait for
+   the signal injection
+
+4. For signal injection you can use the pre-encoded signals, they are available
+   in package/vcc-tcam/VolvoOnCall/test/messages. Push them to the /data, e.g.:
+   adb push bcc_cl_001_signal_honk.bin /data
+
+5. The VOC application can print out the injection syntax (type help), but
+   a typical command for a CCM message may look the following:
+   inject_signal --signal-type CCM --signal-file bcc_cl_001_signal_honk.bin
+

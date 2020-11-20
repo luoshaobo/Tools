@@ -1,0 +1,45 @@
+BCC-CommonTypes {1 3 6 1 4 1 37916 3 6 1 0 0 2} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Envelope                       FROM FS-StandardTypes
+        ;
+    -- Composite types
+
+    -- Simple types
+
+    Uri ::= UTF8String
+
+    UUID ::= OCTET STRING (SIZE(16))
+
+    -- Simple types
+	
+   DatasharingSetting ::= ENUMERATED {
+        datasharingDisabled  (0),
+        detasharingAllowed   (1),
+        ...
+    }
+
+    
+    EndOfService ::= ENUMERATED 
+    {
+        serviceFinishedNormally (0),
+        timeout                 (1),
+        ...
+    }
+
+
+    ExtendedData ::= SEQUENCE {
+        status           Envelope OPTIONAL,
+        ...
+    }
+	
+	
+    TripStatus ::= ENUMERATED {
+	  noTrip,
+	  tripStarted,
+	  tripOngoing,
+	  tripEnded,
+      ...
+    }
+    
+END

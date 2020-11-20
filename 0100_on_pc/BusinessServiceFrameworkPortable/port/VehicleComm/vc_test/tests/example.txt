@@ -1,0 +1,7 @@
+Request_AntennaSwitch 2
+delay 3
+Request_HornAndLight 1
+delay 5
+Request_HornAndLight 1
+delay 1
+Request_LockDoor 0 1

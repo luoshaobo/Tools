@@ -1,0 +1,21 @@
+EntryPoint {1 3 6 1 4 1 37916 3 0 4} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Uri                       FROM FS-CommonTypes
+        ;
+
+    EntryPoint ::= SEQUENCE {
+        thiz                    Uri,
+        specificationVersion    INTEGER,
+        implementationVersion   INTEGER,
+        clientUri               Uri,
+        host                    UTF8String,
+        port                    INTEGER,
+        signalServiceUri        Uri OPTIONAL,
+		validLocations          SEQUENCE OF Country OPTIONAL,
+        ...
+    }
+	
+	Country ::= UTF8String
+
+END

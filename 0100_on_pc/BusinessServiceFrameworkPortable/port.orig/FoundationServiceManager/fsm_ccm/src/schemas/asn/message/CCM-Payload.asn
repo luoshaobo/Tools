@@ -1,0 +1,21 @@
+CCM-Payload {1 3 6 1 4 1 37916 6 1 2} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    -- =================================================================
+    --
+    -- Payload for Connectivity Compact Message
+    --
+    -- =================================================================
+
+    IMPORTS
+           Envelope   FROM FS-StandardTypes
+    ;
+
+    CCM-Payload ::= SEQUENCE {
+       message   Envelope,
+       metadata  SEQUENCE SIZE (1..maxMetadata) OF Envelope OPTIONAL,
+       ...
+    }
+
+    maxMetadata     INTEGER ::= 50
+
+END

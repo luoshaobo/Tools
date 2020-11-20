@@ -1,0 +1,19 @@
+# ignore objects and archives
+*.[oa]
+*.so
+docs/*
+
+#ignore build output and generated stuff
+usermanager_tool/usermanager_tool
+
+#ignore unit test stuff (directories and executables):
+test/unittest/build_googletest/
+test/unittest/build_unittest_fsm_ccm/
+test/unittest/build_unittest_user_manager/
+test/unittest/googletest/
+test/unittest/unittest_user_manager
+
+#ignore emacs/backup files
+*~
+*#
+*.bak

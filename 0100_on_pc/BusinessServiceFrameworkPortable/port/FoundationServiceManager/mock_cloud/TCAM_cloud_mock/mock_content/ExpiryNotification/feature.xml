@@ -1,0 +1,6 @@
+<feature>
+    <name>expiry</name>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <uri>expiry_notification_topic</uri>
+</feature>

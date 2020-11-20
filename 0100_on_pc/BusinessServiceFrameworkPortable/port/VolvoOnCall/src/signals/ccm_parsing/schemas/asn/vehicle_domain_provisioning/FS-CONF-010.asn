@@ -1,0 +1,29 @@
+FS-CONF-010 {1 3 6 1 4 1 37916 3 0 7 0 1 0} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Envelope   FROM FS-StandardTypes
+        ;
+
+     FS-CONF-010 ::= SEQUENCE {
+        configurations   SEQUENCE (SIZE(1.. maxNrOfConfigurations)) OF Configuration,
+        timestamp        GeneralizedTime ,
+        identity         UTF8String OPTIONAL,
+        workOrderID      INTEGER OPTIONAL,
+        ttl              INTEGER,
+        ...
+     }
+
+     Configuration ::= SEQUENCE {
+       envelope            Envelope, 
+       cacheState          CacheState,
+       ...
+     }
+
+     CacheState ::= ENUMERATED {
+       reconnect,
+       invalidate,
+       ...
+     }
+
+     maxNrOfConfigurations INTEGER ::= 255
+END

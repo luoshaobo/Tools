@@ -1,0 +1,21 @@
+#########################################################
+# Copyright (C) 2017 Continental Automotive GmbH
+# Author:       Per Persson
+# Date:         19-Dec-2017
+# Description:  This is VolvoPositioningManager service file
+#########################################################
+
+[Unit]
+Description=Volvo Positioning Manager/Service
+Requires=dbus.service locationmgr.service ipcb.service vc.service lifecyclemgr.service
+After=dbus.service locationmgr.service ipcb.service vc.service lifecyclemgr.service
+
+[Service]
+Type=dbus
+BusName=com.contiautomotive.tcam.vpom
+ExecStart=/usr/bin/vpom
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

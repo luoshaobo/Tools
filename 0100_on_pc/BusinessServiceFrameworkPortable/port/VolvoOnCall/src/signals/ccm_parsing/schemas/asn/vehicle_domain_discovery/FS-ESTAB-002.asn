@@ -1,0 +1,23 @@
+FS-ESTAB-002 {1 3 6 1 4 1 37916 3 0 6 0 0 2} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Envelope, ResponseInfo     FROM FS-StandardTypes;
+
+     --establishment resources enveloped
+     FS-ESTAB-002 ::= SEQUENCE {
+        responseInfo           ResponseInfo,
+        establishResourcesList	SEQUENCE (SIZE(1..maxEstablishmentEnvelopes)) OF Configuration  OPTIONAL,
+        ...
+     }
+
+     Configuration ::= SEQUENCE {
+       envelope            Envelope OPTIONAL,
+       rescourceVersion    UTF8String,
+       cacheUpdatedTime    GeneralizedTime,
+       ttl                 INTEGER,
+       ...
+     }
+
+     maxEstablishmentEnvelopes            INTEGER ::= 255
+
+END

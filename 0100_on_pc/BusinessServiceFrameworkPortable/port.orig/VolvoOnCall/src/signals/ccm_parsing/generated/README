@@ -1,0 +1,21 @@
+# Pre conditions
+Conflicts in the ASN.1 that is not handled correcly needs to be patched manually if new versions overwrites old files.
+
+* In signal CA-FUNC-002 the type Resources has been renamed to Resources-CA.
+
+
+# 1. Generated Code/header files with these asn1c commands. Some types are same between modules/signals and therefore needs to be generated in seperate commands.
+
+../../../../../../../release/fs/devel/usr/bin/asn1c -gen-PER -S ../../../../../../opensource/asn1c/skeletons/ ../schemas/asn/en-standards/msd_v2.asn ../schemas/asn/common/BCC-StandardTypes.asn ../schemas/asn/common/BCC-CommonTypes.asn ../schemas/asn/common/BCC-LocationTypes.asn ../schemas/asn/functions/BCC-FUNC-00* ../schemas/asn/carLocator/BCC-CL-0*
+
+../../../../../../../release/fs/devel/usr/bin/asn1c -gen-PER -S ../../../../../../opensource/asn1c/skeletons/ ../schemas/asn/common/CA-StandardTypes.asn ../schemas/asn/common/CA-CommonTypes.asn ../schemas/asn/discovery/CA-FUNC-0* ../schemas/asn/device_pairing/CA-DPA-02* schemas/asn/device_pairing/CA-DPA-00*
+
+../../../../../../../release/fs/devel/usr/bin/asn1c -fwide-types  -S ../../../../../../opensource/asn1c/skeletons/  ../schemas/asn/rfc/PKIX1Implicit88.asn ../schemas/asn/rfc/PKIX1Explicit88.asn  ../schemas/asn/catalogue/CA-CAT-001.asn
+
+../../../../../../../../release/fs/devel/usr/bin/asn1c -gen-PER  -S ../../../../../../opensource/asn1c/skeletons/  ../schemas/asn/common/FS-CommonTypes.asn ../schemas/asn/features/Features.asn ../schemas/asn/entry_point/EntryPoint.asn ../schemas/asn/expiry_notification/ExpiryNotification.asn
+
+# 2. Remove sample file as it is not needed
+
+rm converter-sample.c
+
+# 3. Inspect the modified files. They might have been modified previously for some reason, transfer such modifications.

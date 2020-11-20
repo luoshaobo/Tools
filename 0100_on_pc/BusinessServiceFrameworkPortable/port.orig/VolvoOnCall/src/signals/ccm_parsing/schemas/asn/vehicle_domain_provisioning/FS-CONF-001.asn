@@ -1,0 +1,65 @@
+FS-CONF-001 {1 3 6 1 4 1 37916 3 0 7 0 0 1} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Envelope   FROM FS-StandardTypes
+        ;
+
+     FS-CONF-001 ::= SEQUENCE {
+        configurations   SEQUENCE (SIZE(1.. maxNrOfConfigurations)) OF Configuration,
+        readInfo         ReadInfo OPTIONAL,
+        writeInfo        WriteInfo OPTIONAL,
+        ...
+     }
+
+     Configuration ::= SEQUENCE {
+       envelope            Envelope,
+       rescourceVersion    UTF8String,
+       readInfo            ReadConfigInfo OPTIONAL,
+       writeInfo           WriteConfigInfo OPTIONAL,
+       ...
+     }
+
+     ReadInfo  ::= SEQUENCE {
+       timestamp        GeneralizedTime,
+       ...
+     }
+
+     WriteInfo  ::= SEQUENCE {
+       identity         UTF8String OPTIONAL,
+       workOrderID      INTEGER OPTIONAL,
+       ...
+     }
+
+     ReadConfigInfo  ::= SEQUENCE {
+       confSource          ConfigurationSource OPTIONAL,
+       identity            UTF8String OPTIONAL,
+       workOrderID         INTEGER OPTIONAL,
+       cacheCreateTime     GeneralizedTime,
+       ttl                 INTEGER,
+       cacheState          CacheState,
+       ...
+     }
+
+     WriteConfigInfo  ::= SEQUENCE {
+       update              BOOLEAN,
+       --ttl                 INTEGER,
+       cacheState          CacheState,
+       ignoreVSDPupdates   BOOLEAN,
+       ...
+     }
+
+     CacheState ::= ENUMERATED {
+       reconnect,
+       invalidate,
+       ...
+     }
+
+     ConfigurationSource ::= ENUMERATED {
+       did,
+       swdl,
+       vsdp,
+       ...
+     }
+
+     maxNrOfConfigurations INTEGER ::= 255
+END

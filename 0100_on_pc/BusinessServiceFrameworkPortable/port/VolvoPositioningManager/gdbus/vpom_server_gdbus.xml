@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+
+<!--/*
+* Copyright (C) 2017 Continental Automotive GmbH
+*
+* Licensed under the "Supplier unrestricted white box" category, as
+* described in the 20160322-1_SW-amendment TCAM.pdf agreement
+* between Volvo Cars and Continental Automotive GmbH.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*/ -->
+
+<!-- D-Bus interfaces for TCAM - VolvoPositioningManager -->
+
+<node>
+    <interface name="com.contiautomotive.tcam.vpom.Manager">
+        <!-- Client to VPOM -->
+        <method name="GNSSPositionDataRawRequest">
+            <arg name="request_id" type="t" direction="in" />
+        </method>
+        <!-- VPOM to Client -->
+        <signal name="GNSSPositionDataRawResponseSig">
+            <arg name="datastatus" type="u" direction="out" />
+            <arg name="year" type="u" direction="out" />
+            <arg name="month" type="u" direction="out" />
+            <arg name="day" type="u" direction="out" />
+            <arg name="hour" type="u" direction="out" />
+            <arg name="minute" type="u" direction="out" />
+            <arg name="second" type="u" direction="out" />
+            <arg name="weekNumber" type="u" direction="out" />
+            <arg name="timeOfWeek" type="u" direction="out" />
+            <arg name="longitude" type="i" direction="out" />
+            <arg name="latitude" type="i" direction="out" />
+            <arg name="altitude" type="i" direction="out" />
+            <arg name="speed" type="u" direction="out" />
+            <arg name="horizontalVelocity" type="u" direction="out" />
+            <arg name="verticalVelocity" type="i" direction="out" />
+            <arg name="heading" type="u" direction="out" />
+            <arg name="magnetic_heading" type="u" direction="out" />
+            <arg name="gpsIsUsed" type="b" direction="out" />
+            <arg name="glonassIsUsed" type="b" direction="out" />
+            <arg name="galileoIsUsed" type="b" direction="out" />
+            <arg name="sbasIsUsed" type="b" direction="out" />
+            <arg name="qzssL1IsUsed" type="b" direction="out" />
+            <arg name="qzssL1SAIFIsUsed" type="b" direction="out" />
+            <arg name="fixType" type="u" direction="out" />
+            <arg name="dgpsIsUsed" type="b" direction="out" />
+            <arg name="selfEphemerisDataUsage" type="b" direction="out" />
+            <arg name="visible_gps" type="u" direction="out" />
+            <arg name="visible_glonass" type="u" direction="out" />
+            <arg name="visible_galileo" type="u" direction="out" />
+            <arg name="visible_sbas" type="u" direction="out" />
+            <arg name="visible_qzssL1" type="u" direction="out" />
+            <arg name="visible_qzssL1SAIF" type="u" direction="out" />
+            <arg name="used_gps" type="u" direction="out" />
+            <arg name="used_glonass" type="u" direction="out" />
+            <arg name="used_galileo" type="u" direction="out" />
+            <arg name="used_sbas" type="u" direction="out" />
+            <arg name="used_qzssL1" type="u" direction="out" />
+            <arg name="used_qzssL1SAIF" type="u" direction="out" />
+            <arg name="hdop" type="u" direction="out" />
+            <arg name="vdop" type="u" direction="out" />
+            <arg name="pdop" type="u" direction="out" />
+            <arg name="tdop" type="u" direction="out" />
+            <arg name="min_size" type="u" direction="out" />
+            <arg name="max_size" type="u" direction="out" />
+            <arg name="actual_size" type="u" direction="out" />
+            <arg name="data_array" type="u" direction="out" />
+            <arg name="request_id" type="t" direction="out" />
+        </signal>
+    </interface>
+</node>

@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: lib_fsm_persist_data_mgr
+Description: Foundation Service Persist Data Manager library
+Version: 0.0.1
+Requires:
+Libs.private: -lstdc++
+Libs: -L${libdir} -lfsm_persist_data_mgr -ldlt -lcas-pcl -lglib-2.0
+Cflags: -I${includedir}/fsm

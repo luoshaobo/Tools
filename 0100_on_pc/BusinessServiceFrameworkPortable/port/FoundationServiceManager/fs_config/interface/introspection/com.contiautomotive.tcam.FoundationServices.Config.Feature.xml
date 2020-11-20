@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Config/Feature"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Discovery.Service.Feature
+         @short_description: Foundation Services Discovery Service Feature
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Config.Feature">
+
+        <!--
+            Enabled:
+
+            Curent state.
+            Permutations of Visibile (true, false) and Enabled (true, false)
+        -->
+        <property name="State" type="u" access="readwrite" />
+
+        <!--
+            Description:
+
+            Feature description.
+        -->
+        <property name="Description" type="s" access="readwrite" />
+
+        <!--
+            Uri:
+
+            Feature payload URI.
+        -->
+        <property name="Uri" type="s" access="readwrite" />
+
+        <!--
+            Icon:
+
+            Feature Icon.
+        -->
+        <property name="Icon"  type="s" access="readwrite" />
+
+        <!--
+            Tags:
+
+            Feature Tags.
+        -->
+        <property name="Tags"  type="as" access="readwrite" />
+
+    </interface>
+</node>

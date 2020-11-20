@@ -1,0 +1,8 @@
+The debian packages in this folder are built with the local build utilities available on Ubuntu 12.04 for the x86_64 and can be used to compile
+and link transfermanager unit-tests (CMakeFiles.txt). Please use the dpkg tool with sudo rights to install them. After installation you should be able to see the packages in pkg-config.
+
+The following source code repo's were used to build the binaries:
+p1/package/genivi/dlt-daemon
+p1/package/opensource/paho-mqtt
+
+The tool called "checkinstall" waas used to generate the deb packages.

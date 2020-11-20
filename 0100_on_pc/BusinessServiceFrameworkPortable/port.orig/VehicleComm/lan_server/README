@@ -1,0 +1,4 @@
+To build VehicleComm module for x86.
+1) ./build.sh --patch    -   Patch vSomeIP by running 
+2) ./build.sh            -   Build dependencies + VehicleComm server binary 
+3) ./start_server.sh <ip-address or network card(e.g eth0)>      - To run the VehicleComm server ip-address should be local

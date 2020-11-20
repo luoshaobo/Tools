@@ -1,0 +1,12 @@
+# Package Information for pkg-config
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/vpom
+
+Name: vpom_client
+Description: client library for VolvoPositioningManager
+Requires.private: glib-2.0 gio-unix-2.0 gio-2.0 libsystemd dbus-1 tpsys automotive-dlt ipcb_client
+Version: 1.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -lvpom_gdbus_client_proxy

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<remote_session xmlns="http://schemas.volvocars.biz/conncar/foundation_services/remote_session" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	<this>/conncar/remote_session-1</this>
+	<vpn_server_address>1.2.3.4</vpn_server_address>
+	<vpn_server_port>1234</vpn_server_port>
+	<vpn_operation_mode>TAP</vpn_operation_mode>
+	<operator_name>Bob</operator_name>
+	<service_organisation_name>Bobs Volvo Repairs</service_organisation_name>
+	<session_safety_code>4321</session_safety_code>
+</remote_session>

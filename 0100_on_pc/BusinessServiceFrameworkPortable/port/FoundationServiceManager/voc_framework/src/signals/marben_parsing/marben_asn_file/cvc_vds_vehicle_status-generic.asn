@@ -1,0 +1,518 @@
+-- Vehicle Data Service Protocol
+-- Ericsson Connected Vehicle Cloud
+--
+-- VDS Services Vehicle Status Data
+--
+-- Current Version:  1.3.9
+--
+-- Change History
+--
+-- Version 1.2
+-- 
+-- Changes
+--   Have more generic version which can be used with different car platforms
+--
+-- Version 1.3.0-snapshot
+--
+-- Changes
+--
+-- 20151024
+--   Changed the FullVehicleStatus to AdditionalVehicleStatus
+--   Introduced the OEM MSD
+--   Make the new the list of vehicle status
+--   Changed the battery status
+-- 20151102
+--   Moved the NetworkAccessStatus into TEMStatus 
+--   Removed HMI information, which should be part of integration with HU
+--   Changed the Direction in MSD from optional to mandatory
+--   Changed the VIN definition to 17 characters
+--   Simplified the TheftNotification
+--   Cleaned the TEMStatus
+-- 20151119
+--   Changed the TheftNoftiation.activated from Boolen to Integer
+-- 20151126
+--   Updated the DTC structrues
+--   Moved the distanceToEmpty into the BasicVehicleStatus
+--   Added more status into AdditionalVehicleStatus,i.e. seat belt status, engine speed, brake pedal, accelerator pedal, curise control
+--   Removed the posCanBeTrusted in the MSD since it's already included in the Position
+--   Removed some unused vehicle status, cabStatus, propulsionType, odometer1
+--   Categorized the singals in the AdditionalVehicleStatus
+--   Changed GenericVehicleMeasurment to  GenericVehicleSignal
+-- 20151210
+--   Added the EcuWarningMessages
+-- Version 1.3.0 released, 2015-12-17
+
+-- Version 1.3.1 released, 2016-02-29
+--    Added the handBrakeStatus and electricParkBrakeStatus
+--    Simplied the versions properties in the TEMStatus
+--    Updated the BatteryStatus
+--    Added the ElectricVehicleStatus
+--    Added the usageMode to BasicVehicleStatus
+--    Added the serviceProvisoned into TEMStatus
+
+-- Version 1.3.2 released, 2016-05-04
+--    GenericVehicleSignal.key from SIZE(10) to SIZE(1..10)
+--    Add below field for signal value validation,  0x0: valid, 0x1: invalid
+--			speedValidity
+--			electricParkBrakeStatusValidity
+--			engineCoolantTemperatureValidity
+--			exteriorTempValidity
+--			brakePedalDepressedValidity
+--			engineSpeedValidity
+
+--    Add below field for signal value validation,  0x0: Invalid, 0x1: valid
+--			winStatusDriverValidity
+--			winStatusPassengerValidity
+--			winStatusDriverRearValidity
+--			winStatusPassengerRearValidity
+--			sunroofOpenStatusValidity
+
+-- Version 1.3.3 released, 2016-06-23
+--		add "ServiceWarningTriggerReason"
+
+-- Version 1.3.4 released, 2016-07-17
+
+-- Version 1.3.5 released, 2016-09-29
+
+-- Version 1.3.6 released, 2016-11-08
+--	Update GenericVehicleSignal structure
+--	Update temperature range
+--	Update stateOfHealth structure 
+--	Update ecuId and dtc data type
+--	Update DtcStatusBitsIso14229 data type 
+
+-- Version 1.3.7 released, 2017-05-19
+-- 	Add signals for CMA electric cars
+--	Update some fields with INTEGER type, add range definition
+--  Add signal indicate pre-climate status: preClimateActive
+
+-- Version 1.3.8 released, 2017-07-04
+-- Add signals 
+
+-- Version 1.3.9 released, 2017-09-19
+ -- Fix some signals range, include chargeLevel, winPos*
+ -- OEMMSD speed cancel the range limit
+ -- Add signals in as.es and as.cs
+
+
+VDS-SERVICES-VEHICLE-STATUS DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+
+-- 	the device status definition for vehicle telematics
+VehicleStatus ::= SEQUENCE {
+ 	basicVehicleStatus		   BasicVehicleStatus OPTIONAL,        -- the basic vehicle status
+  	additionalVehicleStatus    AdditionalVehicleStatus OPTIONAL,   -- the additional vehicle status
+  	msd                        OEMMSD OPTIONAL,                    -- Minimal Set of Data
+  	temStatus                  TEMStatus OPTIONAL,                 -- the TEM status
+	diagnostics				   ECUDiagnostics OPTIONAL,            -- Diagnostic Information for ECU
+	theftNotification		   TheftNotification OPTIONAL,          -- the theft notification
+	notification			   Notification  OPTIONAL				-- generic notification, e.g., vehicle unlock notification
+}
+
+BasicVehicleStatus ::=SEQUENCE {
+    position            Position ,
+    speed               INTEGER , -- km/h   
+	speedValidity		INTEGER (0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid
+	direction           INTEGER (0..360) OPTIONAL,
+    engineStatus        EngineStatus OPTIONAL,
+    keyStatus           KeyStatus OPTIONAL,
+	engineBlockedStatus EngineBlockedStatus OPTIONAL,
+	distanceToEmpty     INTEGER OPTIONAL, -- km
+	usageMode           INTEGER OPTIONAL -- only for CMA car
+}
+
+-- The OEM MSD for the emergency call
+OEMMSD ::=SEQUENCE {
+    automaticActivation     BOOLEAN, -- Activation type: true - automatic call, false - manual call
+    testCall                BOOLEAN, -- Call type: true - test call, false emergency call
+    position                Position, 
+    vehicleType             VehicleType OPTIONAL, -- vehicle type, e.g. passenger vehicle, bus, cargo vehicle, motor cycle, etc, in  CSP this is passenger vehicle as always
+    vin                     VIN OPTIONAL,
+    fuelType                FuelType, 
+    direction               INTEGER (0..360), -- 0 means North, clockwise
+    numberOfPassengers      INTEGER (0..64) OPTIONAL,
+    recentPositions         SEQUENCE OF Position OPTIONAL,
+    speed                   INTEGER OPTIONAL, -- kmph
+    speedValidity           INTEGER (0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid
+    signals                 SET OF GenericVehicleSignal OPTIONAL    -- The optional additional data
+}
+
+
+VIN ::= PrintableString (SIZE(17))
+
+
+
+EngineStatus ::= INTEGER {
+  engine-running         (0), 
+  engine-off             (1),
+  unknown                (2) 
+}
+
+KeyStatus ::= INTEGER {
+  no-key-inserted   (0),
+  key-inserted      (1),
+  unknown            (2)
+}
+
+VehicleType ::= INTEGER {
+  passengerVehicle (0),
+  bus              (1),
+  cargo            (2),
+  motorCycle       (3)
+} 
+
+
+-- To indicate whether the engine is disabled or not, for example RVI can disable the engine.
+EngineBlockedStatus ::= ENUMERATED {
+  unblocked   (0),
+  blocked     (1)
+}
+
+AdditionalVehicleStatus ::=SEQUENCE {
+  confAndId                   ConfigurationAndIdentity OPTIONAL,
+  drivingSafetyStatus         DrivingSafetyStatus  OPTIONAL,
+  maintenanceStatus           MaintenanceStatus   OPTIONAL,
+  runningStatus               RunningStatus  OPTIONAL,
+  climateStatus               ClimateStatus  OPTIONAL,
+  drivingBehaviourStatus      DrivingBehaviourStatus  OPTIONAL,
+  pollutionStatus             PollutionStatus  OPTIONAL,  
+  ecuWarningMessages          EcuWarningMessages OPTIONAL,
+  electricVehicleStatus       ElectricVehicleStatus OPTIONAL,
+  carConfig					  CarConfig OPTIONAL,
+	
+  -- The extended signals which can be reported from the car
+  signals                     SET OF GenericVehicleSignal OPTIONAL,
+  -- The binary chunk reserved for further usage
+  data                        OCTET STRING(SIZE(1..65535)) OPTIONAL
+	
+}
+
+ConfigurationAndIdentity ::=SEQUENCE {
+  vin       VIN OPTIONAL,
+  fuelType  FuelType OPTIONAL 
+}
+
+DrivingSafetyStatus ::=SEQUENCE {
+  srsStatus                    SRSStatus OPTIONAL, -- SRS(airbag) status, deployed or non-deployed
+  -- vehicle alarm status, e.g. ok, perimeterAlarmOn, interiorAlarmOn,perimeterAndInteriorAlarmOn,towAwayActive,unauthMovement
+  vehicleAlarm                 INTEGER OPTIONAL,
+  -- the door open status, e.g. open, closed,etc.
+  doorOpenStatusDriver         INTEGER(0..15) OPTIONAL,
+  doorOpenStatusPassenger      INTEGER(0..15) OPTIONAL,
+  doorOpenStatusDriverRear     INTEGER(0..15) OPTIONAL,
+  doorOpenStatusPassengerRear  INTEGER(0..15) OPTIONAL,
+  -- the door lock status, e.g. locked,  unlocked, safe locked,etc.
+  doorLockStatusDriver         INTEGER(0..15) OPTIONAL,
+  doorLockStatusPassenger      INTEGER(0..15) OPTIONAL,
+  doorLockStatusDriverRear     INTEGER(0..15) OPTIONAL,
+  doorLockStatusPassengerRear  INTEGER(0..15) OPTIONAL,
+  -- the trunk or tailgate open status, e.g. closed, open, locked, unlocked, etc.
+  trunkOpenStatus              INTEGER(0..15) OPTIONAL,
+  trunkLockStatus              INTEGER(0..1) OPTIONAL,	
+  -- to indicate whether the engine hood is open or closed
+  engineHoodOpenStatus         INTEGER(0..15) OPTIONAL,
+  -- to indicate central locking status to the user of the vehicle, e.g. open, closed, locked, safe locked
+  centralLockingStatus         INTEGER(0..15) OPTIONAL,
+  -- the seat belt status, whether it's fastened or not
+  seatBeltStatusDriver         BOOLEAN OPTIONAL, -- ture = fastened
+  seatBeltStatusPassenger      BOOLEAN OPTIONAL,
+  seatBeltStatusDriverRear     BOOLEAN OPTIONAL,
+  seatBeltStatusPassengerRear  BOOLEAN OPTIONAL,
+  -- park brake status 
+  handBrakeStatus              INTEGER(0..15) OPTIONAL,
+  electricParkBrakeStatus      INTEGER(0..15) OPTIONAL,
+  electricParkBrakeStatusValidity    INTEGER(0..1) OPTIONAL -- 0x0: valid, 0x1: Invalid
+}
+
+MaintenanceStatus ::=SEQUENCE {
+  mainBatteryStatus            BatteryStatus OPTIONAL,   -- Vehicle battery status
+  -- tyre pressure
+  tyreStatusDriver             INTEGER  OPTIONAL, 
+  tyreStatusPassenger          INTEGER  OPTIONAL,
+  tyreStatusDriverRear         INTEGER  OPTIONAL,
+  tyreStatusPassengerRear      INTEGER  OPTIONAL,
+  -- tyre pressure warning, e.g. normal, high, low-soft-warning, low-hard-warning, unknown, etc.
+  tyrePreWarningDriver         INTEGER OPTIONAL, 
+  tyrePreWarningPassenger      INTEGER OPTIONAL,
+  tyrePreWarningDriverRear     INTEGER OPTIONAL,
+  tyrePreWarningPassengerRear  INTEGER OPTIONAL,
+  
+  -- engine hours to next service
+  engineHrsToService           INTEGER OPTIONAL,
+  -- distance in KM to next service
+  distanceToService            INTEGER OPTIONAL, -- km
+  -- days to next service
+  daysToService                INTEGER(-150..1890) OPTIONAL,
+  -- service warning status, e.g. normal(no need for service), almost-time-for-service, time-for-service, time-exceeded, unknown, etc.
+  serviceWarningStatus         INTEGER OPTIONAL,
+  -- the reason for service, e.g. calendar, distance, engine hours, engine request, etc.
+  serviceWarningTrigger        ServiceWarningTriggerReason OPTIONAL,
+  odometer                     INTEGER OPTIONAL, -- meter, distance in total
+  brakeFluidLevelStatus        INTEGER OPTIONAL, -- the brake fluid level status, e.g. normal, low, high, etc.
+  washerFluidLevelStatus       INTEGER OPTIONAL  -- indicate washer fluid level low or not low
+ 
+}
+
+
+RunningStatus ::=SEQUENCE {
+  -- the engine oil level status, e.g. overfilled, high,  ok, low, veryLow
+  engineOilLevelStatus         			INTEGER OPTIONAL,
+  engineOilTemperature         			INTEGER OPTIONAL,
+  -- the engine oil pressure, e.g. normal, low
+  engineOilPressureWarning     			INTEGER OPTIONAL,
+  engineCoolantTemperature     			INTEGER OPTIONAL, 
+  engineCoolantTemperatureValidity    	INTEGER (0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid 
+  -- the engine coolant level status, e.g. normal, low, high, etc.
+  engineCoolantLevelStatus     			INTEGER OPTIONAL,
+  fuelLevel                    			INTEGER OPTIONAL,  -- fuel level in liters or percentage
+  fuelLevelStatus              			INTEGER OPTIONAL,
+  
+  --   
+  aveFuelConsumption           INTEGER OPTIONAL,
+  aveFuelConsumptionInLatestDrivingCycle INTEGER OPTIONAL,
+  avgSpeed                     INTEGER OPTIONAL,
+  
+  tripMeter1                   INTEGER OPTIONAL, -- meter
+  tripMeter2                   INTEGER OPTIONAL, -- meter
+  bulbStatus                   INTEGER OPTIONAL
+  
+}
+
+ClimateStatus  ::=SEQUENCE {
+  -- the window status, e.g. open, closed, etc.
+  winStatusDriver              		INTEGER(0..15) OPTIONAL,
+  winStatusDriverValidity    		INTEGER(0..1) OPTIONAL, -- 0x0: invalid, 0x1: valid
+  winStatusPassenger           		INTEGER(0..15) OPTIONAL,
+  winStatusPassengerValidity    	INTEGER(0..1) OPTIONAL, -- 0x0: invalid, 0x1: valid
+  winStatusDriverRear          		INTEGER(0..15) OPTIONAL,
+  winStatusDriverRearValidity    	INTEGER(0..1) OPTIONAL, -- 0x0: invalid, 0x1: valid
+  winStatusPassengerRear       		INTEGER(0..15) OPTIONAL,
+  winStatusPassengerRearValidity    INTEGER(0..1) OPTIONAL, -- 0x0: invalid, 0x1: valid
+ 
+  -- the sunroof open status, closed, raised, fullyopend, etc.
+  sunroofOpenStatus            		INTEGER(0..15) OPTIONAL,
+  sunroofOpenStatusValidity    		INTEGER(0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid
+  
+  ventilateStatus			   		INTEGER(0..1) OPTIONAL,	
+  
+  -- the windows position
+  winPosDriver 						INTEGER(0..1000) OPTIONAL,
+  winPosPassenger					INTEGER(0..1000) OPTIONAL,
+  winPosDriverRear 					INTEGER(0..1000) OPTIONAL,
+  winPosPassengerRear				INTEGER(0..1000) OPTIONAL,
+  
+  interiorTemp     		            INTEGER  OPTIONAL, -- degree celcius
+  exteriorTemp          	        INTEGER  OPTIONAL, -- degree celcius
+  exteriorTempValidity    	   		INTEGER(0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid
+  
+  preClimateActive					BOOLEAN OPTIONAL, --for ON/Off explaining if the PreClimate is running or not (ClimaActv)
+  
+  airCleanSts								INTEGER(0..1) OPTIONAL,  -- air conditioner clean status
+  
+  winCloseReminder					INTEGER(0..7) OPTIONAL,  -- rain close the window to remind
+  
+  drvHeatSts								INTEGER(0..7) OPTIONAL,  -- driver seat heating status
+  passHeatingSts						INTEGER(0..7) OPTIONAL,  -- front passenger seat heating status
+  rlHeatingSts							INTEGER(0..7) OPTIONAL,  -- left rear seat heating status
+  rrHeatingSts							INTEGER(0..7) OPTIONAL,  -- right rear seat heating status
+  
+  drvVentSts								INTEGER(0..7) OPTIONAL,  -- driver seat ventilation status
+  passVentSts								INTEGER(0..7) OPTIONAL,  -- front passenger seat ventilation status
+  rrVentSts									INTEGER(0..7) OPTIONAL,  -- right rear seat ventilation status
+  rlVentSts									INTEGER(0..7) OPTIONAL  -- left rear seat ventilation status
+}
+
+DrivingBehaviourStatus ::=SEQUENCE {
+  brakePedalDepressed          BOOLEAN OPTIONAL,
+  brakePedalDepressedValidity  INTEGER(0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid
+  engineSpeed                  INTEGER OPTIONAL, 
+  engineSpeedValidity    	   INTEGER(0..1) OPTIONAL, -- 0x0: valid, 0x1: Invalid
+  transimissionGearPostion     INTEGER OPTIONAL,
+  cruiseControlStatus          INTEGER OPTIONAL
+}
+
+PollutionStatus ::=SEQUENCE {
+  -- -1 means invalid
+  interiorPM25                 INTEGER (-1..2048) OPTIONAL,
+  exteriorPM25                 INTEGER (-1..2048) OPTIONAL
+}
+
+--Status for electrical or hybrid vehicle.
+ElectricVehicleStatus ::=SEQUENCE
+{
+   isCharging         BOOLEAN OPTIONAL,
+   isPluggedIn        BOOLEAN OPTIONAL,
+   stateOfCharge      INTEGER(0..1000) OPTIONAL,  -- status, e.g. empty, low, normal, high, etc.
+   chargeLevel        INTEGER(0..1000) OPTIONAL,  -- the charge percentage
+   timeToFullyCharged INTEGER(0..2047) OPTIONAL,   -- unit is defined according vehicle model
+   statusOfChargerConnection	INTEGER(0..10) OPTIONAL,  -- Disconnected, ConnectedWithoutPower etc.
+   chargerState		  INTEGER(0..10) OPTIONAL,  -- idle, PreStrt etc.
+   distanceToEmptyOnBatteryOnly	INTEGER(0..1023) OPTIONAL,
+   ems48VSOC		  INTEGER(0..1000) OPTIONAL,
+   emsHVRBSError	  INTEGER(0..1) OPTIONAL,
+   emsRBSModeDisplay  INTEGER(0..7),
+   emsOVPActive		  INTEGER(0..1),
+   ems48vPackTemp1		INTEGER(0..255),
+   ems48vPackTemp2		INTEGER(0..255),
+   emsBMSLBuildSwVersion	PrintableString (SIZE(1..255)) OPTIONAL,
+   emsCBRemainingLife INTEGER(0..100),
+   chargeHvSts		INTEGER(0..3) OPTIONAL,  -- 0x0: Undefined, 0x1: Failed, 0x2: Successful, 0x3: Reserved
+   ptReady		INTEGER(0..3) OPTIONAL,  -- 0x0: PTReady Not Active, 0x1: PTReady Active
+   averPowerConsumption		INTEGER(0..5000) OPTIONAL,
+   chargeSts		INTEGER(0..3) OPTIONAL
+}
+
+CarConfig ::=SEQUENCE
+{
+   heatedFrontSeats         INTEGER OPTIONAL, --  Heated front seats
+   parkingClimateLevel      INTEGER OPTIONAL, -- Parking Climate level
+   heatedSteeringWheel      INTEGER OPTIONAL  -- Heated steering wheel
+}
+
+
+-- The extentable ECU Warning Message, each warning message will have a specified Key and the warning code as the Value
+EcuWarningMessages ::= SET OF GenericVehicleSignal
+
+GenericVehicleSignal ::= SEQUENCE {
+   key                   PrintableString (SIZE(1..100)),
+   collectTime			TimeStamp OPTIONAL,
+   value				INTEGER OPTIONAL,
+   stringVal      		UTF8String (SIZE(0..65535)) OPTIONAL,
+   boolVal        		BOOLEAN OPTIONAL,
+   timestampVal   		TimeStamp OPTIONAL,
+   dataVal        		OCTET STRING(SIZE(1..65535)) OPTIONAL
+}
+
+NetworkAccessStatus ::= SEQUENCE {
+  simInfo                SIMInfo OPTIONAL,
+  mobileNetwork          PrintableString(SIZE(0..127)) OPTIONAL -- 2G/3G/4G/wifi
+}
+
+SIMInfo ::= SEQUENCE {
+  msisdn       PrintableString(SIZE(1..32)) OPTIONAL,
+  imsi         PrintableString(SIZE(1..32)) OPTIONAL,
+  iccId        PrintableString(SIZE(1..32)) OPTIONAL
+}
+
+SRSStatus ::= ENUMERATED {
+    no-srs-info      (0),
+    srs-not-deployed (1),
+    srs-deployed     (2)
+}
+
+TEMStatus ::= SEQUENCE {
+   vin                       VIN OPTIONAL,
+   powerSource               PowerSource,
+   backupBattery             BatteryStatus OPTIONAL, 
+   
+   powerMode                 TEMPowerMode,
+   sleepCycleNextWakeupTime  TimeStamp OPTIONAL,  -- Thursday, 1 January 1970 means no information
+   
+   serviceProvisoned         BOOLEAN OPTIONAL, -- refer to the TEM provision, to sync the status between TEM and CSP 
+  
+   healthStatus              HealthStatus OPTIONAL,
+   diagnostics				 ECUDiagnostic OPTIONAL, -- for TEM DTC codes
+      
+   networkAccessStatus       NetworkAccessStatus OPTIONAL, -- the network access information
+
+   serialNumber              PrintableString OPTIONAL,
+   completeECUPartNumbers	 PrintableString OPTIONAL,
+   imei                      PrintableString OPTIONAL,
+   
+   hwVersion                 PrintableString  OPTIONAL,
+   swVersion                 PrintableString  OPTIONAL,
+   mpuVersion                PrintableString  OPTIONAL,
+   mcuVersion                PrintableString  OPTIONAL
+ 
+}
+
+-- The power source for T-Box
+PowerSource ::=INTEGER {
+    mainBattery   (0),
+    backupBattery (1)
+}
+
+BatteryStatus ::= SEQUENCE {  
+   stateOfCharge             INTEGER OPTIONAL,  -- status, e.g. empty, low, normal, high, etc.
+   chargeLevel               INTEGER OPTIONAL,  -- the charge percentage
+   stateOfHealth             INTEGER OPTIONAL,   -- the health of battery, to indicate whether the battery need to be replaced or not
+   voltage                   INTEGER OPTIONAL  -- V
+}
+
+-- T-Box Power Mode, to indicate which mode the T-Box is
+TEMPowerMode ::= ENUMERATED {
+   normal        (0),
+   standby       (1),
+   sleep-poll    (2),
+   off           (3)
+}
+
+HealthStatus ::= INTEGER {
+  ok           (0),
+  faulty       (1),
+  unknown      (2),
+  invalid      (3)
+}
+
+
+FuelType ::= INTEGER {
+  petrol                (0),
+  diesel                (1),
+  petrolHybrid          (2),
+  dieselHybrid          (3),
+  ev                    (4),
+  hydrogenFuelcellEV    (5),
+  compressedGas         (6),
+  liquefiedPropaneGas   (7),
+  invalid               (8)
+}
+
+ECUDiagnostics ::= SET OF ECUDiagnostic
+
+
+ECUDiagnostic ::= SEQUENCE {
+   ecuID              PrintableString( SIZE(1..100) ),   --ECU ID which will be OEM specific,
+   diagnosticResult   HealthStatus,                      -- Diagnostic results
+   dtcs               SET OF DiagnosticTroubleCode OPTIONAL,  --the DTCs for the ECU
+   exceptionCode      INTEGER                      OPTIONAL  --the code to identify the exception where the ECU cannot provide the DTCs, OEM specific
+}
+
+DiagnosticTroubleCode ::= SEQUENCE {
+   dtc               PrintableString( SIZE(1..100) ),   --ID of the trouble code. OEM specific,
+   status            DtcStatusBitsIso14229 ,            --status of the DTC. Follows ISO 14229
+   failureCount      INTEGER (0..255)        OPTIONAL,  --Failure counter.
+   lastFail          TimeStamp               OPTIONAL,  --Time of last failure
+   firtFail          TimeStamp               OPTIONAL,  --Time of first failure
+   firstFailureOdometer         INTEGER      OPTIONAL,  --the odometer at the first failure
+   firstFailureBatteryVoltage   INTEGER      OPTIONAL,  --the battery voltage at the first failure
+   firstFailureVehicleSpeed     INTEGER      OPTIONAL  --the vehicle speed at the first failure
+ 
+}
+
+
+DtcStatusBitsIso14229 ::= BIT STRING {
+  testFailed                            (0),
+  testFailedThisOperationCycle          (1),
+  pendingDTC                            (2),
+  confirmedDTC                          (3),
+  testNotCompletedSinceLastClear        (4),
+  testFailedSinceLastClear              (5),
+  testNotCompletedThisOperationCycle    (6),
+  warningIndicatorRequested             (7)
+}
+
+ 
+TheftNotification ::=SEQUENCE {
+  time              TimeStamp,
+  activated         INTEGER -- To indicate the reason of the theft notification trigger, e.g. doors/trunk/hood open, tow away
+}
+
+ServiceWarningTriggerReason ::= ENUMERATED {
+  calendar  (0),
+  distance  (1),
+  engineHours  (2),
+  engineRequest  (3),
+  other  (4)
+}
+
+END

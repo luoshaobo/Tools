@@ -1,0 +1,9 @@
+.cproject
+.project
+gdbus/vpom-ifc-generated.h
+gdbus/vpom-ifc-generated.c
+*.[oa]
+*.so
+.d/
+gdbus/client_test/vpom_gdbus_client
+src/vpom

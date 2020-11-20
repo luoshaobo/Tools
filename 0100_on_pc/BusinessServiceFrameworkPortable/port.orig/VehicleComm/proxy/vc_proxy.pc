@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/vehiclecomm
+
+Name: vc_proxy
+Description: client library for vehicle_comm
+Requires.private: glib-2.0 gio-unix-2.0 tpsys automotive-dlt
+Version: 1.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -lvc_proxy

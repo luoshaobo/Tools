@@ -1,0 +1,18 @@
+voc
+*.o
+*.a
+*.so
+*~
+*.bak
+docs/*
+src/voc_dbus_client/voc_dbus_client
+src/generated
+
+# ignore generated test code:
+test/unittest/*.bin
+test/unittest/*.pem
+test/unittest/*.shared_secret
+unittest_voc
+test/unittest/googletest/
+test/unittest/build_googletest/
+test/unittest/build_unittest_voc/

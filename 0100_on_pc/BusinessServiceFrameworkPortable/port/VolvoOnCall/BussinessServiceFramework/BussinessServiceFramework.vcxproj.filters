@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{27ba3642-d131-4ca6-981c-44924a43f89b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{425ccccd-bad8-4ef2-b353-a5e56e82e371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\bsfwk">
+      <UniqueIdentifier>{14a585b3-45f3-4637-a748-1218a0ea69e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\bsfwk\bsfwk_BusinessJobStateMachine.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_BusinessServer.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_BusinessService.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_BusinessServiceStateMachine.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_Common.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_EntityFactoryBase.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_Global.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_IEntityFactory.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_IJobEntity.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_IJobStateMachine.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_IServiceEntity.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_IServiceStateMachine.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_JobEntityBase.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_ServiceEntityBase.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_Types.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_StatemachineServiceEntity.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bsfwk\bsfwk_StatemachineJobEntity.h">
+      <Filter>include\bsfwk</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\bsfwk_BusinessJobStateMachine.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_BusinessServer.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_BusinessService.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_BusinessServiceStateMachine.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_Common.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_EntityFactoryBase.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_Global.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_JobEntityBase.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_ServiceEntityBase.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_StatemachineServiceEntity.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsfwk_StatemachineJobEntity.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

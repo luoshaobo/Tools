@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Config/Resource"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Config.Resource
+         @short_description: Configuration Resource
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Config.Resource">
+        <!--
+            Expired:
+
+            @immediate: marked as true if Resource is to be immediately re-fetched from it's source
+            and operated upon, false is new payload should be fetched and operated upon when resource is needed.
+
+            Remote resource payload expired.
+        -->
+        <signal name="Expired">
+            <arg name="immediate" type="b" />
+        </signal>
+
+        <!--
+             PayloadsChanged:
+
+             @encoding: payload encoding that was changed by the source.
+             @source: source that changed the payload.
+             @payload: binary blob in the specified encoding.
+
+             Available resource payload changed.
+        -->
+        <signal name="PayloadsChanged">
+            <arg name="encoding" type="o" />
+            <arg name="source" type="o" />
+            <arg name="payload" type="ay" direction="out" >
+                <annotation name="org.gtk.GDBus.C.ForceGVariant" value="true" />
+            </arg>
+        </signal>
+
+        <!--
+            Updated:
+
+            @source: source that triggered the data-model change.
+
+            Data-model has changed.
+        -->
+        <signal name="Updated">
+            <arg name="source" type="o" />
+        </signal>
+
+        <!--
+            GetPayload:
+
+            @encoding: encoding format of the returned payload. The desired encoding must be one of possible payload
+            encodings listed by 'Encodings' property. Supplying a different value will result in call failure.
+            @source: one of the available sources.
+            @payload: binary blob in the specified encoding
+
+            Retrieves the resource payload in an arbitrary encoding, from given source.
+        -->
+        <method name="GetPayload">
+            <arg name="encoding" type="o" direction="in" />
+            <arg name="source" type="o" direction="in" />
+            <arg name="payload" type="ay" direction="out">
+                <annotation name="org.gtk.GDBus.C.ForceGVariant" value="true"/>
+            </arg>
+        </method>
+
+        <!--
+                Sources:
+
+                Payload sources (DID, SWDL, VSDP)
+        -->
+        <property name="Sources" type="ao" access="readwrite" />
+
+        <!--
+             Encodings:
+
+             List of all encodings the payload is available in.
+        -->
+        <property name="Encodings" type="ao" access="readwrite" />
+
+
+        <!--
+            Name:
+
+            Resource name.
+         -->
+         <property name="Name" type="s" access="readwrite" />
+
+    </interface>
+</node>

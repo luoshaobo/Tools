@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Config/ProvisionedResource"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Config.ProvisionedResource
+         @short_description: Foundation Services Config ProvisionedResource
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Config.ProvisionedResource">
+
+        <!--
+            Payload:
+
+                Data-model from preferred source.
+        -->
+        <property name="Payload" type="ay" access="readwrite">
+            <annotation name="org.gtk.GDBus.C.ForceGVariant" value="true"/>
+        </property>
+
+        <!--
+            Source:
+
+                Prefferred source.
+        -->
+        <property name="Source" type="o" access="readwrite" />
+
+        <!--
+            Encoding:
+
+                Prefferred encoding.
+        -->
+        <property name="Encoding" type="o" access="readwrite" />
+
+    </interface>
+</node>

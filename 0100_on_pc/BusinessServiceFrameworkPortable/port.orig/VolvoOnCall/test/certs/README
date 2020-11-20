@@ -1,0 +1,10 @@
+Genereated with:
+
+openssl genrsa -out ca/private/ca.key.pem 4096
+openssl req -config openssl.cfg -key ca/private/ca.key.pem -new -x509 -days 3650 -sha256 -extensions v3_ca -out ca/certs/ca.cert.pem
+openssl genrsa -out tcam/1/tcam.key.pem 2048
+openssl req -config openssl.cfg -key tcam/1/tcam.key.pem -new -sha256 -out ca/csr/tcam1.csr.pem
+openssl ca -config openssl.cfg -extensions usr_cert -days 730 -notext -md sha256 -in ca/csr/tcam1.csr.pem -out tcam/1/tcam.cert.pem
+openssl genrsa -out clients/1/client.key.pem 2048
+openssl req -config openssl.cfg -key clients/1/client.key.pem -new -sha256 -out ca/csr/client1.csr.pem
+openssl ca -config openssl.cfg -extensions usr_cert -days 730 -notext -md sha256 -in ca/csr/client1.csr.pem -out clients/1/client.cert.pem 

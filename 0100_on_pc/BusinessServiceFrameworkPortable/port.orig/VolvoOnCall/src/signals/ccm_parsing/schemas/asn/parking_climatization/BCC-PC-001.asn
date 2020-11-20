@@ -1,0 +1,81 @@
+BCC-PC-001 {1 3 6 1 4 1 37916 3 6 9 0 0 1} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+	BCC-PC-001 ::= SEQUENCE {
+		operation  CHOICE {
+			start        	StartParameters,       
+			stop         	StopParameters,
+			setCalendarV1  	SEQUENCE(SIZE(255)) OF CalendarSettingsV1,	-- >= SPA. Manage multiple calendar versions. Might require GCP support in MApp and/or new message type or enveloped payload?
+			setTimers	 	TimerInfo,			-- EuCD only
+			getStatus    	NULL,
+			...
+			}
+	}
+
+	StartParameters::= SEQUENCE {    							-- implicit immediately    
+		climatizationService	ClimatizationService,
+		--parkedIndoors			BOOLEAN							 When is this required/used, HEV (EuCD) HMI sync? !maybe required in response!
+		...
+	}
+
+	StopParameters::= SEQUENCE {								-- implicit immediately
+		...
+	}
+
+	 CalendarSettingsV1 ::= SEQUENCE 
+	{
+		calendarId 	INTEGER,
+		enabled		BOOLEAN,
+		settings	ClimatizationSelectionSetting OPTIONAL,		-- When is this supported?
+		type		CalendarType,
+		time		GeneralizedTime,
+		repeat		BOOLEAN,  			-- Indicates if the weekday should be repeated for all weeks
+		...
+	}
+	 
+	ClimatizationService ::= CHOICE {	-- What does MApp need to know and expose to end users, e.g. possible to control only heater or only cooler?
+		climatization NULL,				-- Can be electrical or fuel based and can depend on market, vehicle decides if there are multiple climatization systems. Will also trigger preCleaning if available in vehicle.
+		preCleaning NULL,				-- >= SPA only
+		electrical-preheater NULL,		-- Not able to remote control ?
+		ventilation NULL,				-- Not able to remote control ?
+		additional-heater NULL,			-- Not able to remote control ?
+		...
+	}
+	 
+	ClimatizationSelectionSetting ::=  SEQUENCE {
+		frontDriver		BOOLEAN, 	
+		frontPassSeat	BOOLEAN,
+		rearDriver		BOOLEAN,
+		rearMid			BOOLEAN,
+		rearPass		BOOLEAN,
+		steering		BOOLEAN, 
+		...
+	}
+	 
+	TimerInfo ::=  SEQUENCE {
+		timer1		TimerSettings OPTIONAL,
+		timer2		TimerSettings OPTIONAL,
+		...
+	}
+	 
+	TimerSettings ::=  SEQUENCE {
+		time		GeneralizedTime,
+		enabled		BOOLEAN,					-- Indicates if the timer is active
+		...
+	}
+	 
+	CalendarType ::=  CHOICE {
+		weekday		SEQUENCE(SIZE(0..7)) OF Days,	-- Array of weekdays for which the setting is valid.
+		date     	GeneralizedTime 
+	}
+
+	Days ::=  ENUMERATED {
+		monday		(0),
+		tuesday		(1),
+		wednesday	(2),
+		thursday	(3),
+		friday		(4),
+		saturday	(5),
+		sunday		(6)
+	}
+
+END

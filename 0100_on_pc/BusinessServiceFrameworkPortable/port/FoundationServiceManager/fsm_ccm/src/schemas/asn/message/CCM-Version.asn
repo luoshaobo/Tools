@@ -1,0 +1,18 @@
+CCM-Version {1 3 6 1 4 1 37916 6 1 3} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    -- =================================================================
+    --
+    -- Vearsion type for Connectivity Compact Message
+    --
+    -- =================================================================
+    IMPORTS
+           VersionInfo             FROM FS-StandardTypes
+    ;
+
+    CCM-Version ::= SEQUENCE {
+        version                  VersionInfo,
+        ...
+    }
+
+
+END

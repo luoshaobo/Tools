@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!-- Copyright (c) 2018 Continental AG and subsidiaries -->
+<!-- Location manager plugins XML configuration file -->
+<!-- This file specifies the plugin configuration that location manager requires for operation -->
+<PLATFORM_CONFIG>
+	<service name="Location Manager">
+		<!-- Location Source Plugin naming convention /opt/conti/lib/libcas-locationmgr-%%NAME%%.so -->
+		<plugins vendor="Continental">
+			<plugin name="qmi">
+				<property name="type">source</property>
+				<property name="broadcast">yes</property>
+			</plugin>
+			<!-- plugin name="dr">
+				<property name="type">enhance</property>
+				<property name="broadcast">yes</property>
+				<property name="input_plugin">dr</property>
+			</plugin -->
+		</plugins>
+	</service>
+</PLATFORM_CONFIG>

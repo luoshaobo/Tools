@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: libfsm_vocframework
+Description: Foundation Service Manager / Volvo On Call framework
+Version: 1.0
+Requires: libfsm_ccm, libfsm_ssm, libfsm_transfermanager, libusermanager, libfsm_persist_data_mgr, vc_proxy, ipcb_client,vpom_client, marben_runtime, marben_parsers, libfsm_fscfg
+Libs.private: -lstdc++
+Libs: -L${libdir} -lfsm_vocframework
+Cflags: -I${includedir}/fsm/  -I${includedir}/fsm/voc_framework/signal_sources/generated/

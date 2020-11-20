@@ -1,0 +1,28 @@
+diff --git a/implementation/service_discovery/src/ipv4_option_impl.cpp b/implementation/service_discovery/src/ipv4_option_impl.cpp
+index ca5a2c5..9a6461f 100644
+--- a/implementation/service_discovery/src/ipv4_option_impl.cpp
++++ b/implementation/service_discovery/src/ipv4_option_impl.cpp
+@@ -13,8 +13,7 @@
+ namespace vsomeip {
+ namespace sd {
+ 
+-ipv4_option_impl::ipv4_option_impl(bool _is_multicast) :
+-        address_({0}) {
++ipv4_option_impl::ipv4_option_impl(bool _is_multicast) :        address_() {
+     length_ = (1 + 4 + 1 + 1 + 2);
+     type_ = (
+             _is_multicast ?
+diff --git a/implementation/service_discovery/src/ipv6_option_impl.cpp b/implementation/service_discovery/src/ipv6_option_impl.cpp
+index 1aa2570..e7a5d43 100755
+--- a/implementation/service_discovery/src/ipv6_option_impl.cpp
++++ b/implementation/service_discovery/src/ipv6_option_impl.cpp
+@@ -13,8 +13,7 @@
+ namespace vsomeip {
+ namespace sd {
+ 
+-ipv6_option_impl::ipv6_option_impl(bool _is_multicast) :
+-        address_({0}) {
++ipv6_option_impl::ipv6_option_impl(bool _is_multicast) :        address_() {
+     length_ = (1 + 16 + 1 + 1 + 2);
+     type_ = (
+             _is_multicast ?

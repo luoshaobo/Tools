@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+
+<!--/**
+* Copyright (C) 2016 Continental Automotive GmbH
+*
+* Licensed under the "Supplier unrestricted white box" category, as
+* described in the 20160322-1_SW-amendment TCAM.pdf agreement
+* between Volvo Cars and Continental Automotive GmbH.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*/ -->
+
+<!-- D-Bus interfaces for TCAM - VehicleComm -->
+
+<node>
+    <interface name="com.contiautomotive.tcam.VehicleComm.iface">
+        <method name="GetClientID">
+            <arg name="client_id" type="q" direction="out" />
+        </method>
+        <method name="Request">
+            <arg name="request_id" type="q" direction="in" />
+            <arg name="unique_id" type="u" direction="in" />
+            <arg name="client_id" type="q" direction="in" />
+            <arg name="request_data" type="a(y)" direction="in" />
+            <arg name="request_data_size" type="q" direction="in" />
+            <arg name="request_id" type="q" direction="out" />
+            <arg name="unique_id" type="u" direction="out" />
+            <arg name="client_id" type="q" direction="out" />
+            <arg name="response_data" type="a(y)" direction="out" />
+            <arg name="response_data_size" type="q" direction="out" />
+        </method>
+        <signal name="EventGeneral">
+            <arg name="event_id" type="q" />
+            <arg name="unique_id" type="u" />
+            <arg name="client_id" type="q" />
+            <arg name="event_data" type="a(y)" />
+            <arg name="event_data_size" type="q" />
+        </signal>
+        <signal name="EventBLE">
+            <arg name="event_id" type="q" />
+            <arg name="unique_id" type="u" />
+            <arg name="client_id" type="q" />
+            <arg name="event_data" type="a(y)" />
+            <arg name="event_data_size" type="q" />
+        </signal>
+        <signal name="EventDiagnostics">
+            <arg name="event_id" type="q" />
+            <arg name="unique_id" type="u" />
+            <arg name="client_id" type="q" />
+            <arg name="event_data" type="a(y)" />
+            <arg name="event_data_size" type="q" />
+        </signal>
+        <signal name="EventSystem">
+            <arg name="event_id" type="q" />
+        </signal>
+    </interface>
+</node>

@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: libfsm_ssm
+Description: Foundation Service Manager / signal service manager library
+Version: 1.0
+Requires: comaclient
+Libs.private: -lstdc++
+Libs: -L${libdir} -lfsm_ssm
+Cflags: -I${includedir}/fsm_ssm

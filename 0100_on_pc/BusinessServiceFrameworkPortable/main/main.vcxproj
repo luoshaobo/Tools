@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{B14797A5-B2D3-4BE9-81BE-DF34DBDC15D1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TestServiceFramework006</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <ProjectName>main</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <TargetName>sample_app</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;COMALOG_NO_DLT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../../include;../../../project\vs2015\ServiceFramework\ServiceFramework\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\project\vs2015\ServiceFramework\x64\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ServiceFramework.dll;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);COMALOG_NO_DLT;VCLOG_NO_DLT;WINDOWS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\test\include;..\misc\include;..\rmc\include;..\theft_notification\include;..\simulator\include;..\port\VolvoOnCall\BussinessServiceFramework\include\bsfwk;..\port\ServiceFramework\include;..\port\ServiceFramework\project\vs2015\ServiceFramework\ServiceFramework\include;..\port\FoundationServiceManager\voc_framework\include;..\port\VolvoOnCall\include;..\port\UserManager\include;..\port\misc\include;..\port\VehicleComm\interface;..\port\VehicleComm\include;..\port\VolvoPositioningManager\include;..\port\VolvoPositioningManager\interface;..\port\FoundationServiceManager\voc_framework\src\signals\marben_parsing\marben_gen_cplus</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\x64\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ServiceFramework.lib;BussinessServiceFramework.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\misc\include\misc.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\signal.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vdmsg_signal.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vdmsg_signal_types.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vehicle_comm_signal.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vpom_signal.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\app_data.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\rmc_signal_adapt.h" />
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\signal_adapt_base.h" />
+    <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_rdl_signal.h" />
+    <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_rmc_signal.h" />
+    <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_theft_signal.h" />
+    <ClInclude Include="..\rmc\include\rmc_common.h" />
+    <ClInclude Include="..\rmc\include\rmc_door_tailgate.h" />
+    <ClInclude Include="..\rmc\include\rmc_flash_horn.h" />
+    <ClInclude Include="..\rmc\include\rmc_global.h" />
+    <ClInclude Include="..\rmc\include\rmc_pm25.h" />
+    <ClInclude Include="..\rmc\include\rmc_window_roof.h" />
+    <ClInclude Include="..\simulator\include\rmc_simulator.h" />
+    <ClInclude Include="..\simulator\include\simulator_common.h" />
+    <ClInclude Include="..\simulator\include\vc_simulator.h" />
+    <ClInclude Include="..\simulator\include\vpom_simulator.h" />
+    <ClInclude Include="..\test\include\test_app_0001.h" />
+    <ClInclude Include="..\test\include\test_app_0002.h" />
+    <ClInclude Include="..\test\include\test_app_0003.h" />
+    <ClInclude Include="..\test\include\test_app_0004.h" />
+    <ClInclude Include="..\test\include\test_app_0005.h" />
+    <ClInclude Include="..\test\include\test_app_0006.h" />
+    <ClInclude Include="..\test\include\test_app_0007.h" />
+    <ClInclude Include="..\test\include\test_app_0008.h" />
+    <ClInclude Include="..\test\include\test_app_0010.h" />
+    <ClInclude Include="..\test\include\test_app_0011.h" />
+    <ClInclude Include="..\test\include\test_app_0101.h" />
+    <ClInclude Include="..\test\include\test_app_0102.h" />
+    <ClInclude Include="..\test\include\test_app_0103.h" />
+    <ClInclude Include="..\test\include\test_app_0104.h" />
+    <ClInclude Include="..\test\include\test_app_0201.h" />
+    <ClInclude Include="..\test\include\test_app_0202.h" />
+    <ClInclude Include="..\test\include\test_app_0203.h" />
+    <ClInclude Include="..\test\include\test_app_0204.h" />
+    <ClInclude Include="..\test\include\test_app_0401.h" />
+    <ClInclude Include="..\test\include\test_app_0501.h" />
+    <ClInclude Include="..\test\include\test_app_0502.h" />
+    <ClInclude Include="..\test\include\test_app_5001.h" />
+    <ClInclude Include="..\test\include\test_app_6001.h" />
+    <ClInclude Include="..\test\include\test_app_global.h" />
+    <ClInclude Include="..\theft_notification\include\theft_notification.h" />
+    <ClInclude Include="..\theft_notification\include\theft_notification_global.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\misc\src\misc.cc" />
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signals\signal.cc" />
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signals\vdmsg_signal.cc" />
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signals\vdmsg_signal_types.cc" />
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signal_adapt\gly_signal_adapt\rmc_signal_adapt.cc" />
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\transactions\transaction_id.cc" />
+    <ClCompile Include="..\port\VolvoOnCall\src\signals\geely\gly_vds_rdl_signal.cc" />
+    <ClCompile Include="..\port\VolvoOnCall\src\signals\geely\gly_vds_rmc_signal.cc" />
+    <ClCompile Include="..\port\VolvoOnCall\src\signals\geely\gly_vds_theft_signal.cc" />
+    <ClCompile Include="..\rmc\src\rmc_common.cc" />
+    <ClCompile Include="..\rmc\src\rmc_door_tailgate.cc" />
+    <ClCompile Include="..\rmc\src\rmc_flash_horn.cc" />
+    <ClCompile Include="..\rmc\src\rmc_global.cc" />
+    <ClCompile Include="..\rmc\src\rmc_pm25.cc" />
+    <ClCompile Include="..\rmc\src\rmc_window_roof.cc" />
+    <ClCompile Include="..\simulator\src\rmc_simulator.cc" />
+    <ClCompile Include="..\simulator\src\simulator_common.cc" />
+    <ClCompile Include="..\simulator\src\vc_simulator.cc" />
+    <ClCompile Include="..\simulator\src\vpom_simulator.cc" />
+    <ClCompile Include="..\test\src\test_app_0001.cc" />
+    <ClCompile Include="..\test\src\test_app_0002.cc" />
+    <ClCompile Include="..\test\src\test_app_0003.cc" />
+    <ClCompile Include="..\test\src\test_app_0004.cc" />
+    <ClCompile Include="..\test\src\test_app_0005.cc" />
+    <ClCompile Include="..\test\src\test_app_0006.cc" />
+    <ClCompile Include="..\test\src\test_app_0007.cc" />
+    <ClCompile Include="..\test\src\test_app_0008.cc" />
+    <ClCompile Include="..\test\src\test_app_0010.cc" />
+    <ClCompile Include="..\test\src\test_app_0011.cc" />
+    <ClCompile Include="..\test\src\test_app_0101.cc" />
+    <ClCompile Include="..\test\src\test_app_0102.cc" />
+    <ClCompile Include="..\test\src\test_app_0103.cc" />
+    <ClCompile Include="..\test\src\test_app_0104.cc" />
+    <ClCompile Include="..\test\src\test_app_0201.cc" />
+    <ClCompile Include="..\test\src\test_app_0202.cc" />
+    <ClCompile Include="..\test\src\test_app_0203.cc" />
+    <ClCompile Include="..\test\src\test_app_0204.cc" />
+    <ClCompile Include="..\test\src\test_app_0401.cc" />
+    <ClCompile Include="..\test\src\test_app_0501.cc" />
+    <ClCompile Include="..\test\src\test_app_0502.cc" />
+    <ClCompile Include="..\test\src\test_app_5001.cc" />
+    <ClCompile Include="..\test\src\test_app_6001.cc" />
+    <ClCompile Include="..\test\src\test_app_global.cc" />
+    <ClCompile Include="..\theft_notification\src\theft_notification.cc" />
+    <ClCompile Include="..\theft_notification\src\theft_notification_global.cc" />
+    <ClCompile Include="src\main.cc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

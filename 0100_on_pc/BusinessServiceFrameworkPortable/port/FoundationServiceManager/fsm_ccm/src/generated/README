@@ -1,0 +1,13 @@
+generated with:
+
+1. Modify Address to AddressCCM and SubjectKeyIdentifier to SubjectKeyIdentifierCCM, this is done to avoid conflicts with CarAccess.
+2. In FS-Standard-Types.asn there are multiple ChannelConfig (e.g. SmsChannelConfig, BleChannelConfig, etc). All of them contain sequence of ContentTypes called messages. This causes build error due to naming collision. Change "messages" to more specific name for the Channel config (e.g. blemessages for BleChannelConfig, smsmessages for SmsChannelConfig etc)
+
+3. ../../../../../../release/fs/devel/usr/bin/asn1c -S ../../../../../opensource/asn1c/skeletons/ ../schemas/asn/standard_asn1_types/FS-StandardTypes.asn ../schemas/asn/common/CCM-CommonTypes.asn ../schemas/asn/message/CCM-Version.asn ../schemas/asn/message/CCM-Header.asn ../schemas/asn/message/CCM-Payload.as
+
+4. after that converter-sample was deleted as it will never be used. Remove also unused elements causing conflicts with voc:
+   rm ErrorCode.*
+   rm ErrorInfo.*
+   rm ResponseInfo.*
+   rm SuccessCode.*
+   rm SuccessInfo.*

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<external_diagnostics xmlns="http://schemas.volvocars.biz/conncar/foundation_services/external_diagnostics" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+   <this>/external_diagnostics-1</this>
+   <client_capabilities>http://192.168.1.113:8088/RN/externaldiagnostics-1/clientcapabilities</client_capabilities>
+   <remote_session>http://192.168.1.113:8088/RN/externaldiagnostics-1/remotesession</remote_session>
+</external_diagnostics>

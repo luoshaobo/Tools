@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<client_capabilities xmlns="http://schemas.volvocars.biz/conncar/foundation_services/client_capabilities" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+   <this>/external_diagnostics-1</this>
+   <diagnostic_capability>READ</diagnostic_capability>
+</client_capabilities>

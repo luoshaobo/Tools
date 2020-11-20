@@ -1,0 +1,38 @@
+#########################################################
+# Copyright (C) 2016 Continental Automotive GmbH
+#
+# Licensed under the "Supplier unrestricted white box" category, as
+# described in the 20160322-1_SW-amendment TCAM.pdf agreement
+# between Volvo Cars and Continental Automotive GmbH.
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+# Author:       Ola Lilja & Johan Bohlin
+# Date:         11-Nov-2016
+# Description:  This is systemd service file
+#########################################################
+
+[Unit]
+Description=Vehicle Comm Service
+Requires=dbus.service
+After=basic.target dbus.service vcs.service
+
+[Service]
+Type=dbus
+BusName=com.contiautomotive.tcam.VehicleComm
+ExecStartPre=/bin/rm -f /var/run/vc-lock
+EnvironmentFile=-/etc/sysconfig/general_env
+Environment=LD_LIBRARY_PATH=/usr/lib/boost
+Environment=VSOMEIP_CONFIGURATION=/etc/lan_comm.json
+Environment=VSOMEIP_APPLICATION_NAME=LANComm
+ExecStart=/usr/bin/vehicle_comm
+TimeoutStopSec=3
+TimeoutStartSec=30
+Restart=always
+RestartSec=1
+WatchdogSec=30
+
+[Install]
+WantedBy=multi-user.target

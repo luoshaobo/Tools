@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Provisioning"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Config
+         @short_description: Foundation Services Provisioning Configuration
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Provisioning">
+
+        <!--
+            Resources:
+            The list of all provisioned resources.
+        -->
+        <property name="Resources" type="ao" access="readwrite" />
+
+    </interface>
+</node>

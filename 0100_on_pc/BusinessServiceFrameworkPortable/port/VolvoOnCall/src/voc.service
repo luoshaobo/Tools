@@ -1,0 +1,14 @@
+[Unit]
+Description=VolvoOnCall daemon
+Requires=dlt.service dbus.service communicationmanager.service vc.service conti-nadif.service pas.service ipcb.service fscfgd.service lifecyclemgr.service connman.service
+After=dlt.service dbus.service communicationmanager.service vc.service conti-nadif.service pas.service ipcb.service fscfgd.service lifecyclemgr.service connman.service
+
+[Service]
+Type=dbus
+BusName=com.contiautomotive.tcam.VolvoOnCall
+ExecStart=/usr/bin/voc
+Restart=always
+TimeoutSec=infinity
+
+[Install]
+WantedBy=multi-user.target

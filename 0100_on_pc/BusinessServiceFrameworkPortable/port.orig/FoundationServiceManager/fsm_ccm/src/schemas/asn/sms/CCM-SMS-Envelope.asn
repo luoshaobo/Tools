@@ -1,0 +1,43 @@
+CCM-SMS-Envelope {1 3 6 1 4 1 37916 6 2 1} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    -- =================================================================
+    --
+    -- Envelope for Connectivity Compact Message SMS backup message
+    --
+    -- =================================================================
+
+    IMPORTS
+          UINT8, UINT16, UINT32                    FROM FS-StandardTypes
+          MessageId, TransactionId, UINT1, UINT2  FROM CCM-CommonTypes
+    ;
+
+    CCM-SMS-Envelope ::= SEQUENCE {
+        signature         Signature,
+        config            Config,
+        timestamp         UINT32,
+        timeToLive        UINT16,
+        transactionId     TransactionId,
+        messageId         UINT16,
+        resendCounter     UINT8,
+        recipient         OCTET STRING (SIZE(20)),
+        ivSeed            OCTET STRING (SIZE(4)),
+        payload           OCTET STRING (SIZE(34))
+    } 
+
+
+    Config ::= SEQUENCE {
+         keyType          UINT2,
+         messageType      UINT1,
+         encryptedContent BOOLEAN,
+         deliveryOptions  UINT1,
+         receiptOptions   UINT1,
+         spare            UINT2
+    }
+
+    Signature ::= SEQUENCE {
+       recid    OCTET STRING (SIZE(1)),
+       r        OCTET STRING (SIZE(32)),
+       s        OCTET STRING (SIZE(32))
+    }
+
+END

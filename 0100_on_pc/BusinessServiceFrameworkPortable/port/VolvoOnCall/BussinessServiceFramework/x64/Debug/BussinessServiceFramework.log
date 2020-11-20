@@ -1,0 +1,15 @@
+﻿  bsfwk_BusinessJobStateMachine.cc
+  bsfwk_BusinessServer.cc
+  bsfwk_BusinessService.cc
+  bsfwk_BusinessServiceStateMachine.cc
+  bsfwk_Common.cc
+  bsfwk_EntityFactoryBase.cc
+  bsfwk_Global.cc
+  bsfwk_JobEntityBase.cc
+  bsfwk_ServiceEntityBase.cc
+  bsfwk_StatemachineJobEntity.cc
+  bsfwk_StatemachineServiceEntity.cc
+  Generating Code...
+bsfwk_EntityFactoryBase.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+bsfwk_Common.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+  BussinessServiceFramework.vcxproj -> D:\lsb\work_dir\Tbox\TCam\MyCode\PC\vs2017\BusinessServiceFrameworkPortable\x64\Debug\BussinessServiceFramework.lib

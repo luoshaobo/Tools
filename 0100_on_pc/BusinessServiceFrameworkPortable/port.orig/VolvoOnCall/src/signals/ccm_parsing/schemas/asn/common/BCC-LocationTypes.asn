@@ -1,0 +1,83 @@
+BCC-LocationTypes {1 3 6 1 4 1 37916 3 6 1 0 0 3} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        VehicleLocation, VehicleLocationDelta  FROM MSD-ASN1-V2
+    ;
+
+    -- Simple types (alphabetic order)
+
+    -- Composite types (alphabetic order)
+    Coordinate ::= SEQUENCE
+    {
+        latitude            REAL(-90..90),
+        longitude           REAL(-180..180),
+        ...
+    }
+
+    Location ::= SEQUENCE
+    {
+        dataTimestamp         GeneralizedTime OPTIONAL, -- Use TIME derivate later if ASN.1 2008 standard is chosen
+
+        coordinate            Coordinate,
+        altitude              REAL OPTIONAL, -- m
+        heading               INTEGER(0..360) OPTIONAL, -- degrees
+        speed                 REAL(0..200) OPTIONAL, -- m/s
+        climb                 REAL(-180..180) OPTIONAL,
+        rollRate              REAL(-100..100) OPTIONAL,
+        pitchRate             REAL(-100..100) OPTIONAL,
+        yawRate               REAL(-100..100) OPTIONAL,
+
+        -- Dilution
+        pdop                  REAL OPTIONAL,
+        hdop                  REAL OPTIONAL,
+        vdop                  REAL OPTIONAL,
+
+        -- Satellite info
+        usedSatellites        INTEGER OPTIONAL,
+        trackedSatellites     INTEGER OPTIONAL,
+        visibleSatellites     INTEGER OPTIONAL,
+
+        -- Precision
+        sigmaHposition        REAL OPTIONAL, -- m
+        sigmaAltitude         REAL OPTIONAL, -- m
+        sigmaSpeed            REAL OPTIONAL, -- m
+        sigmaClimb            REAL OPTIONAL, -- m
+
+        -- Satellite info
+        gnssFixStatus         GnssFixStatus OPTIONAL,
+        drStatus              BOOLEAN OPTIONAL,
+        usedSatelliteSystems  SatelliteSystem OPTIONAL,
+
+
+        -- VCC additions
+        positionCanBeTrusted  BOOLEAN OPTIONAL,
+        pressure              REAL OPTIONAL,
+        sigmaPressure         REAL OPTIONAL, -- TBD
+        sigmaHeading          INTEGER(0..180) OPTIONAL, -- degrees
+        ...
+    }    
+    GnssFixStatus::= ENUMERATED {
+        noFix       (0),
+        timeFix     (1),
+        twoDFix     (2),
+        threeDdFix  (3),
+        ...
+    }
+    SatelliteSystem ::= BIT STRING {
+        gps      (0),
+        glonass  (1),
+        galileo  (2),
+        beidou   (3)
+    }
+
+    MinimumSetOfLocationData ::= SEQUENCE
+    {
+        positionCanBeTrusted     BOOLEAN,
+        vehicleLocation          VehicleLocation,
+        vehicleDirection         INTEGER (0..255),
+        recentVehicleLocationN1  VehicleLocationDelta  OPTIONAL,
+        recentVehicleLocationN2  VehicleLocationDelta  OPTIONAL,
+        ...
+    }
+
+END

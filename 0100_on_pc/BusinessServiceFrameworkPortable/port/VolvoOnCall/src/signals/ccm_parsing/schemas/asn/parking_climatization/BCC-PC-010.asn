@@ -1,0 +1,69 @@
+BCC-PC-010 {1 3 6 1 4 1 37916 3 6 9 0 1 0} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    BCC-PC-010 ::= SEQUENCE {
+		timerStatus	TimerInfo,
+        status		ServiceStatus,
+		warning		ServiceWarning,
+        ...
+    }
+
+    ServiceStatus ::= ENUMERATED {
+		unknown            (0),
+		off                (1),
+		on-by-direct-ctrl  (2),
+		on-by-timer1       (3),
+		on-by-timer2       (4),
+		on-other           (5),
+		...
+	}
+	
+	ServiceWarning ::= ENUMERATED {
+		batt-low                (1),
+		fuel-low                (2),
+		batt-fuel-low           (3),
+		out-of-order            (4),
+		other                   (6),
+		unknown                 (7),
+		service-req             (8),  -- Service required ? what is this?
+		shut-off-plug-change    (9),  -- shutdown on plug change notification
+		shut-off-hvbatt-temp    (10), -- Shutdown on HVBattery cooling request
+		shut-off-error          (11), -- Shutdown due to error
+        ...
+    }
+	
+	TimerInfo ::=  SEQUENCE {
+		timer1		TimerSettings OPTIONAL,
+		timer2		TimerSettings OPTIONAL,
+		...
+	}
+	 
+	TimerSettings ::=  SEQUENCE {
+		time		GeneralizedTime,
+		enabled		BOOLEAN OPTIONAL,					-- TEM might not know the status?
+		...
+	}
+	
+	CalenderStatus ::= SEQUENCE {		-- Needs more elaboration!
+        trigger Trigger,
+        calenderInfo   SEQUENCE OF CalenderInfo OPTIONAL,
+        ...
+    }
+
+    Trigger ::= CHOICE {
+        statusUpdate     NULL,
+--        startScheduled ::= CHOICE {
+--            calenderId         INTEGER,
+--           }
+        started          NULL,
+        stopped          NULL,
+        calenderChanged  NULL,
+        ...
+    }
+    CalenderInfo ::= SEQUENCE {
+        id           INTEGER,
+        startTime    GeneralizedTime,
+        repeat       BOOLEAN,
+        ...
+    }
+
+END

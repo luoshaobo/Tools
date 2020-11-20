@@ -1,0 +1,6 @@
+<feature>
+    <name>fdast</name>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <uri>http://192.168.1.113:8088/RN/assistancecall-1</uri>
+</feature>

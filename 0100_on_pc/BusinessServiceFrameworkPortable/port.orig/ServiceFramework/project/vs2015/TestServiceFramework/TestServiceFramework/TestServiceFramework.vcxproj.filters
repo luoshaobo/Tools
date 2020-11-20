@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\tut">
+      <UniqueIdentifier>{b4a509d6-ffc0-4168-ae16-4c8966fcdbb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tut">
+      <UniqueIdentifier>{cbe81a7d-6b90-44d9-a07f-2bcc33da8792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ServiceFramework">
+      <UniqueIdentifier>{85758d14-f32d-4a56-9393-4e74ee0c255f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tut\tinyunittest.hpp">
+      <Filter>Header Files\tut</Filter>
+    </ClInclude>
+    <ClInclude Include="tut\tinyunittest_asserts.hpp">
+      <Filter>Header Files\tut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\test\src\collectiongoolgemocks.h">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TestServiceFramework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tut\tinyunittest.cpp">
+      <Filter>Source Files\tut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\test\src\test_semaphore.cpp">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\test\src\test_stringutils.cpp">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\test\src\test_threadeventqueue.cpp">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\test\src\test_timeelapse.cpp">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\test\src\test_atomiccounter.cpp">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\test\src\test_eventhandler.cpp">
+      <Filter>Source Files\ServiceFramework</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

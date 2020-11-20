@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Config"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Data
+         @short_description: Foundation Services Data container
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Config">
+
+        <!--
+            Encodings:
+            List of all data encodings.
+        -->
+        <property name="Encodings" type="ao" access="readwrite" />
+
+        <!--
+            Sources:
+            List of all data sources.
+        -->
+        <property name="Sources" type="ao" access="readwrite" />
+
+        <!--
+            Resources:
+            List of all resource instances.
+        -->
+        <property name="Resources" type="ao" access="readwrite" />
+
+    </interface>
+</node>

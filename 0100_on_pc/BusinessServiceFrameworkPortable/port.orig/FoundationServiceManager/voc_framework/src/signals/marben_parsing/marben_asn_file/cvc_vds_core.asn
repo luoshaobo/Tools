@@ -1,0 +1,94 @@
+-- Vehicle Data Service Protocol
+-- Ericsson Connected Vehicle Cloud
+--
+-- VDS Core Data
+--
+-- Current Version:  1.3.9
+--
+-- Change History
+--
+-- Version 1.2
+--
+-- Changes:
+--   added the milliseconds into the TimeStamp
+--   changed the eventId to TimeStamp
+--   extended the MessageTTL to 24 hours
+--   added MessageSequence into the RequestBody
+--   removed the ServiceDataVersion
+
+-- Version 1.3.0-snapshot
+--  
+--  Changes
+--  20151122
+--   changed the MessageTTL to 10 days 
+--  20151126
+--   removed the encryptionAlgorithm from header
+-- Version 1.3.0 released, 2015-12-17
+
+-- Version 1.3.1 released, 2016-02-29
+
+-- Version 1.3.2 released, 2016-05-04
+
+-- Version 1.3.3 released, 2016-06-23
+
+-- Version 1.3.4 released, 2016-07-25
+
+-- Version 1.3.5 released, 2016-09-29
+
+-- Version 1.3.6 released, 2016-11-08
+
+-- Version 1.3.7 released, 2017-05-19
+
+-- Version 1.3.8 released, 2017-07-04
+
+-- Version 1.3.8 released, 2017-09-19
+
+VDS-CORE DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+VDServiceRequest ::= SEQUENCE {
+	header 	RequestHeader, -- A request header, common for all requests
+	body 	RequestBody OPTIONAL -- A request body specific for the type of service being executed
+}
+
+RequestHeader ::= SEQUENCE {
+	requestid 			RequestId, -- An identifier of this request, must be unique to the sending party. If this request is an ACK, this is the identifier of the request being acknowledged
+	timeStamp			TimeStamp, -- The time when this message was created
+	eventId 			TimeStamp OPTIONAL, -- Identifier of the service event that is being executed, the value is the time when the event is created
+	creatorId			CreatorId OPTIONAL, -- Identifies if this event was created by a TEM unit or CVC back-end
+	messageTTL			MessageTTL OPTIONAL, -- Message time-to-live after which this request message should be discarded, no present means no limit
+	requestType			RequestType OPTIONAL,-- Identifies the type of message, no presents means serviceRequest
+	ackRequired			ACKRequired OPTIONAL-- If this request needs to be acknowledged, no present means false
+}
+
+RequestId ::= INTEGER (0..255)
+
+
+TimeStamp ::= SEQUENCE {
+  seconds INTEGER(0..2147483647),  -- UTC Timestamp
+  milliseconds  INTEGER(0..999) OPTIONAL -- Millisecond within the second
+}
+
+
+CreatorId ::= ENUMERATED {
+	ecu		(0),
+	cvc		(1)
+}
+
+MessageTTL ::= INTEGER(0..86400)  -- Time in 10s increment (240 hours). 0=Unlimited TTL
+
+RequestType ::= ENUMERATED{
+	serviceRequest		(0),
+	ack     			(1)
+}
+
+ACKRequired ::= BOOLEAN
+
+RequestBody ::= SEQUENCE {
+  serviceId 			ServiceId OPTIONAL, -- Determines the service that is being executed (defined in service specific ASN.1 file)
+  serviceData 			ServiceData OPTIONAL, -- Service specific data (defined in service specific ASN.1 file)
+  seq                   MessageSequence OPTIONAL -- Message sequence to prevent the replay attack
+}
+
+MessageSequence ::= INTEGER (0..255)
+
+END

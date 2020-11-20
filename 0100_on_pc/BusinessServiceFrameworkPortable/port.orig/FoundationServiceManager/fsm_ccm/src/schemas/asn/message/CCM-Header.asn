@@ -1,0 +1,88 @@
+CCM-Header {1 3 6 1 4 1 37916 6 1 1} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    -- =================================================================
+    --
+    -- Header type for Connectivity Compact Message
+    --
+    -- =================================================================
+    IMPORTS
+           Encoding, FSSubjectKeyIdentifier, UINT8, UINT16,
+           VersionInfo, FSVIN             FROM FS-StandardTypes
+           Timestamp, TimeToLiveMilliSeconds, TimeToLiveSeconds, TransactionId,
+           Uri, UUID, INT32             FROM CCM-CommonTypes
+    ;
+
+    CCM-Header ::= SEQUENCE {
+        version                  VersionInfo,
+        timestamp                Timestamp OPTIONAL,
+        timeToLive               TimeToLive OPTIONAL,
+        sessionId                SessionId OPTIONAL,
+        transactionId            TransactionId OPTIONAL,
+        messageId                UINT16 OPTIONAL,
+        resendCounter            UINT8 OPTIONAL,
+        sender                   AddressCCM OPTIONAL,
+        recipients               Recipients OPTIONAL,
+        deliveryOptions          DeliveryOptions OPTIONAL,
+        receiptOptions           ReceiptOptions OPTIONAL,
+        contentEncoding          Encoding OPTIONAL,
+        contentVersion           VersionInfo OPTIONAL,
+        ...
+    }
+    
+    AddressCCM ::= CHOICE {
+        vehicle                 FSVIN,
+        userId                  UUID,
+        deviceId                UUID,
+        subjectKeyIdentifier    FSSubjectKeyIdentifier,
+        uri                     Uri,
+        instanceId              UUID,
+        objectId                OBJECT IDENTIFIER,
+        ...
+    }
+          
+    Recipients ::= SEQUENCE SIZE (1..maxRecipients) OF AddressCCM
+    maxRecipients   INTEGER ::= 100
+
+    SessionId     ::= OCTET STRING (SIZE(16)) 
+
+    DeliveryOptions ::= SEQUENCE {
+        storeAndForward       StoreAndForwardOptions OPTIONAL,
+        qosLevel              INT32 OPTIONAL,
+        sendPushNotification  BOOLEAN OPTIONAL, -- TBC
+        smsDeliveryOptions    SmsDeliveryOptions OPTIONAL,
+        ...       
+    }
+    SmsDeliveryOptions ::= ENUMERATED {
+        sendSmsAsBackup              (0),  -- Default value
+        sendSmsAsBackupAndRetain     (1),
+        ...
+    }
+
+    StoreAndForwardOptions ::= ENUMERATED {
+        storeAlways         (0),  -- Default value
+        storeLatest         (1),
+        dontStore           (2),
+        ...
+    }
+
+    ReceiptOptions ::= SEQUENCE {
+        -- send receipt when:
+        endToEndAck                 BOOLEAN OPTIONAL,
+        msgDeliveredAck             BOOLEAN OPTIONAL,
+        msgDeliveredSmsAck          BOOLEAN OPTIONAL,
+        msgDeliveredSmsNoack        BOOLEAN OPTIONAL,
+        msgUndeliveredStored        BOOLEAN OPTIONAL,
+        msgUndeliveredTtlExpired    BOOLEAN OPTIONAL,
+        pushNotificationSent        BOOLEAN OPTIONAL, -- TBC
+        recipientNotAuthorized      BOOLEAN OPTIONAL,
+        recipientUnconnected        BOOLEAN OPTIONAL,
+        tracertAck                  BOOLEAN OPTIONAL,
+        ...       
+    }
+    TimeToLive ::= CHOICE {
+           seconds        TimeToLiveSeconds,
+           milliSeconds   TimeToLiveMilliSeconds,
+        ...
+    }
+
+END

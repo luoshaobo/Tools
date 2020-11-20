@@ -1,0 +1,32 @@
+﻿  atomiccounter.cpp
+  binaryringbuffer.cpp
+  comalog.cpp
+  dynamiclibrary.cpp
+  dynamiclibrary_WIN32.cpp
+  eventhandler.cpp
+  eventstatemachinecontrol.cpp
+  eventstatemachineresult.cpp
+  ilifecycle.cpp
+  ipaddress.cpp
+  istatemachine.cpp
+  mutex.cpp
+  mutex_WIN32.cpp
+  networkinterface.cpp
+  runnable.cpp
+  semaphore.cpp
+  semaphore_WIN32.cpp
+  socket.cpp
+  statemachinemaster.cpp
+  stringutils.cpp
+  Generating Code...
+  Compiling...
+  subject.cpp
+  thread.cpp
+  threadeventqueue.cpp
+  thread_WIN32.cpp
+  timeelapse.cpp
+  timer.cpp
+  timestamp.cpp
+  Generating Code...
+     Creating library D:\lsb\work_dir\Tbox\TCam\MyCode\PC\vs2017\BusinessServiceFrameworkPortable\x64\Debug\ServiceFramework.lib and object D:\lsb\work_dir\Tbox\TCam\MyCode\PC\vs2017\BusinessServiceFrameworkPortable\x64\Debug\ServiceFramework.exp
+  ServiceFramework.vcxproj -> D:\lsb\work_dir\Tbox\TCam\MyCode\PC\vs2017\BusinessServiceFrameworkPortable\x64\Debug\ServiceFramework.dll

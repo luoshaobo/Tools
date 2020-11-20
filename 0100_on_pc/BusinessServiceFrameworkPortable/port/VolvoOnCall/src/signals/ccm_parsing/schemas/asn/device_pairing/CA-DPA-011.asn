@@ -1,0 +1,28 @@
+CA-DPA-011 {1 3 6 1 4 1 37916 3 8 7 0 1 1} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        ResponseInfo     FROM FS-StandardTypes
+        DevicePairingId, SessionId, VehicleInfo   FROM CA-CommonTypes
+        ;
+
+    CA-DPA-011 ::= SEQUENCE {
+        id                 DevicePairingId,
+        responseInfo       ResponseInfo,
+        status          CHOICE {
+           initiated    NULL,
+           finished     FinishedStatus,
+           ...
+        } OPTIONAL,
+        vehicleInfo    VehicleInfo OPTIONAL,
+        newSessionId   SessionId OPTIONAL,
+        ...
+    }
+
+    FinishedStatus ::= ENUMERATED {
+        stoppedByCommand                    (0),
+        terminatedRemoteConnectionTimeout   (1),
+        terminatedPairingTimeout            (2),
+        ...
+    }    
+    
+END

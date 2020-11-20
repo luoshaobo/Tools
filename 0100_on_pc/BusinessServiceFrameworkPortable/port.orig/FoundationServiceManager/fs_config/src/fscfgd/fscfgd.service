@@ -1,0 +1,14 @@
+[Unit]
+Description=Foundation Services Config Daemon
+Requires=dlt.service dbus.service communicationmanager.service vc.service conti-nadif.service pas.service ipcb.service
+After=dlt.service dbus.service communicationmanager.service vc.service conti-nadif.service pas.service ipcb.service
+
+
+[Service]
+Type=dbus
+BusName=com.contiautomotive.tcam.FoundationServices.Config
+ExecStart=/usr/bin/fscfgd
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

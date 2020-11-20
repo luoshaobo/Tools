@@ -1,0 +1,67 @@
+CarAccess {1 3 6 1 4 1 37916 3 8 2 0} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Uri, UUID, SubjectKeyIdentifier       FROM CA-CommonTypes
+        ;
+
+
+    CarAccess ::= SEQUENCE {
+        resources        ResourcesCA,
+        uplinkTopics     SEQUENCE (SIZE(1..maxNumberOfTopics)) OF TopicInfo, 
+        downlinkTopics   SEQUENCE (SIZE(1..maxNumberOfTopics)) OF TopicInfo, 
+        ...
+    }
+
+    ResourcesCA ::= SEQUENCE {
+        thiz               Address,
+        catalogueUl        Topic,
+        catalogueDl        Topic,
+        delegateUl         Topic,
+        delegateDl         Topic,
+        devicePairingUl    Topic,
+        devicePairingDl    Topic,
+        --routing          Topic,
+        --ticket           Topic,
+        ...
+    }
+
+    TopicInfo ::= SEQUENCE {
+        topic          Topic,
+        priority       Priority,
+        mqttProtocol   MqttProtocol,
+        services       SEQUENCE (SIZE(1..maxNumberOfServices)) OF ServiceInfo OPTIONAL,
+        ...
+    }
+
+    Address ::= CHOICE {
+       uri         Uri,
+       instanceId  UUID,
+       -- topic       Topic
+       -- serviceId   OBJECT IDENTIFIER,
+       -- ski         SubjectKeyIdentifier,
+       ... 
+    }
+
+    MqttProtocol ::= ENUMERATED {
+        ccm     (1),
+        ...
+      }
+
+    Priority ::= INTEGER {
+        low    (20),
+        normal (50),
+        high   (80)
+    }
+
+    ServiceInfo ::= SEQUENCE {
+        oid       OBJECT IDENTIFIER,
+        subId     UTF8String OPTIONAL,
+        ...
+    }
+
+    Topic   ::=  UTF8String
+
+    maxNumberOfTopics     INTEGER ::= 10
+    maxNumberOfServices   INTEGER ::= 100
+
+END

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node name="/com/contiautomotive/tcam/VolvoOnCall/Test"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <interface name="com.contiautomotive.tcam.VolvoOnCall.Test">
+      <method name="InjectSignal">
+        <arg name="command" type="s" direction="in" />
+        <arg name="response" type="b" direction="out" />
+      </method>
+    </interface>
+</node>

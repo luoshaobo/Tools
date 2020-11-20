@@ -1,0 +1,155 @@
+BasicCarControl {1 3 6 1 4 1 37916 3 6 2 0} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    IMPORTS 
+        Uri, UUID            FROM BCC-CommonTypes
+        ChannelConfiguration FROM FS-StandardTypes
+        ;
+
+
+    BasicCarControl ::= SEQUENCE {
+        resources        Resources OPTIONAL,
+        functions        SEQUENCE OF Functions OPTIONAL,
+        ...
+    }
+
+    Resources ::= SEQUENCE {
+        thiz             Address,
+        ...
+    }
+
+    Address ::= CHOICE {
+       uri         Uri,
+       instanceId  UUID,
+       ... 
+    }
+
+    Functions  ::= CHOICE {
+        oid        OBJECT IDENTIFIER,  
+        -- or
+        clConfig        CarLocatorConfiguration,
+        cuConfig        CarUseageConfiguration,
+		dssConfig       DatasharingStatusConfiguration,
+		dashConfig      DashboardConfiguration,
+        pcConfig        ParkingClimatizationConfiguration,
+        --hcConfig        HealtCheckConfiguration,
+        --lockConfig      LockingConfiguration,
+        --rbmConfig       RemoteBatteryManagementConfiguration,
+        --rdConfig        RemoteDashboardConfiguration,
+        --smesConfig      Send.......Configuration,
+        --stcConfig       SendToCarConfiguration,
+        ...
+    }
+
+   -- CarLocator =============================================
+    CarLocatorConfiguration ::= SEQUENCE {
+        operations    SEQUENCE OF CarLocatorOperation,
+        options       SEQUENCE OF CarLocatorOption OPTIONAL,
+        allowedChannelsFromVehicle	SEQUENCE OF ChannelConfiguration,
+        allowedChannelsToVehicle	SEQUENCE OF ChannelConfiguration,
+        ...
+    }
+
+    CarLocatorOperation ::= CHOICE {
+        locationAdvert   LocationAdvertParameters,
+        ...
+    }
+	
+    LocationAdvertParameters ::= SEQUENCE {
+        kind SEQUENCE OF LocationAdvertKind,
+        ...
+    }
+	
+    LocationAdvertKind  ::= ENUMERATED {
+        honk,
+        flash,
+        honkAndFlash,
+        ...
+    }	
+    CarLocatorOption ::= CHOICE {
+        noparam NULL,
+        ...
+    }
+
+	-- CarUsage =============================================
+    CarUseageConfiguration ::= SEQUENCE {
+        cucoperations    SEQUENCE OF CarUsageOperation,
+        cucoptions       SEQUENCE OF CarUsageOption OPTIONAL,
+        cucallowedChannelsFromVehicle	SEQUENCE OF ChannelConfiguration,
+        cucallowedChannelsToVehicle	SEQUENCE OF ChannelConfiguration,
+        ...
+    }
+
+    CarUsageOperation ::= CHOICE {
+        noparam NULL,
+        ...
+    }
+	
+    CarUsageOption ::= CHOICE {
+        noparam NULL,
+        ...
+    }
+	
+    -- =============================================
+    DashboardConfiguration ::= SEQUENCE {
+        dcoperations   SEQUENCE OF DashboardOperation,
+        dcoptions      SEQUENCE OF DashboardOption OPTIONAL,
+        dcallowedChannelsFromVehicle	SEQUENCE OF ChannelConfiguration,
+        dcallowedChannelsToVehicle	SEQUENCE OF ChannelConfiguration,
+
+        ...
+    }
+
+    DashboardOperation ::= CHOICE {
+        getData NULL,
+		...
+	}
+	
+    DashboardOption ::= CHOICE {
+        noparam  NULL,
+        ...
+    }
+
+	-- DatasharingStatus =============================================
+    DatasharingStatusConfiguration ::= SEQUENCE {
+        dscoperations   SEQUENCE OF DatasharingStatusOperation,
+        dcsoptions      SEQUENCE OF DatasharingStatusOption OPTIONAL,
+        dcsallowedChannelsFromVehicle	SEQUENCE OF ChannelConfiguration,
+        dcsallowedChannelsToVehicle	SEQUENCE OF ChannelConfiguration,
+        ...
+    }
+
+    DatasharingStatusOperation ::= CHOICE {
+        noparam  NULL,
+		...
+	}
+	
+    DatasharingStatusOption ::= CHOICE {
+        noparam  NULL,
+        ...
+    }
+  
+    -- ParkingClimatization =============================================
+    ParkingClimatizationConfiguration ::= SEQUENCE {
+        pccoperations   SEQUENCE OF ParkingClimatizationOperation,
+        pccoptions      SEQUENCE OF ParkingClimatizationOption OPTIONAL,
+        pccallowedChannelsFromVehicle	SEQUENCE OF ChannelConfiguration,
+        pccallowedChannelsToVehicle	SEQUENCE OF ChannelConfiguration,
+
+        ...
+    }
+
+    ParkingClimatizationOperation ::= CHOICE {
+        start NULL,
+		stop NULL,
+		setCalendarV1 NULL,
+        setTimers NULL,
+        getStatus NULL,
+		...
+	}
+	
+    ParkingClimatizationOption ::= CHOICE {
+        noparam  NULL,
+        ...
+    }
+
+END

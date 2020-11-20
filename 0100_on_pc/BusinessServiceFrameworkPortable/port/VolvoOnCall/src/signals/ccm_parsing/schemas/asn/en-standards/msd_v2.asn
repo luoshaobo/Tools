@@ -1,0 +1,289 @@
+MSD-ASN1-V2
+
+-- Definition of the eCall related MSD message in ASN.1
+-- Any MSD message will encoded using this scheme, following the
+-- UPER encoding rules.
+--
+-- The MSD message is defined in CEN standard EN 15722.
+-- Comments in this definition are taken from that standard. In
+-- case of inconsistency in the comment, the text of EN 15722
+-- prevails.
+
+DEFINITIONS
+AUTOMATIC TAGS ::=
+BEGIN
+
+-- Version of this ASN.1 MSD specification
+-- (inclusion of this element allows software developers to
+-- automatically read out the current version number from the ASN.1
+-- compilation for automatic inclusion into the msdVersion parameter
+-- of the MSD message, i.e. can reduce the chance of using an ASN.1
+-- description of one version but saying it is another)
+CurrentVersion::= INTEGER (2)
+
+-- ECallMessage is the top level information element
+-- The ECallMessage structure supports only one message type (msd)
+-- Extendibility at this level is not allowed, thus ensuring that the
+-- msdVersion (message format version) can be extracted directly.
+-- Elements:
+--   msdVersion: MSD format version
+--               The format described in this document carries version 1
+--   msd:        Minimum Set Of Data uplink from vehicle
+--
+-- The OCTET STRING (CONTAINING ...) construct is used to ensure that any
+-- implementation can extract the msdVersion value from any version,
+-- without decoding errors.
+ECallMessage ::= SEQUENCE {
+   msdVersion  INTEGER(0 .. 255),
+   msd OCTET STRING (CONTAINING MSDMessage)
+}
+
+-- The main uplink msd message from the vehicle (excluding msdVersion)
+-- Elements:
+--   msdStructure: The main MSD structure
+--   optionalAdditionalData: Additional data
+-- Extendable in future versions at this level e.g. to add extra data
+--
+MSDMessage ::= SEQUENCE {
+   msdStructure           MSDStructure,
+   optionalAdditionalData AdditionalData OPTIONAL,
+   ...
+}
+
+-- The main MSD structure, excluding additional data
+-- Elements:
+--   messageIdentifier: Message identifier, starting with 1 for each
+--                      new eCall transaction and to be incremented
+--                      with every application layer MSD retransmission
+--                      following a new ‘Send MSD’ request after the
+--                      incident event
+-- control: see ControlType
+-- vehicleIdentificationNumber: see MSDVIN
+-- vehiclePropulsionStorageType: see VehiclePropulsionStorageType
+-- timestamp: Timestamp of incident event
+--            As seconds elapsed since midnight January 1st, 1970 UTC.
+--            Failure value for time stamp set to “0”
+-- vehicleLocation: see VehicleLocation
+-- vehicleDirection: Direction of travel
+--                   in 2°-degrees steps from magnetic north
+--                   (0– 358, clockwise)
+--                   If direction of travel is invalid or unknown,
+--                   the value 255 shall be used
+--                   Only values from 0 to 179 are valid.
+-- recentVehicleLocationN1: location delta with respect to
+--                          vehicleLocation
+--                          see VehicleLocationDelta
+-- recentVehicleLocationN2: location deltat with respect to
+--                          recentVehicleLocationN1
+--                          see VehicleLocationDelta
+-- numberOfPassengers: Number of occupants in the vehicle according
+--                     to available information.
+--                     NOTE 1 This information is indicative
+--                     only as it may be not always be reliable
+--                     in providing exact information about the
+--                     number of passengers (e.g. because seatbelts
+--                     may not be fastened by passengers or seatbelts
+--                     may be fastened for other reasons).
+--                     NOTE 2 If no information about the number of
+--                     occupants is available, this parameter needs
+--                     to be omitted or filled with the representation
+--                     of value 255
+--
+MSDStructure ::= SEQUENCE {
+   messageIdentifier            INTEGER(0 .. 255),
+   control                      ControlType,
+   vehicleIdentificationNumber  MSDVIN,
+   vehiclePropulsionStorageType VehiclePropulsionStorageType,
+   timestamp                    INTEGER(0 .. 4294967295),
+   vehicleLocation              VehicleLocation,
+   vehicleDirection             INTEGER(0 .. 255),
+   recentVehicleLocationN1      VehicleLocationDelta OPTIONAL,
+   recentVehicleLocationN2      VehicleLocationDelta OPTIONAL,
+   numberOfPassengers           INTEGER(0 .. 255) OPTIONAL,
+   ...
+}
+
+-- The ControlType is a collection of the following elements:
+-- Elements:
+--   automaticActivation: true = Automatic activation,
+--                        false = Manual activation
+--   testCall: true = Test call, false = Emergency
+--   positionCanBeTrusted: true = Position can be trusted,
+--                         false = low confidence in position
+--                         NOTE “Low confidence in position”
+--                         shall mean that there is less than 95%
+--                         confidence that exact position is
+--                         within the limits of a radius of ±150m
+--                         of reported position
+--   vehicleType: see VehicleType
+--
+ControlType ::= SEQUENCE {
+  automaticActivation  BOOLEAN,
+  testCall             BOOLEAN,
+  positionCanBeTrusted BOOLEAN,
+  vehicleType          VehicleType
+}
+
+-- Definiton of the vehicle type reporting the incident.
+-- NOTE: Vehicle definitions class M, N according directive 2007/46/EC;
+--       class L according directive 2002/24/EC
+-- Extendable in future versions for new vehicle types
+--
+VehicleType ::= ENUMERATED{
+   passengerVehicleClassM1 (1),
+   busesAndCoachesClassM2 (2),
+   busesAndCoachesClassM3 (3),
+   lightCommercialVehiclesClassN1 (4),
+   heavyDutyVehiclesClassN2 (5),
+   heavyDutyVehiclesClassN3 (6),
+   motorcyclesClassL1e (7),
+   motorcyclesClassL2e (8),
+   motorcyclesClassL3e (9),
+   motorcyclesClassL4e (10),
+   motorcyclesClassL5e (11),
+   motorcyclesClassL6e (12),
+   motorcyclesClassL7e (13),
+   ...
+}
+
+-- MSDVIN (vehicle identification number) according ISO 3779
+--   isowmi: World Manufacturer Index (WMI)
+--   isovds: Vehicle Type Descriptor (VDS)
+--   Vehicle Identifier Section (VIS) consisting of
+--     isovisModelyear: Modelyear from Vehicle Identifier Section (VIS)
+--     isovisSeqPlant:  Plant code + sequential number
+--                      from Vehicle Identifier Section (VIS)
+MSDVIN ::= SEQUENCE {
+  isowmi          PrintableString (SIZE(3)) (FROM("A".."H"|"J".."N"|"P"|"R".."Z"|"0".."9")),
+  isovds          PrintableString (SIZE(6)) (FROM("A".."H"|"J".."N"|"P"|"R".."Z"|"0".."9")),
+  isovisModelyear PrintableString (SIZE(1)) (FROM("A".."H"|"J".."N"|"P"|"R".."Z"|"0".."9")),
+  isovisSeqPlant  PrintableString (SIZE(7)) (FROM("A".."H"|"J".."N"|"P"|"R".."Z"|"0".."9"))
+}
+
+-- VehiclePropulsionStorageType is a collection of elements
+-- that contain information about the presence of propulsion
+-- storage inside the vehicle sending the MSD.
+--
+-- For each storage type the following coding applies:
+--   false = indicates a type of storage not present
+--   true = indicates type of storage which is present
+-- The following storage types are supported:
+--   Gasoline tank
+--   Diesel tank
+--   Compressed natural gas (CNG)
+--   Liquid propane gas (LPG)
+--   Electric energy storage (with more than 42v and 100Ah)
+--   Hydrogen storage
+--   other storage
+-- If the type of energy storage is unknown, then all elements
+-- shall be set to false.
+-- Extendible in future versions for new fuel storage types
+VehiclePropulsionStorageType ::= SEQUENCE {
+  gasolineTankPresent   BOOLEAN DEFAULT FALSE,
+  dieselTankPresent     BOOLEAN DEFAULT FALSE,
+  compressedNaturalGas  BOOLEAN DEFAULT FALSE,
+  liquidPropaneGas      BOOLEAN DEFAULT FALSE,
+  electricEnergyStorage BOOLEAN DEFAULT FALSE,
+  hydrogenStorage       BOOLEAN DEFAULT FALSE,
+  otherStorage          BOOLEAN DEFAULT FALSE,
+  ...
+}
+
+-- VehicleLocation:
+-- The current location of the vehicle
+-- Elements:
+--  Position latitude (WGS84) in milliarcsec
+--   32 bits (4 octets) allocated to make signed value handling easier
+--   Real latitude values in 1 milli-arc-second units
+--   Valid value range (-324000000 to 324000000)
+--    calculation example:
+--     48.3003333 = 48°18'1.20" N
+--                = 48*60*60.000” + 18*60.000” + 1.20”
+--                = 173881.200”
+--                = 173881200 milliarcsec
+--
+--   maximum value:
+--    90°00'00.000"  = 324000000
+--   minimum value:
+--    -90°00'00.000" = -324000000
+--
+--  NOTE 1: if latitude is invalid or unknown,
+--   the representation of value 2147483647 shall
+--   be transmitted.
+--  NOTE 2: if both latitude and longitude have
+--   value 0 then the location shall also be
+--   interpreted as invalid/unknown.
+--  NOTE 3: if the transmitter determines either
+--   latitude or longitude to be invalid/unknown,
+-- then it is recommended to transmit both
+-- longitude and latitude as unknown.
+-- NOTE 4: if the receiver determines either
+-- latitude or longitude to be invalid/unknown,
+-- then it is recommended to interpret both
+-- longitude and latitude as invalid/unknown
+-- Position longitude (WGS84)
+-- 32 bits (4 octets) allocated to make signed value handling easier
+-- Real longitude values in 1 milli-arc-second units
+-- Valid value range (-648000000 to 648000000)
+--
+-- see 'Position latitude'
+--
+VehicleLocation ::= SEQUENCE {
+  positionLatitude  INTEGER(-2147483648..2147483647),
+  positionLongitude INTEGER(-2147483648..2147483647)
+}
+
+-- VehicleLocationDelta:
+-- Description of (the delta of) a recent vehicle locatation
+-- before the incident
+--  Latitude Delta (+ for North and – for South)
+--  with respect to vehicleLocation.
+--   1 Unit = 100 miliarcseconds, which is approximately 3m
+--   Coded value range (-512..511)
+--   representing -51200 to +51100 miliarcseconds,
+--   or from 51,2’’S to 51,1’’N from the reference position
+
+-- Longitude Delta (+ for East and – for West)
+-- with respect to vehicleLocation.
+--  1 Unit = 100 miliarcseconds, which is approximately 3m
+--  Coded value range (-512..511)
+--  representing -51200 to +51100 miliarcseconds,
+--  or from 51,2’’W to 51,1’’E from the reference position
+--
+VehicleLocationDelta ::= SEQUENCE {
+  latitudeDelta  INTEGER (-512..511),
+  longitudeDelta INTEGER (-512..511)
+}
+
+-- AdditionalData:
+-- Further additional bytes of data encoded as in a
+-- seperate ASN.1 definition
+-- NOTE: The framework format of this field is defined here,
+--       which includes a method to uniquely identify the exact
+--       format of the data.
+-- Elements:
+--   oid: Object identifier which uniquely identifies the format
+--        and meaning of the data which follows.
+
+--   data:Transparent optional additional data,
+--        according to the format referenced by the oid
+--        The user must ensure that the size of this element
+--        is restricted to ensure that the total ECallMessage is
+--        small enough for the relevant transmission medium.
+AdditionalData ::= SEQUENCE {
+  oid  RELATIVE-OID,
+  data OCTET STRING
+}
+
+-- Several of the elements above are "extendable"
+-- according to the ASN.1 standard to facilitate future extensions
+-- whilst also maintaining backwards compatibility.
+--     Tip for using the extendability marker in later versions:
+--     For the extended version put a "," behind the "..."
+--     and add new elements ensuring that there is no ","
+--     at the end of the list
+--     Example: numberOfPassengers,
+--              ...,
+--              newMsdParameter1 TYPE1,
+--              newMsdParameter2 TYPE2
+END

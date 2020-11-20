@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: libfsm_usermanager
+Description: Foundation Service Manager UserMananger library, provides common functions for accessing
+FoundationServices users, keys and certificates
+Version: 1.0
+Requires:
+Libs.private: -lstdc++ -lsqlite3
+Libs: -L${libdir} -lfsm_usermanager
+Cflags: -I${includedir}/fsm/usermanager

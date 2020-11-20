@@ -1,0 +1,6 @@
+<feature>
+    <name>ExternalDiagnostics</name>
+    <enabled>true</enabled>
+    <visible>false</visible>
+    <uri>http://192.168.1.113:8088/RN/externaldiagnostics-1</uri>
+</feature>

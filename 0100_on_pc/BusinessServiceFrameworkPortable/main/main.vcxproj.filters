@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signals\signal.cc">
+      <Filter>port\FoundationServiceManager\voc_framework\src\signals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signals\vdmsg_signal.cc">
+      <Filter>port\FoundationServiceManager\voc_framework\src\signals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signals\vdmsg_signal_types.cc">
+      <Filter>port\FoundationServiceManager\voc_framework\src\signals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\VolvoOnCall\src\signals\geely\gly_vds_rdl_signal.cc">
+      <Filter>port\VolvoOnCall\src\signals\geely</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\transactions\transaction_id.cc">
+      <Filter>port\FoundationServiceManager\voc_framework\src\transactions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\VolvoOnCall\src\signals\geely\gly_vds_rmc_signal.cc">
+      <Filter>port\VolvoOnCall\src\signals\geely</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\FoundationServiceManager\voc_framework\src\signal_adapt\gly_signal_adapt\rmc_signal_adapt.cc">
+      <Filter>port\FoundationServiceManager\voc_framework\src\signal_adapt\gly_signal_adapt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cc">
+      <Filter>main\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmc\src\rmc_common.cc">
+      <Filter>rmc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmc\src\rmc_door_tailgate.cc">
+      <Filter>rmc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmc\src\rmc_flash_horn.cc">
+      <Filter>rmc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmc\src\rmc_global.cc">
+      <Filter>rmc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmc\src\rmc_pm25.cc">
+      <Filter>rmc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rmc\src\rmc_window_roof.cc">
+      <Filter>rmc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\simulator\src\rmc_simulator.cc">
+      <Filter>simulator\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\simulator\src\simulator_common.cc">
+      <Filter>simulator\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\simulator\src\vc_simulator.cc">
+      <Filter>simulator\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\simulator\src\vpom_simulator.cc">
+      <Filter>simulator\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0001.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0002.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0003.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0004.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0005.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0006.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0101.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0102.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0103.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0104.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0201.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0202.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0203.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0204.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_5001.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_global.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\misc\src\misc.cc">
+      <Filter>misc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\theft_notification\src\theft_notification.cc">
+      <Filter>theft_notification\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\theft_notification\src\theft_notification_global.cc">
+      <Filter>theft_notification\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\port\VolvoOnCall\src\signals\geely\gly_vds_theft_signal.cc">
+      <Filter>port\VolvoOnCall\src\signals\geely</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0007.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0008.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0010.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0011.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_6001.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0401.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0501.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0502.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_rdl_signal.h">
+      <Filter>port\VolvoOnCall\include\signals\geely</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\signal.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vdmsg_signal.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vdmsg_signal_types.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vehicle_comm_signal.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signals\vpom_signal.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_rmc_signal.h">
+      <Filter>port\VolvoOnCall\include\signals\geely</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\app_data.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\gly_signal_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\rmc_signal_adapt.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\gly_signal_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\signal_adapt_base.h">
+      <Filter>port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\gly_signal_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmc\include\rmc_common.h">
+      <Filter>rmc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmc\include\rmc_door_tailgate.h">
+      <Filter>rmc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmc\include\rmc_flash_horn.h">
+      <Filter>rmc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmc\include\rmc_global.h">
+      <Filter>rmc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmc\include\rmc_pm25.h">
+      <Filter>rmc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rmc\include\rmc_window_roof.h">
+      <Filter>rmc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\simulator\include\rmc_simulator.h">
+      <Filter>simulator\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\simulator\include\simulator_common.h">
+      <Filter>simulator\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\simulator\include\vc_simulator.h">
+      <Filter>simulator\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\simulator\include\vpom_simulator.h">
+      <Filter>simulator\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0001.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0002.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0003.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0004.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0005.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0006.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0101.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0102.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0103.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0104.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0201.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0202.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0203.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0204.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_5001.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_global.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\misc\include\misc.h">
+      <Filter>misc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\theft_notification\include\theft_notification.h">
+      <Filter>theft_notification\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\theft_notification\include\theft_notification_global.h">
+      <Filter>theft_notification\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_theft_signal.h">
+      <Filter>port\VolvoOnCall\include\signals\geely</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0007.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0008.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0010.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0011.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_6001.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0401.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0501.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0502.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="port">
+      <UniqueIdentifier>{ec947ff9-70cf-4647-bb92-6ba395184e9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager">
+      <UniqueIdentifier>{ff488da2-bf06-4217-9d22-766e27612b9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework">
+      <UniqueIdentifier>{c6a686b3-5ecb-4d8c-b73c-cca4bda28de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\include">
+      <UniqueIdentifier>{35445c03-b330-46a5-bbfd-2982caf3c62a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\src">
+      <UniqueIdentifier>{32a3034a-7951-4943-b4e9-3fe4a9fde8ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\src\signals">
+      <UniqueIdentifier>{13493541-fffd-4a41-810e-e7f52942f859}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall">
+      <UniqueIdentifier>{0cc28fff-231d-4402-8e6d-451d1f364c94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall\src">
+      <UniqueIdentifier>{ef19919e-1bc6-44b4-9f6c-3fe1c296eec9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall\src\signals">
+      <UniqueIdentifier>{96dd7448-3221-4c11-8037-5907a4535215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall\src\signals\geely">
+      <UniqueIdentifier>{2ba0c4e8-bff9-432f-bd5a-009b433c1d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall\include">
+      <UniqueIdentifier>{efee6515-cd1b-480b-a3c7-802a816e13e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall\include\signals">
+      <UniqueIdentifier>{7d9808bf-a537-4ca5-be6f-8a539f1eec18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VolvoOnCall\include\signals\geely">
+      <UniqueIdentifier>{82c744ea-568f-4a4f-986d-93f1e40005fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\include\voc_framework">
+      <UniqueIdentifier>{a21137db-aaa8-4921-b4de-11d884287913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\include\voc_framework\signals">
+      <UniqueIdentifier>{c7a66f0b-d668-4f95-8eff-698133d9108a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\VehicleComm">
+      <UniqueIdentifier>{37d387e2-5bff-409a-8b9d-6a9166923827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\src\transactions">
+      <UniqueIdentifier>{91f91b17-99c2-4279-83a8-509b856489c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{93398fa5-059d-423d-b41d-7297c50ecc1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rmc">
+      <UniqueIdentifier>{876ef6c2-36cd-432a-9479-9fc06a9b00fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="simulator">
+      <UniqueIdentifier>{741d04c9-b4d9-4075-82f1-256259da90d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="misc">
+      <UniqueIdentifier>{76868a8b-3aca-4e0f-986e-bf5aaf5416fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\src\signal_adapt">
+      <UniqueIdentifier>{bc942052-4fdf-48d0-afbd-b045953d835e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt">
+      <UniqueIdentifier>{6a479ed5-f414-484a-ae53-908a24385725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\src\signal_adapt\gly_signal_adapt">
+      <UniqueIdentifier>{b9519ef8-8e76-44ab-8fc6-b9ada671eab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port\FoundationServiceManager\voc_framework\include\voc_framework\signal_adapt\gly_signal_adapt">
+      <UniqueIdentifier>{7311cdfa-df5d-42cc-81f8-cb76312cdec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{33f51a55-a4b3-4d8f-b61b-254d5fce52f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\src">
+      <UniqueIdentifier>{08655acc-68a5-4c23-bac2-30334d2abefc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rmc\include">
+      <UniqueIdentifier>{40be99f2-ba82-4aaa-9a8c-7633580d173d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rmc\src">
+      <UniqueIdentifier>{08474715-39c9-41c7-bed7-dcb436d0cbe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="simulator\include">
+      <UniqueIdentifier>{266a4854-e970-4038-b32e-7b387922e517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="simulator\src">
+      <UniqueIdentifier>{7f5fe6e5-12cc-463b-9204-d1d5c778b08a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\include">
+      <UniqueIdentifier>{c26fe0f2-9a71-4162-9355-770a8f715480}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\src">
+      <UniqueIdentifier>{1133be21-a67c-48ee-ab04-22e688891d5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="misc\include">
+      <UniqueIdentifier>{b298fd14-5c3a-4aa4-8132-bcb9ef9f4b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="misc\src">
+      <UniqueIdentifier>{75a1155e-2ce4-48bb-bf3d-8af94521f165}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="theft_notification">
+      <UniqueIdentifier>{85cc0858-7a48-4c73-84da-b6d4fbd898b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="theft_notification\include">
+      <UniqueIdentifier>{83cd40e8-3ba8-474b-b3a7-821075592519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="theft_notification\src">
+      <UniqueIdentifier>{e6791357-83ff-47bf-ae70-abdcc5b2dc00}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

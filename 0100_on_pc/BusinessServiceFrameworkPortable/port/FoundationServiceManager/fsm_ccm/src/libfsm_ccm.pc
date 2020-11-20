@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: libfsm_ccm
+Description: Foundation Service Manager library, provides common functions for telematic applications
+Version: 1.0
+Requires:
+Libs.private: -lstdc++
+Libs: -L${libdir} -lfsm_ccm
+Cflags: -I${includedir}/fsm_ccm

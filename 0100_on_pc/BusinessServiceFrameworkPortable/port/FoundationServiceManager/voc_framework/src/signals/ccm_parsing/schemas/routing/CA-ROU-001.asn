@@ -1,0 +1,14 @@
+CA-ROU-001 {1 3 6 1 4 1 37916 3 8 3 0 0 1} DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+
+    CA-ROU-001 ::= SEQUENCE {
+        generalInfo     SEQUENCE SIZE (1.. maxNumberOfStrings) OF UTF8String OPTIONAL,
+        --Status,
+        -- TBD
+        ...
+    }
+
+   maxNumberOfStrings  INTEGER ::= 100
+
+    
+END

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Config/Encoding"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Config.Encoding
+         @short_description: Foundation Services Config Encoding
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Config.Encoding">
+
+        <!--
+             Name:
+             Encoding Name
+        -->
+        <property name="Name" type="s" access="readwrite" />
+
+    </interface>
+</node>

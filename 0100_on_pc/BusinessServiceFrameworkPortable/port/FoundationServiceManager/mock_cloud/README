@@ -1,0 +1,108 @@
+## MOCK SERVER ##
+
+1. Install required software
+
+   Install "SoapUI Open Source" from https://www.soapui.org/downloads/soapui.html.
+
+2. Set up ethernet connection between TCAM and the computer running the moc server
+
+   Configure ethernet connection between TCAM and the computer that will run the mock server.
+   - TCAM gets default address assigned, which is 192.168.1.112
+   - assign 192.168.1.113 to your computer (mask 255.255.255.0) - mock server configuration assumes this address
+
+   Test the connection in both directions using ping
+
+3. Install mock content
+
+   Copy TCAM_cloud_mock with all content so that it is placed alongside your soupui installation.
+   The structure should for example look like:
+   ~/soapui/SoapUI-5.3.0
+           /TCAM_cloud_mock
+
+4. Start mock server on the computer
+
+   Either use command line then run:
+   ~/SmartBear/SoapUI-5.2.1/bin/mockservicerunner.sh VC-soapui-project.xml
+   (Above assumes the default installation of SoapUI, change if needed)
+   or import VC-soapui-project.xml file in the SoapUI GUI and start CN and RN services from there.
+
+5. Setup TCAM to contact the mock server
+   TCAM's default configuration placed in /etc/tcam.config is made to
+   contact the VCC test cloud. For that reason it has enabled SSL support and expects valid certificates
+   to be placed in the following locations:
+     Connected car certificate: /data/telematics/keys/ccCert.cer
+     Connected car certificate key: /data/telematics/keys/ccCert.key
+     Connected car Certificate Authority bundle: /data/telematics/keys/CAinfo.txt
+   With the certificates in place, the default configuration should just work towards the Volvo test cloud.
+
+   The default configuration can be overriden by placing a custom tcam.config file in /data/telematics/.
+   An example custom configuration file configured to access the mock server with address 192.168.1.113
+   has been placed in the same directory as this README file.
+
+   If your setup is not identical to the described ones, please copy /etc/tcam.config
+   to /data/telematics/ and modify it to use the correct settings for your setup.
+
+6. install VOC test certificates (VolvoOnCall/test/certs)
+
+   adb push tcam/1/tcam.key.pem /data/certs/cardomain/mclient_key_pem.txt
+   adb push tcam/1/tcam.cert.pem /data/certs/cardomain/mclient_cert_pem.txt
+   adb push clients/1/client.key.pem /data/certs/cardomain/car_key_pem.txt
+   adb push clients/1/client.cert.pem /data/certs/cardomain/car_cert_pem.txt
+   adb push ca/certs/ca.cert.pem /data/certs/cardomain/car_root_cert_pem.txt
+
+   NOTE! expect changes here
+
+7. Restart the service
+
+   Restart the fssdd service in case you need to retrigger the reading of the configuration:
+   adb shell
+   systemctl stop fssdd
+   systemctl start fssdd
+
+8. Exit mock server
+
+   If you have started a command line version, you can just tap any key to shut down the mock server.
+   If you have started the mock server using GUI there are buttons there to stop the mock server.
+
+
+## LOCAL MQTT BROKER ##
+
+Follow these steps to setup a local MQTT Test Broker/Server
+
+1. Install mosquitto with command:
+
+   sudo apt-get install mosquitto
+
+2. Install the mosquitto client with command:
+
+   sudo apt-get install mosquitto-clients
+
+3. The MQTT broker should after this auto start and be running in the background.
+
+4. The default config is that it is setup to run without TLS on port 1883
+   TLS command can be added my adding a new listening port in /etc/mosquitto/mosquitto.conf and
+   set it up as TLS.
+
+5. To public something from the console use the mosquitto_pub command:
+
+   mosquitto_pub -t 'test/topic' -m 'helloWorld'
+
+6. To subscribe to a topic use the mosquitto_sub command:
+
+   mosquitto_sub -v -t 'test/topic'
+
+
+## UPDATING MOCK CONTENT ##
+
+Follow these steps to generate new mock content.
+
+1. cd <my_source_tree>/package/vcc-tcam/VolvoOnCall/test/unittest
+
+2. make clean
+
+3. make
+
+4. ./unittest_voc --gtest_filter=GenerateCloudmockContent*
+
+5. Binary CCM files should now have been generated in the VolvoOnCall/test/unittest
+   directory. Move the generated files to your cloud mock and have fun.

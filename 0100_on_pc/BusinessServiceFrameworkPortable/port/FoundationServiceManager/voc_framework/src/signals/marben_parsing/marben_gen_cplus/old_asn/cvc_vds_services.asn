@@ -1,0 +1,381 @@
+-- Vehicle Data Service Protocol
+-- Ericsson Connected Vehicle Cloud
+--
+-- VDS Service Data
+-- 
+-- Current Version:  1.3.9
+--
+-- Change History
+--
+-- Version 1.2
+--
+-- Changes
+--   Introduced a new schema to seperate the device status part
+--   Added PointOfInterest
+--   Added generic message push support
+--   Added trip and tracking point 
+--
+-- Version 1.3.0-snapshot
+--  
+--  Changes
+--  20151024  
+--     Changed the ServiceId for remote door/trunk lock/unlock
+--     Changed the deviceStatus to vehicleStatus
+--     Merged the remote honk and flash as one servcie id
+--     Enhanced the ServiceParameter to support more different type of value
+--     Extended the ErrorCode length to 255
+--     Removed service id ros, remote operation scheduling
+--     Added OTA
+--  20151102
+--     Removed the POI, which is covered by the integration with IHU
+--     Removed Remote Operate Light service id
+--     Changed the Upload TEM Log service id
+--  20151110
+--     Merged the SVT service id
+--     Changed the JournalLog to Trip
+--     Updated the Trip and Trackpoint
+--     Added the TEM reset service id
+--     Changed the Remote Vehicle status service id to RVS
+--     Removed remote alarm reset service id
+--     Changed the Theft Notification service id
+--  20151119
+--     Chnaged the ErrorCode, removed the predefined reasons
+--     Added a new Service Id for remote climate control, rce
+--     Changed the Remote operate window to Remote close window/sunroff, row -> rws
+--     Added vehicleErrorCode into Error
+--     Removed unused service ids
+--  20151126
+--     Removed the clearCall from ServiceCommand
+--     Changed remoteControlInhibited from OPTIONAL to Mandatory in the ServiceStatus
+--     Added the Remote Seat Heat service id
+-- Version 1.3.0 released, 2015-12-17
+
+
+-- Version 1.3.1 released, 2016-02-29
+--    Changed the serviceId from rtn to rtu
+--    Added the servcieId, rpp, remote pull pm2.5
+
+-- Version 1.3.2 released, 2016-05-04
+--		Add tripFragments for Non-CMA
+
+-- Version 1.3.3 released, 2016-06-23
+--		Add "verificationCode" in OTA
+--		Add "Notification"
+--		Add service: vun(69), mcp(101)
+
+-- Version 1.3.4 released, 2016-07-25
+-- 		Add "NEVServiceData"
+--		Add "EventRule"
+
+-- Version 1.3.5 released, 2016-09-29
+
+-- Version 1.3.6 released, 2016-11-08
+--		Add service: rec(27)
+--		Add carLocatorStatUploadEn, if user turn off through IHU, position will not upload to CSP
+--		Add marsCoordinates, indicate coordinate system
+--		Update Postion, latitude and longitude is OPTIONAL now.
+--		Add service: trs (52)
+
+-- Version 1.3.7 released, 2017-05-11
+
+-- Version 1.3.8 released, 2017-07-04
+--		Add service: msr(102)
+
+-- Version 1.3.9 released, 2017-09-19
+
+VDS-SERVICES DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- Identifies the service being executed
+-- 3 letter code corresponds to service identifier used in the Communication Layer protocol
+-- Can support 17576 number of different services
+ServiceId ::= INTEGER{
+	mtp (01), -- TEM Provision
+	mtu (02), -- TEM Unprovision
+    mcu (04), -- Configuration update
+	mpm (05), -- TEM power mode mgmt.
+	mta (06), -- TEM activation
+	mul (07), -- Upload TEM log
+	mrs (08), -- TEM factory reset
+	rin (11), -- Remote  control inhibition
+	rdl (13), -- Remote  door lock
+	rdu (14), -- Remote  door unlock
+	rtl (15), -- Remote  trunk lock
+	rtu (16), -- Remote  trunk unlock
+	res (17), -- Remote  engine start
+	rvi (18), -- Remote  vehicle immobilization
+	rcc (19), -- Remote  climate control (non-engine)
+	rce (20), -- Remote  climate control
+	rhl (21), -- Remote  honk & light
+	rsh (22), -- Remote  seat heat
+	rws (23), -- Remote  close/open window/sunroof
+	rpc (24), -- Remote  PM 2.5 clean
+	rpp (25), -- Remote  Pull PM 2.5
+	ren (26), -- Remote  event notification
+	rec (27), -- Remote EV charging, schedule
+	
+	cec (31), -- E Call
+	cep (32), -- PSAP E Call
+	cbc (33), -- B Call
+	cic (34), -- I Call
+	svt (41), -- SVT
+	stn (44), -- Theft Notification
+	rvs (51), -- Remote status & dashboard
+	trs (52), -- Triggered Remote status
+	jou (61), -- Journey log
+	hec (62), -- Health check
+	dia (63), -- Remote diagnostics
+   	ota (67), -- OTA upgrade
+	osc (68), -- Send to car
+	vun (69), -- Vehicle unlock notification
+	dkb (80), -- Digital key booking
+	bks (89), -- Blue tooth key sharing
+	bdc (90), -- Big Data collect
+	
+	wcr (71), -- windows close reminder
+	rsv (72), -- Remote seat ventilate
+	
+	mcp (101), -- Certificate provision
+	msr (102), -- message sequence reset
+	rms (500) -- Remote monitor service
+	
+}(0..17575)
+
+
+ServiceData ::= SEQUENCE {
+    -- the following are service control related parameters
+	serviceTrigger			ServiceTrigger OPTIONAL,	
+	serviceParameters		SEQUENCE OF ServiceParameter OPTIONAL,	-- generic service parameters used for extension
+	serviceCommand          ServiceCommand OPTIONAL,
+	
+	-- the service operation result
+	serviceResult			ServiceResult OPTIONAL,
+	
+	-- the service status in system
+	serviceStatus           ServiceStatus OPTIONAL,
+ 	
+	-- the data pushed to device  (downlink)
+	message                 GeneralMessage OPTIONAL,-- The general message used to push notificaton
+	pois                    SET OF PointOfInterest OPTIONAL,
+	configuration			Configuration  OPTIONAL,
+	
+	-- the device status reported to cloud (uplink)
+	vehicleStatus           VehicleStatus  OPTIONAL,	-- defined in specific device status ASN.1 file)
+	
+	ota OTA OPTIONAL,
+	-- trip information from the vehicle
+	trip					Trip          OPTIONAL,
+
+	-- trip information from the vehicle FOR non-CMA	
+	tripFragments 			SEQUENCE OF TripFragment OPTIONAL,
+
+	-- track points, can be used in SVT and Journey log
+	trackPoints             SEQUENCE OF TrackPoint OPTIONAL,
+
+	-- NEV RMS service data
+	nevServiceData             NEVServiceData OPTIONAL,
+	
+	-- Event notification, rule
+	eventRule					EventRule OPTIONAL
+	
+}
+
+
+ServiceCommand ::=INTEGER {
+   startService    (0),
+   requestData     (1),
+   responseData    (2),
+   executionAction (4),
+   terminateService (20)
+} (0..40)
+
+
+ServiceParameter ::=SEQUENCE {
+   key            PrintableString (SIZE(0..250)),
+   
+   -- different type of values, support int, string, boolean and timestamp
+   intVal         INTEGER OPTIONAL,
+   stringVal      UTF8String (SIZE(0..65535)) OPTIONAL,
+   boolVal        BOOLEAN OPTIONAL,
+   timestampVal   TimeStamp OPTIONAL,
+   dataVal        OCTET STRING(SIZE(1..65535)) OPTIONAL
+}
+
+ServiceTrigger ::=SEQUENCE {
+  -- no value means the service will be performed immediately
+  scheduledTime         TimeStamp 	OPTIONAL,
+  -- To indicate whether it's recurrent or one-time opperation, default is one-time
+  recurrentOperation    BOOLEAN OPTIONAL,
+  -- Time in 10s increment, maxium 1 year
+  duration              INTEGER (0..3153600) OPTIONAL, 
+  -- Time in 10s increment, maxium 10 days
+  interval              INTEGER (0..86400) OPTIONAL,
+  -- number of time occurs, -1 indicates no limtes
+  occurs                INTEGER (-1..65534) OPTIONAL,
+  endTime               TimeStamp 	OPTIONAL
+}
+
+ServiceResult ::=SEQUENCE {
+  operationSucceeded        BOOLEAN,
+  error                     Error OPTIONAL
+}
+-- should this be removed???
+ServiceStatus ::=SEQUENCE {
+  remoteControlInhibited    BOOLEAN
+}
+
+OTA ::=SEQUENCE {
+  swModel                   PrintableString OPTIONAL,
+  swVersion                 PrintableString OPTIONAL, -- 0 means no version information
+  downloadUrl               UTF8String,
+  verificationCode			PrintableString OPTIONAL  
+}
+
+Error ::= SEQUENCE {
+  code ErrorCode,
+  vehicleErrorCode INTEGER OPTIONAL, -- the error code from vehicle/TEM, OEM specific
+  message PrintableString(SIZE(0..255)) OPTIONAL -- the addtional error description
+}
+
+ErrorCode ::= INTEGER {
+  incorrectState        (1),  
+  invalidData           (2),  
+  invalidFormat         (3),  
+  powderModeNotCorrect  (4), 
+  conditionsNotCorrect  (5),  
+  executionFailure      (6),
+  permissionDenied      (7),  
+  timeout               (8),
+  backupBatteryUsage	(9)
+}
+
+
+Position ::= SEQUENCE {        
+  -- format: milliarcsecond <=> degree * 3600000
+  latitude                INTEGER(-2147483648..2147483647) OPTIONAL, -- 32 bits
+  longitude               INTEGER(-2147483648..2147483647) OPTIONAL,  -- 32 bits
+  altitude                INTEGER(-100..8091) OPTIONAL, -- the altitude in meter
+  posCanBeTrusted         BOOLEAN OPTIONAL, -- false means TEM use last position instead of GPS, default is true
+  carLocatorStatUploadEn  BOOLEAN OPTIONAL, -- can TEM upload position, user can enable/disable through IHU, default is true
+  marsCoordinates		  BOOLEAN OPTIONAL  -- true means GCJ-02 coordinaes, false means WGS-84, defult is false
+}
+
+
+Configuration ::= SEQUENCE {
+   version               PrintableString,
+   items                 SET OF ConfigurationItem
+}
+
+-- configuration is a list of key:value pairs
+ConfigurationItem ::= SEQUENCE {
+  name                   PrintableString,
+  parameters             SEQUENCE OF ServiceParameter
+}
+
+GeneralMessage	::= CHOICE {
+  message               UTF8String (SIZE(0..65535)),
+  ocetMessage           OCTET STRING(SIZE(1..65535))
+}
+
+
+Trip ::= SEQUENCE {
+  tripId               INTEGER,
+  startTime            TimeStamp,
+  startOdometer        INTEGER OPTIONAL, 
+  fuelConsumption      INTEGER OPTIONAL,
+  traveledDistance     INTEGER, -- km
+  trackpoints          SEQUENCE OF TrackPoint,
+  waypoints            SEQUENCE OF Position OPTIONAL,
+  avgSpeed             INTEGER,
+  endTime              TimeStamp,
+  endOdometer          INTEGER OPTIONAL, 
+  electricConsumption  INTEGER OPTIONAL,
+  electricRegeneration INTEGER OPTIONAL
+}
+
+TripFragment ::= SEQUENCE {
+  startTime                 	TimeStamp,
+  startPosition					Position OPTIONAL,
+  startOdometer             	INTEGER OPTIONAL,
+  startFuelLevel         		INTEGER OPTIONAL,
+  startElectricConsumption      INTEGER OPTIONAL,
+  startElectricRegeneration     INTEGER OPTIONAL,
+  endTime                   	TimeStamp OPTIONAL,
+  endPosition					Position OPTIONAL,
+  endOdometer               	INTEGER OPTIONAL, 
+  endFuelLevel           		INTEGER OPTIONAL,
+  endElectricConsumption		INTEGER OPTIONAL,
+  endElectricRegeneration		INTEGER OPTIONAL  
+}
+
+TrackPoint ::= SEQUENCE {
+  systemTime           TimeStamp,
+  position             Position,
+  speed                INTEGER , -- kmph
+  direction            INTEGER(0..360) OPTIONAL, -- 0 means North, clockwise				
+  isSVT                BOOLEAN OPTIONAL,
+  odometer             INTEGER OPTIONAL,
+  travelDistanceSinceLastWaypoint INTEGER OPTIONAL,
+  --Consumed fuel since trip start/last waypoint . 
+  fuelConsumptionSinceLastWaypoint    INTEGER  OPTIONAL, 
+  --Electrical consumption since last sample.
+  electricConsumptionSinceLastSample          INTEGER  OPTIONAL,
+  --Electrical regeneration since last sample. 
+   electricRegenerationSinceLastSample            INTEGER OPTIONAL
+ }
+ 
+
+PointOfInterest ::= SEQUENCE {
+  name        	UTF8String(SIZE(0..100)),
+  position	    Position OPTIONAL,
+  type		    UTF8String(SIZE(0..255)) OPTIONAL,	
+  contactInfo   ContactInfo OPTIONAL,
+  url			UTF8String(SIZE(0..255)) OPTIONAL,
+  attributes 	SEQUENCE SIZE(0..15) OF ServiceParameter OPTIONAL
+}
+
+ContactInfo ::= SEQUENCE {
+   email		UTF8String(SIZE(0..255)) OPTIONAL,
+   address		PostAddress OPTIONAL,
+   phone1		PrintableString(SIZE(0..27)) OPTIONAL,		
+   phone2		PrintableString(SIZE(0..27)) OPTIONAL
+}
+
+PostAddress ::= SEQUENCE {
+  street		UTF8String(SIZE(0..255)) OPTIONAL,
+  houseNumber	UTF8String(SIZE(0..63))  OPTIONAL,
+  city		    UTF8String(SIZE(0..255)) OPTIONAL,
+  region		UTF8String(SIZE(0..255)) OPTIONAL,
+  postcode	    UTF8String(SIZE(0..255)) OPTIONAL,
+  country		UTF8String(SIZE(0..255)) OPTIONAL
+}
+
+Notification ::=SEQUENCE {
+  reason    		NotificationReason,
+  time              TimeStamp,
+  parameters		SEQUENCE OF ServiceParameter OPTIONAL
+}
+
+NotificationReason ::= INTEGER {
+  door-unlock   (0),
+  event-trigger (1)
+}
+
+EventRule ::=SEQUENCE {
+	ruleId			INTEGER, -- Rule identity
+	startTime		TimeStamp OPTIONAL, -- Rule should be effective since this time in TEM
+	endTime			TimeStamp OPTIONAL, -- Rule should not be effective after this time in TEM
+    conditions		SET OF RuleCondition OPTIONAL,
+	interval		INTEGER OPTIONAL, -- Unit is second
+	action			EventAction OPTIONAL
+}
+
+RuleCondition ::=SEQUENCE {
+	condition	PrintableString(SIZE(1..1000)) -- format: <vehicle_status> <operator> <target>
+}
+
+EventAction ::= SEQUENCE {
+	triggerTimes	INTEGER OPTIONAL,  -- Trigger notification times, 0 means always trigger
+	notifyInterval	INTEGER OPTIONAL  -- notify interval 
+}
+
+END

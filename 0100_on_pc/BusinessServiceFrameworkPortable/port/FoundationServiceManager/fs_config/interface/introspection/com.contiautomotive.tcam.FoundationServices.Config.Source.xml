@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Author: Iulian Sirghi -->
+<node name="/com/contiautomotive/tcam/FoundationServices/Config/Source"
+      xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
+    <!--
+         com.contiautomotive.tcam.FoundationServices.Data.Source
+         @short_description: Resource data-model source
+    -->
+    <interface name="com.contiautomotive.tcam.FoundationServices.Config.Source">
+
+        <!--
+            Updated:
+
+            @resources: List of resources affected by the update.
+
+            Source update signal.
+            In the situation when the source has refreshed it's associated data, this signal is dispatched to let
+            listeners know which sub-set of the resource list has changed.
+        -->
+        <signal name="Updated">
+            <arg name="resources" type="ao" />
+        </signal>
+
+        <!--
+            Name:
+
+            Source name.
+         -->
+         <property name="Name" type="s" access="readwrite" />
+
+        <!--
+            GetEncodings:
+
+            @resource: resource object path.
+            @encodings: list of encoding object paths.
+
+            Retrieves all encodings available for the given resource.
+        -->
+        <method name="GetEncodings">
+            <arg name="resource" type="o" />
+            <arg name="encodings" type="ao" direction="out" />
+         </method>
+
+        <!--
+             HasResource:
+
+            @resource: resource object path
+            @has_resource: true if source describes a payload for given resource.
+
+            Retrieves true id source describes a payload for a given resource.
+        -->
+	<method name="HasResource">
+		<arg name="resource" type="o" />
+		<arg name="has_resource" type="b" direction="out" />
+	</method>
+
+        <!--
+            GetPayload:
+
+            @resource: resource object path.
+            @encoding: encoding object path.
+            @payload: resource payload in given encoding.
+
+            Retrieves a resource in given encoding.
+        -->
+        <method name="GetPayload">
+            <arg name="resource" type="o" />
+            <arg name="encoding" type="o" />
+            <arg name="payload" type="ay" direction="out">
+	    	<annotation name="org.gtk.GDBus.C.ForceGVariant" value="true"/>
+	    </arg>
+         </method>
+
+        <!--
+            Update:
+
+            Update all owned subject resources with the latest data-model.
+            End result is update signal with set containing resources that changed.
+        -->
+        <method name="Update" />
+
+    </interface>
+</node>

@@ -1,0 +1,113 @@
+-- Vehicle Data Service Protocol
+-- Ecarx Connected Vehicle Cloud
+--
+-- VDS Data for New Engry Vehicle (NEV)
+--
+-- Current Version: 1.2
+--
+
+-- Version 1.2
+-- 
+-- Changes
+--
+--   Modify mdpID range
+--   Modify data type to INTEGER
+--   Modify data type to INTEGER
+--   Modify data type to INTEGER
+
+-- Version 1.1
+
+-- Changes 
+-- 
+--     Removed duplicate of Timestamp - collectionTime and updated latitude INTEGER(-2147483648..2147483647) to align with 8888260713-NOTE-SWRS-IP Command Bus Msg_REV_013 spec.
+
+
+VDS-NEV DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+NEVServiceData ::= SEQUENCE {
+	vehicleVin              PrintableString (SIZE(17)),
+	testVehicle				BOOLEAN, -- TRUE=test vehicle, FALSE=customer vehicle
+	rvdcTriggerCondition	NEVTriggerCondition, -- periodicTrg (1) UM Driving (periodic MDP), umChangeTrg (2) UM Driving -> UM != Driving (1 MDP), chargeStartTrg (3) Charging start (1 MDP), chargeStopTrg (4) Charging Stop (1 MDP), disableRmsTrg (5) Rms disabled
+	mdpID					INTEGER(0..4294967295), --Increase by one by each measurement cycle. Starting from 0. 
+	maID					PrintableString(SIZE(0..20)), --Partnumber for MA file
+	position            	NEVDRVehiclePosition, --GPS Data
+	ecuData 				EcuData -- ECU data or if the MDP has no diagnostic data included 
+}
+
+NEVTriggerCondition ::= ENUMERATED {
+    periodicTrg (1),  -- UM Driving (periodic MDP)
+    umChangeTrg (2),  -- UM Driving -> UM != Driving (1 MDP)
+    chargeStartTrg (3),  -- Charging start (1 MDP)
+    chargeStopTrg (4),  -- Charging Stop (1 MDP)
+	disableRmsTrg (5) -- CC#14=Active -> cc#14=Inactive (1 MDP)
+}
+
+EcuData ::= CHOICE {
+	noDiagData NULL, -- No diagnostic data included in the MDP due to Charging, end of driving cycle or tester with higher priority is present. 
+	data SET OF ECUData -- ECU data
+	
+}
+
+NEVDateTime ::= SEQUENCE {
+	year INTEGER(2000..2127), 
+	month INTEGER(1..12), 
+	day INTEGER(1..31), 
+	hour INTEGER(0..23), 
+	minute INTEGER(0..59), 
+	second INTEGER(0..59)
+}	
+
+NEVDRVehiclePosition ::= CHOICE {
+	noValidData NULL, --Used if the server can not provide a position of sufficient quality 
+	drPosition NEVDRPositionData
+} 
+
+NEVDRPositionData ::= SEQUENCE { 
+	longLat 	NEVCoordinatesLongLat, 
+	heading 	INTEGER(0..360), 
+	speedKmph 	INTEGER(0..255), --255=unknown 
+	hdopX10 	INTEGER(0..255), --HDOP multiplied by 10. 255=unknown 
+	numSat 		INTEGER(0..127), --Number of satellites used in fix. 127=unknown 
+	fixTime 	NEVDateTime, --GPS time received with the fix 
+	fixType 	NEVGnssFixType, --Specifies the current GNSS fix, not regarding DR 
+	drType 		NEVDeadReckoningType, 
+	drDistance 	INTEGER(0..65535) --Distance in meters driven since last fix 
+}
+
+NEVGnssFixType ::= ENUMERATED { 
+	notAvailable (0), --not available : no GNSS information available (e.g no GNSS antenna connection, GNSS receiver failure) 
+	noFix (1), --No Fix: satellites received - no position available 
+	fix2D (2), --2D fix : satellites received : 2 dimensional position fix 
+	fix3D (3), --3D fix : satellites received : 3 dimensional position fix 
+	startupMode (4) --Based on a position saved after last driving cycle (Cold Start Fix) 
+} 
+
+NEVDeadReckoningType ::= ENUMERATED { 
+	noDr (0), -- No dead reckoning used 
+	drNoMapMatch (1), -- Dead reckoning used but not matched to any map 
+	drMapMatched (2) -- Position is matched to map
+}
+
+--Coordinates in degrees/360*2^32. Positive values are North and East 
+NEVCoordinatesLongLat ::= SEQUENCE { 
+	longitude INTEGER(-2147483648..2147483647), 
+	latitude INTEGER(-2147483648..2147483647)
+}
+
+ECUData	::= SEQUENCE {
+	ecu					INTEGER(0..65535), -- The ECU ID 
+	diagnosticNumber	PrintableString(SIZE(1..20)), -- Diagnostic Part number  
+	didData				SET OF DIDData,
+	dtcData				SET OF DTCData
+}
+
+DIDData ::= SEQUENCE {
+	id			INTEGER(0..65535), -- ID for the specific DID
+	data		OCTET STRING(SIZE(0..100)) -- DID READOUT
+}
+DTCData ::= SEQUENCE {
+	id			INTEGER(0..16777215), -- ID for the specific DTC
+	data		OCTET STRING(SIZE(0..100)) -- DTC BYTE
+}
+
+END

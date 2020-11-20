@@ -1,0 +1,30 @@
+{
+    "unicast" : "192.168.1.133",
+    "logging" :
+    { 
+        "level" : "trace",
+        "console" : "true",
+        "file" : { "enable" : "false", "path" : "/tmp/vsomeip.log" },
+        "dlt" : "false"
+    },
+    "applications" : 
+    [
+        {
+            "name" : "VGMServer",
+            "id" : "0x1277"
+        }
+    ],
+    "services" :
+    [
+        {
+            "service" : "0x0666",
+            "instance" : "0x0777",
+            "reliable" : { "port" : "50010", "enable-magic-cookies" : "false" }
+        }
+    ],
+    "routing" : "VGMServer",
+    "service-discovery" :
+    {
+        "enable" : "false"
+    }
+}
