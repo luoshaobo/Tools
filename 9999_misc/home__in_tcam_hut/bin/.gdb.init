@@ -1,0 +1,5 @@
+target remote :12345
+b main
+set solib-absolute-prefix ~/opt1
+c
+c

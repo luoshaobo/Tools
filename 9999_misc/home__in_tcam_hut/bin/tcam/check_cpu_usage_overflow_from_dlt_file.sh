@@ -1,0 +1,54 @@
+#!/bin/bash
+
+FLAG_TO_REMOVE_IMMEDIATE_FILES=0
+
+INPUT_DLT_FILE_PATH="$1"
+OUTPUT_DLT_TXT_FILE_PATH="${INPUT_DLT_FILE_PATH}.txt"
+OUTPUT_CPU_SUMMARY_FILE_PATH="${INPUT_DLT_FILE_PATH}__CpuSummary.txt"
+OUTPUT_CPU_USAGE_OVERFLOW_RESULT_FILE_PATH="${INPUT_DLT_FILE_PATH}__CpuUsageOverflowResult.txt"
+
+function help
+{
+    echo "Usage:"
+    echo "  `basename $0` <dlt_file_path> [<arg1_to_forward> [<arg2_to_forward> ...]]"
+}
+
+function main
+{
+    local INPUT_DLT_FILE_DIR 
+
+    if [ $# -lt 1 ]; then
+        help
+        exit 1
+    fi
+
+    if [ ! -r "${INPUT_DLT_FILE_PATH}" ]; then
+        echo "*** ERROR: file can't be read: ${INPUT_DLT_FILE_PATH}" >&2
+        exit 1
+    fi
+
+    INPUT_DLT_FILE_DIR=`dirname "$INPUT_DLT_FILE_PATH"`
+    if [ ! -w "$INPUT_DLT_FILE_DIR" ]; then
+        echo "*** ERROR: directory can't be written: ${INPUT_DLT_FILE_DIR}" >&2
+        exit 1
+    fi
+
+    dlt-convert -a "${INPUT_DLT_FILE_PATH}" > "$OUTPUT_DLT_TXT_FILE_PATH"
+    cat "${OUTPUT_DLT_TXT_FILE_PATH}" | grep "TOPC CPU" | grep "CPU:" > "${OUTPUT_CPU_SUMMARY_FILE_PATH}"
+
+    shift 1         # other arguments will be forwarded to check_cpu_usage_overflow.py
+
+    check_cpu_usage_overflow.py \
+        --input-cpu-summary-file-path="${OUTPUT_CPU_SUMMARY_FILE_PATH}" \
+        --output-result-file-path="${OUTPUT_CPU_USAGE_OVERFLOW_RESULT_FILE_PATH}" \
+        --cpu-usage-overflow-max-limit=90 \
+        --cpu-usage-overflow-min-time=30 \
+        $*
+
+    if [ $FLAG_TO_REMOVE_IMMEDIATE_FILES -eq 1 ]; then
+        rm -f "$OUTPUT_DLT_TXT_FILE_PATH"
+        rm -f "$OUTPUT_CPU_SUMMARY_FILE_PATH"
+    fi
+}
+
+main $*

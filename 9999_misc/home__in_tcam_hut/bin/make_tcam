@@ -1,0 +1,3 @@
+#!/bin/bash
+
+make V=1 CAS_TARGET_HW=gly-tcam $@

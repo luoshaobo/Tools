@@ -1,0 +1,25 @@
+[global]
+    workgroup = WORKGROUP
+    netbios name = SAMBA_FS
+    interfaces = lo eth0 eth1 10.0.2.2
+    security = user
+
+[real_root]
+    path = /
+    writable = yes
+    comment = real root
+
+[root]
+    path = /root
+    writable = yes
+    comment = home of root
+
+[uidv4956]
+    path = /home/uidv4956
+    writable = yes
+    comment = home of uidv4956
+
+[arm_rootfs]
+    path = /opt/arm/rootfs
+    writable = yes
+    comment = arm rootfs

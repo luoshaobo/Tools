@@ -1,0 +1,4 @@
+#!/bin/bash
+
+su_1 -c "/usr/bin/sudo -i"
+

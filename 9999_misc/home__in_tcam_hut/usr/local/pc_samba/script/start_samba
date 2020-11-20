@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. ~/usr/local/pc_samba/script/inc_samba_run_time_env
+
+smbd -D
+

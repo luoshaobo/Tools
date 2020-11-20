@@ -1,0 +1,6 @@
+#!/bin/bash
+
+(
+    cd $HOME/bin/d-feed.d
+    ./d-feet -l $@
+)

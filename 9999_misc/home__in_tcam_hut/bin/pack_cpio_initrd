@@ -1,0 +1,6 @@
+#!/bin/bash
+
+find . | cpio -o -v -H newc > ../initrd.img
+gzip -9 ../initrd.img
+mv ../initrd.img.gz ../initrd.img
+

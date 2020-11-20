@@ -1,0 +1,13 @@
+[2020/09/03 17:22:49.404812,  0] param/loadparm.c:7969(lp_do_parameter)
+  Ignoring unknown parameter "bind interface only"
+[2020/09/03 17:22:49.406555,  0] lib/pidfile.c:146(pidfile_create)
+  ERROR: smbd is already running. File /home/uidv4956/usr/local/pc_samba/var/locks/smbd.pid exists and process id 5245 is running.
+[2020/09/03 17:24:41,  0] smbd/server.c:1072(main)
+  smbd version 3.6.25 started.
+  Copyright Andrew Tridgell and the Samba Team 1992-2011
+[2020/09/03 17:24:41,  0] param/loadparm.c:7969(lp_do_parameter)
+  Ignoring unknown parameter "bind interface only"
+[2020/09/03 17:24:41.842908,  0] param/loadparm.c:7969(lp_do_parameter)
+  Ignoring unknown parameter "bind interface only"
+[2020/09/03 17:24:41.844625,  0] lib/pidfile.c:146(pidfile_create)
+  ERROR: smbd is already running. File /home/uidv4956/usr/local/pc_samba/var/locks/smbd.pid exists and process id 5245 is running.

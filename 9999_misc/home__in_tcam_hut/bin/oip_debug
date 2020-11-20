@@ -1,0 +1,723 @@
+#!/bin/bash
+################################################################################
+#    OIP_DEBUG
+################################################################################
+# Script for preparing debug environment from crash reports and helping
+# analysis using gdb.
+#
+# Author: Jens Rossbach (jens.rossbach@continental-corporation.com)
+# Version: 1.7 (2016-07-11)
+################################################################################
+
+
+################################################################################
+#    PREDEFINED VARIABLES AND CONSTANTS
+################################################################################
+
+#### CONSTANTS #################################################################
+DEF_APP_DIR=$HOME/.oip_debug
+DEF_TEMP_DIR=/tmp/oip_debug
+DEF_SETTINGS_FILE=$DEF_APP_DIR/settings.conf
+DEF_SESSION_FILE=$DEF_APP_DIR/session.conf
+DEF_LOG_FILE=$DEF_APP_DIR/oip_debug.log
+
+#### PREDEFINED VARIABLES ######################################################
+SCRIPT_NAME=`basename $0`
+VERBOSE_MODE=1
+INFO_MODE=0
+IPK_MODE=0
+WARNING_FLAG=0
+
+#### CONFIG KEYS (DEFAULT VALUES) ##############################################
+output_dir=$DEF_APP_DIR
+machine_arch=imx6x-std
+rootfs_source=image
+
+
+################################################################################
+#    FUNCTIONS
+################################################################################
+
+#### log_debug: write a message to the log file ################################
+function log_debug
+{
+    echo "$1" >> $DEF_LOG_FILE
+}
+
+#### handle_error: print a general error message and exit with error code ######
+function handle_error
+{
+    echo "Failed, execution aborted!"
+    echo -e "See \033[0;31m$DEF_LOG_FILE\033[0m for more information."
+
+    # clean-up temporary files
+    rm -rf $DEF_TEMP_DIR
+
+    exit 1
+}
+
+#### handle_warning: print a general warning message (and continue) ############
+function handle_warning
+{
+    WARNING_FLAG=1
+}
+
+#### fatal: print an error message and exit with error code ####################
+function fatal
+{
+	echo -e "$1!"
+    exit 1
+}
+
+#### hint: print a hint for usage and exit with error code #####################
+function hint
+{
+	echo -e "$1!"
+	if [ -z "$2" ]; then
+		echo -e "Type \033[0;33m$SCRIPT_NAME --help\033[0m for more information on the usage."
+	else
+		echo -e "Type \033[0;33m$SCRIPT_NAME $2 --help\033[0m for more information on the command."
+	fi
+
+	exit 1
+}
+
+#### usage: print a usage description and exit #################################
+function usage
+{
+	if [ -z "$1" ]; then
+		echo -e "\033[0;33mUSAGE\033[0m"
+		echo "  $SCRIPT_NAME [options] <command> [<args>]"
+        echo
+        echo -e "\033[0;33mOPTIONS\033[0m"
+        echo "  -h,--help  Print this help page."
+		echo
+		echo -e "\033[0;33mCOMMANDS\033[0m"
+        echo "  info       Print information about the crash report."
+		echo "  prepare    Prepare debugging environment."
+		echo "  analyze    Analyze crash report."
+		echo "  config     Get or set configuration options."
+        echo "  help       Print help for a specific command."
+		echo
+		echo -e "Type \033[0;33m$SCRIPT_NAME <command> --help\033[0m or \033[0;33m$SCRIPT_NAME help <command>\033[0m for more information on a specific command."
+    elif [ "$1" == "info" ]; then
+        echo -e "\033[0;33mUSAGE\033[0m"
+		echo "  $SCRIPT_NAME info <crash_report>"
+        echo
+        echo "This command extracts and prints information about the specified crash report."
+	elif [ "$1" == "prepare" ]; then
+        echo -e "\033[0;33mUSAGE\033[0m"
+		echo "  $SCRIPT_NAME prepare [options] <crash_report>"
+        echo
+        echo -e "\033[0;33mOPTIONS\033[0m"
+        echo "  -a,--additional-ipk-dir <directory>    Additionally extract IPKs from specified directory into rootfs."
+        echo "  --gdb-cmd <cmd>                        Name of GDB executable if different from default."
+        echo "  -h,--help                              Print this help page."
+        echo "  -i,--ipk-rootfs                        Extract rootfs binaries from IPKs instead of rootfs image"
+        echo "                                         (has no effect if option rootfs_source is set to 'ipk')."
+        echo "  --machine-arch <arch>                  Use specified machine architecture instead of configured one."
+        echo "  -n,--name <name>                       Append specified name to crash analysis folder name"
+        echo "                                         (if omitted, current date and time is used)."
+        echo "  --output-dir <directory>               Use specified directory as output directory instead of configured one."
+        echo "  -p,--pdk <directory>                   Use specified PDK directory instead of the one from the crash report."
+        echo "  -q,--quiet                             Be less verbose."
+        echo "  -r,--rootfs <directory>                Do not extract rootfs and debug IPKs, use specified directory instead."
+	elif [ "$1" == "analyze" ]; then
+        echo -e "\033[0;33mUSAGE\033[0m"
+	    echo "  $SCRIPT_NAME analyze [options] [crash_analysis_directory]"
+        echo
+        echo -e "\033[0;33mOPTIONS\033[0m"
+        echo "  -h,--help  Print this help page."
+        echo
+        echo "If no crash analysis directory is specified, current directory is used."
+	elif [ "$1" == "config" ]; then
+        echo -e "\033[0;33mUSAGE\033[0m"
+		echo "  $SCRIPT_NAME config [options] [<conf_name>[=<conf_value>]]"
+        echo
+        echo -e "\033[0;33mOPTIONS\033[0m"
+        echo "  -h,--help  Print this help page."
+        echo
+        echo "When calling without arguments, all configuration keys with their current values are listed. Calling without assignment (i.e. only the key name) displays the value of that key, otherwise sets the key's value to the specified one."
+    elif [ "$1" == "help" ]; then
+        echo -e "\033[0;33mUSAGE\033[0m"
+        echo "  $SCRIPT_NAME help [command_name]"
+        echo
+        echo "The command name is one of prepare, analyze, config, help. If omitted, the general help page is displayed."
+    else
+        echo -e "Unknown command \033[0;31m$1\033[0m!"
+	fi
+
+	exit 0
+}
+
+#### evaluate_command: evaluate command entered by user ########################
+function evaluate_command
+{
+	if [ $# -lt 1 ]; then
+		hint "Insufficient command line arguments"
+	fi
+
+	case "$1" in
+        info)
+		COMMAND=info
+		;;
+		config)
+		COMMAND=config
+		;;
+		prepare)
+		COMMAND=prepare
+		;;
+		analyze)
+		COMMAND=analyze
+		;;
+        help)
+		COMMAND=help
+		;;
+		-h|--help)
+		usage
+		;;
+		*)
+		hint "Unknown command or option \033[0;31m$1\033[0m"
+		;;
+	esac
+}
+
+#### extract_crash_report: extract files from crash report #####################
+function extract_crash_report
+{
+    [ $VERBOSE_MODE -eq 1 ] && echo "Extracting crash report..."
+
+    log_debug "Extracting $1 to $DEF_TEMP_DIR"
+	tar xf $1 -C $DEF_TEMP_DIR &>> $DEF_LOG_FILE || handle_error
+
+    add_info=`find $DEF_TEMP_DIR -name "AdditionalInfo.tar.gz"`
+    if [ -z $add_info ]; then
+        log_debug "No additional info archive found, looking for unpacked files..."
+        add_info=`find $DEF_TEMP_DIR -name "AdditionalInfo.OIPBuildInfo.txt"`
+
+        if [ -z $add_info ]; then
+            log_debug "Additional info not found!"
+            handle_error
+        else
+            add_info=`dirname $add_info`
+            log_debug "Found additional info in $add_info, move to $DEST_DIR/crash_report"
+            mv $add_info/AdditionalInfo.* $DEST_DIR/crash_report
+
+            if [ -f $add_info/cortex.dump ]; then
+                log_debug "Found cortex.dump in $add_info, move to $DEST_DIR/crash_report"
+                mv $add_info/cortex.dump $DEST_DIR/crash_report
+            else
+                log_debug "No cortex.dump found!"
+            fi
+        fi
+    else
+        log_debug "Found additional info archive at $add_info, extracting to $DEST_DIR/crash_report"
+    	tar xf $add_info -C $DEST_DIR/crash_report &>> $DEF_LOG_FILE || handle_error
+    fi
+
+    if [ -z $CUST_PDK ]; then
+    	PDK_PATH=`sed -n 's/^Used Mirror: \+\(\/PROJ\/.*\)\/Mirror\/.*$/\1/p' $DEST_DIR/crash_report/AdditionalInfo.OIPBuildInfo.txt` &>> $DEF_LOG_FILE || handle_error
+        log_debug "Found PDK at $PDK_PATH"
+
+        if [[ $INFO_MODE -eq 0 && ! -d "$PDK_PATH" ]]; then
+    	    log_debug "Baseline directory $PDK_PATH not found!"
+    	    handle_error
+    	fi
+    else
+        PDK_PATH=$CUST_PDK
+        log_debug "Using custom PDK at $PDK_PATH"
+    fi
+
+    if [ -d "$PDK_PATH/ADK" ]; then
+        ADK_DIR="/ADK"
+    else
+        log_debug "ADK sub directory not found, using direct PDK path."
+    fi
+
+    if [ $INFO_MODE -eq 0 ]; then
+        if [ $CORE_GZ -eq 0 ]; then
+            core_file=`find $DEF_TEMP_DIR -name "core.lz4"`
+        else
+            core_file=`find $DEF_TEMP_DIR -name "core.gz"`
+        fi
+
+        log_debug "Found core file at $core_file, extracting to $DEST_DIR/crash_report/core"
+        if [ $CORE_GZ -eq 0 ]; then
+            if [ -f $PDK_PATH$ADK_DIR/imx6x-std-adk/x86_64-linux/usr/bin/lz4 ]; then
+                LZ4_CMD=$PDK_PATH$ADK_DIR/imx6x-std-adk/x86_64-linux/usr/bin/lz4
+                log_debug "Using LZ4 tool found at $LZ4_CMD"
+            else
+                log_debug "LZ4 tool not found in PDK, checking system..."
+                if [ $(dpkg-query -W -f='${Status}' liblz4-tool 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+                    log_debug "LZ4 tool not installed."
+                    fatal "LZ4 tool not found in PDK and also not installed, please install on your system and try again!"
+                fi
+
+                log_debug "Using installed LZ4 tool"
+                LZ4_CMD=lz4
+            fi
+
+            $LZ4_CMD -d $core_file $DEST_DIR/crash_report/core &>> $DEF_LOG_FILE || handle_error
+        else
+            gzip -cd $core_file 1> $DEST_DIR/crash_report/core 2>> $DEF_LOG_FILE || handle_error
+        fi
+    fi
+}
+
+#### extract_rootfs: extract root filesystem from SDK rootfs image ##########################
+function extract_rootfs
+{
+    if [ $IPK_MODE -eq 0 ]; then
+        [ $VERBOSE_MODE -eq 1 ] && echo "Extracting root file system from image..."
+        log_debug "Extracting $PDK_PATH$ADK_DIR/images/*image-$CUR_MACHINE_ARCH.rootfs.tar.* to $DEST_DIR/rootfs"
+
+	    tar xf $PDK_PATH$ADK_DIR/images/*image-$CUR_MACHINE_ARCH.rootfs.tar.* --exclude='./dev/*' -C $DEST_DIR/rootfs &>> $DEF_LOG_FILE || handle_error
+    fi
+}
+
+#### ipk_extract: extract a single IPK package #################################
+function ipk_extract
+{
+    if [ $2 -eq 0 ]; then
+        log_debug "Extracting debug IPKs in $1 to $DEST_DIR/rootfs"
+	    list=`find $1 -name "*-dbg*.ipk"`
+    else
+        log_debug "Extracting all IPKs in $1 to $DEST_DIR/rootfs"
+        list=`find $1 -name "*.ipk" ! -name "*-dev*.ipk" ! -name "*-static*.ipk" ! -name "*-doc*.ipk" ! -name "*-systemd*.ipk" ! -name "*systemd-*.ipk" ! -name "*-locale*.ipk" ! -name "*-charmap*.ipk"`
+    fi
+
+	for f in $list
+	do
+        log_debug "Processing IPK $f"
+		ar p $f data.tar.gz | tar xzf - --overwrite -C $DEST_DIR/rootfs &>> $DEF_LOG_FILE || handle_warning
+	done
+}
+
+#### extract_sdk_ipks: extract IPK packages from SDK ###########################
+function extract_sdk_ipks
+{
+	[ $VERBOSE_MODE -eq 1 ] && echo "Extracting hardware independent packages..."
+	ipk_extract "$PDK_PATH$ADK_DIR/ipk/armv7a" $IPK_MODE
+
+	[ $VERBOSE_MODE -eq 1 ] && echo "Extracting hardware dependent packages..."
+	ipk_extract "$PDK_PATH$ADK_DIR/ipk/$CUR_MACHINE_ARCH" $IPK_MODE
+}
+
+#### extract_additional_ipks: extract additional IPK packages ##################
+function extract_additional_ipks
+{
+    if [ ! -z "$ADD_IPKS" ]; then
+    	[ $VERBOSE_MODE -eq 1 ] && echo "Extracting additional packages..."
+    	ipk_extract "$ADD_IPKS" 1
+    fi
+}
+
+#### print_summary: print preparation summary ##################################
+function print_summary
+{
+    if [[ $VERBOSE_MODE -eq 1 || $INFO_MODE -eq 1 ]]; then
+        if [ $INFO_MODE -eq 0 ]; then
+            echo
+            if [ $WARNING_FLAG -eq 0 ]; then
+                echo -e "Crash analysis preparation \033[0;32msuccessful\033[0m!"
+            else
+                echo "Crash analysis preparation finished with warnings!"
+                echo -e "See \033[0;31m$DEF_LOG_FILE\033[0m for more information."
+            fi
+            echo -e "\033[0;33mCrashed process:\033[0m        $PROCESS_NAME"
+            echo -e "\033[0;33mUsed PDK:\033[0m               $PDK_PATH"
+            if [ ! -z "$ADD_IPKS" ]; then
+                echo -e "\033[0;33mAdditional IPKs:\033[0m        $ADD_IPKS"
+            fi
+            echo -e "\033[0;33mHardware Architecture:\033[0m  $CUR_MACHINE_ARCH"
+            echo -e "\033[0;33mAnalysis directory:\033[0m     $DEST_DIR"
+            echo
+            echo -e "Enter analysis directory and type \033[0;33m$SCRIPT_NAME analyze\033[0m to continue."
+        else
+            echo -e "\033[0;33mCrashed process:\033[0m $PROCESS_NAME"
+            if [ -d $PDK_PATH ]; then
+                echo -e "\033[0;33mAffected PDK:\033[0m    \033[0;32m$PDK_PATH\033[0m"
+            else
+                echo -e "\033[0;33mAffected PDK:\033[0m    \033[0;31m$PDK_PATH\033[0m (not existing!)"
+            fi
+        fi
+    fi
+}
+
+#### debug_prepare: prepare debugging environment ##############################
+function debug_prepare
+{
+    if [ $INFO_MODE -eq 0 ]; then
+    	if [ $# -lt 1 ]; then
+    		hint "Insufficient command line arguments" "prepare"
+    	elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    		usage "prepare"
+    	fi
+
+        if [ "$rootfs_source" == "ipk" ]; then
+            IPK_MODE=1
+        fi
+
+        temp=`getopt -o a:in:p:r: --long additional-ipk-dir:,ipk-rootfs,name:,pdk:,rootfs:,output-dir:,machine-arch:,gdb-cmd: -n "$SCRIPT_NAME" -- "$@"`
+        if [ $? != 0 ] ; then
+            exit 1
+        fi
+
+        eval set -- "$temp"
+
+        while true ; do
+            case "$1" in
+                -a|--additional-ipk-dir)
+                ADD_IPKS=`readlink -f "$2"`
+                if [ $? -ne 0 ]; then
+                    fatal "Invalid path \033[0;31m$2\033[0m for additional IPK directory"
+                fi
+                shift 2
+                ;;
+                -i|--ipk-rootfs)
+                IPK_MODE=1
+                shift
+                ;;
+                -n|--name)
+                ENV_NAME="$2"
+                shift 2
+                ;;
+                -p|--pdk)
+                CUST_PDK=`readlink -f "$2"`
+                if [ $? -ne 0 ]; then
+                    fatal "Invalid path \033[0;31m$2\033[0m for custom PDK"
+                fi
+                shift 2
+                ;;
+                -r|--rootfs)
+                CUST_ROOTFS=`readlink -f "$2"`
+                if [ $? -ne 0 ]; then
+                    fatal "Invalid path \033[0;31m$2\033[0m for custom rootfs"
+                fi
+                shift 2
+                ;;
+                -q|--quiet)
+                VERBOSE_MODE=0
+                shift
+                ;;
+                --output-dir)
+                CUR_OUTPUT_DIR="$2"
+                mkdir -p $CUR_OUTPUT_DIR
+                if [ $? -ne 0 ]; then
+                    fatal "Output directly \033[0;31m$2\033[0m cannot be created"
+                fi
+                shift 2
+                ;;
+                --machine-arch)
+                CUR_MACHINE_ARCH="$2"
+                shift 2
+                ;;
+                --gdb-cmd)
+                GDB_CMD="$2"
+                shift 2
+                ;;
+                --)
+                shift
+                break
+                ;;
+                *)
+                fatal "Internal error"
+                ;;
+            esac
+        done
+    fi
+
+    if [ ! -f "$1" ]; then
+        fatal "File \033[0;31m$1\033[0m not found"
+    fi
+
+    if [[ ! "$1" =~ ^.*\.tar.*$ ]]; then
+        fatal "File \033[0;31m$1\033[0m is not a valid crash report"
+    fi
+
+    # prepare temporary folder
+	rm -rf $DEF_TEMP_DIR
+    mkdir -p $DEF_TEMP_DIR
+
+    echo "OIP_DEBUG on `date '+%Y-%m-%d %H:%M:%S'`" > $DEF_LOG_FILE
+	echo "--------------------------------" >> $DEF_LOG_FILE
+	echo >> $DEF_LOG_FILE
+
+    if [ $INFO_MODE -eq 0 ]; then
+    	tar tvf $1 2>> $DEF_LOG_FILE | grep 'core.lz4' > /dev/null
+    	if [ $? -eq 0 ]; then
+            CORE_GZ=0
+        else
+            tar tvf $1 2>> $DEF_LOG_FILE | grep 'core.gz' 1> /dev/null
+            if [ $? -eq 0 ]; then
+                CORE_GZ=1
+            else
+                fatal "No core dump found inside \033[0;31m$1\033[0m"
+            fi
+    	fi
+
+        if [ -z "$ENV_NAME" ]; then
+            ENV_NAME=`date +%Y%m%d_%H%M%S`
+        fi
+
+        if [ -z "$CUR_OUTPUT_DIR" ]; then
+            CUR_OUTPUT_DIR=$output_dir
+        fi
+
+        if [ -z "$CUR_MACHINE_ARCH" ]; then
+            CUR_MACHINE_ARCH=$machine_arch
+        fi
+
+        DEST_DIR="$CUR_OUTPUT_DIR/crash_analysis.$ENV_NAME"
+
+        if [ -d "$DEST_DIR" ]; then
+            echo -e "Destination directory \033[0;31m$DEST_DIR\033[0m already exists!"
+            echo -n "Overwrite (Y/n)? "
+
+            while true
+            do
+                read confirmation
+
+                case "$confirmation" in
+                    Y)
+                    break
+                    ;;
+                    n)
+                    echo "Aborted by user."
+                    exit 0
+                    ;;
+                    *)
+                    echo -n "Please type Y or n (case sensitive): "
+                    ;;
+                esac
+            done
+
+            rm -rf $DEST_DIR
+        fi
+
+        mkdir -p $DEST_DIR/.oip_debug
+        mkdir -p $DEST_DIR/crash_report
+
+        if [ -z "$CUST_ROOTFS" ]; then
+            mkdir -p $DEST_DIR/rootfs
+        else
+            ln -s $CUST_ROOTFS $DEST_DIR/rootfs
+        fi
+    else
+        DEST_DIR=$DEF_TEMP_DIR
+        mkdir -p $DEST_DIR/crash_report
+    fi
+
+	extract_crash_report "$1"
+
+    if [ -f $DEST_DIR/crash_report/cortex.dump ]; then
+        PROCESS_NAME=`sed -n "/^\[memory maps\]$/{N;s/^\[memory maps\]\n.* \(\/.*\)$/\1/p}" $DEST_DIR/crash_report/cortex.dump` &>> $DEF_LOG_FILE
+    fi
+
+
+    if [ -z "$PROCESS_NAME" ]; then
+        if [ $INFO_MODE -eq 0 ]; then
+            echo "Unable to retrieve process name from crash report, please enter!"
+            echo -n "Full path of process: "
+
+            read PROCESS_NAME
+            log_debug "Process $PROCESS_NAME received from user input"
+        else
+            log_debug "Unknown process name"
+            PROCESS_NAME="unknown"
+        fi
+    else
+        log_debug "Process $PROCESS_NAME received from $DEST_DIR/crash_report/cortex.dump"
+    fi
+
+    if [ $INFO_MODE -eq 0 ]; then
+        if [ -z "$GDB_CMD" ]; then
+            # Search GDB executable(s)
+            found_gdbs=($(find $PDK_PATH$ADK_DIR/lnToMV_Tools/MV_Tools/tools/arm-gnueabi/bin/ -name '*-gdb'))
+
+            # No GDB executable was found
+            if [ ${#found_gdbs[@]} -eq 0 ]; then
+                log_debug "No GDB executable found under $PDK_PATH$ADK_DIR/lnToMV_Tools/MV_Tools/tools/arm-gnueabi/bin"
+                fatal "No GDB executable found"
+
+            # Multiple GDB executables were found, user selection required
+            elif [ ${#found_gdbs[@]} -gt 1 ]; then
+                echo "Multiple GDB executables found."
+
+                i=1
+                for gdb in ${found_gdbs[@]}; do
+                    echo "($i) `basename $gdb`"
+                    ((i++))
+                done
+
+                while true
+                do
+                    echo -n "Please select: "
+                    read i
+
+                    if [[ $i =~ ^[0-9]+$ && $i -ge 1 && $i -le ${#found_gdbs[@]} ]]; then
+                        ((i--))
+                        break
+                    fi
+                done
+
+                GDB_CMD=${found_gdbs[$i]}
+                log_debug "Using selected GDB executable at $GDB_CMD"
+
+            # GDB executable found, all good
+            else
+                GDB_CMD=${found_gdbs[0]}
+                log_debug "Found GDB executable at $GDB_CMD"
+            fi
+        else
+            GDB_CMD=$PDK_PATH$ADK_DIR/lnToMV_Tools/MV_Tools/tools/arm-gnueabi/bin/$GDB_CMD
+            if [ ! -f $GDB_CMD ]; then
+                log_debug "User specified GDB executable $GDB_CMD not existing"
+                fatal "Specified GDB executable does not exist"
+            fi
+
+            log_debug "Using user specified GDB at $GDB_CMD"
+        fi
+
+        echo -n $PROCESS_NAME 1> $DEST_DIR/.oip_debug/proc 2>> $DEF_LOG_FILE || handle_error
+        ln -s $PDK_PATH $DEST_DIR &>> $DEF_LOG_FILE
+        ln -s $GDB_CMD $DEST_DIR/.oip_debug/gdb  &>> $DEF_LOG_FILE || handle_error
+
+        if [ -z "$CUST_ROOTFS" ]; then
+            extract_rootfs
+            extract_sdk_ipks
+            extract_additional_ipks
+        fi
+    fi
+
+    print_summary
+
+	# clean-up temporary files
+	rm -rf $DEF_TEMP_DIR
+}
+
+#### print_summary: print preparation summary ##################################
+function print_info
+{
+    if [ $# -lt 1 ]; then
+		hint "Insufficient command line arguments" "info"
+	elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+		usage "info"
+	fi
+
+    INFO_MODE=1
+    debug_prepare "$@"
+}
+
+#### analyze_core: analyze core dump using gdb #################################
+function analyze_core
+{
+    if [ $# -eq 1 ]; then
+        if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    		usage "analyze"
+        else
+            cd "$1"
+    	fi
+    fi
+
+    if [ ! -d ".oip_debug" ]; then
+        fatal "No crash report found at \033[0;31m$PWD\033[0m"
+    fi
+
+    PROCESS_NAME=`cat .oip_debug/proc`
+    .oip_debug/gdb --quiet -ex "set sysroot rootfs" -ex "core-file crash_report/core" -ex "bt" rootfs$PROCESS_NAME
+}
+
+#### load_config: load configuration from file #################################
+function load_config
+{
+	# read config file, if existing
+	if [ -f $DEF_SETTINGS_FILE ]; then
+		source $DEF_SETTINGS_FILE
+	fi
+}
+
+#### write_config_entry: write a single config entry to stdout or a file #######
+function write_config_entry
+{
+	if [ -z $3 ]; then
+		echo -e "\033[0;32m$1\033[0m = \033[0;33m$2\033[0m"
+	else
+		echo "$1=$2" >> $3
+	fi
+}
+
+#### print_config: print configuration to stdout or a file #####################
+function print_config
+{
+	if [ $# -eq 1 ]; then
+		echo "################################################################################" > $1
+		echo "#    CONFIGURATION FOR SCRIPT OIP_DEBUG" >> $1
+		echo "################################################################################" >> $1
+		echo >> $1
+	fi
+
+	write_config_entry "output_dir" "${output_dir}" $1
+	write_config_entry "machine_arch" "${machine_arch}" $1
+    write_config_entry "rootfs_source" "${rootfs_source}" $1
+}
+
+#### configure_script: handle configuration ####################################
+function configure_script
+{
+    if [ $# -eq 0 ]; then
+		print_config
+	elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+		usage "config"
+    elif [[ "$1" =~ ^[a-z_]+=.*$ ]]; then
+        option_name=`echo "$1" | sed -n "s/^\([a-z_]\+\)=.*$/\1/p"`
+        if [ -z "$(eval "echo \$$option_name")" ]; then
+            fatal "Unknown option \033[0;31m$option_name\033[0m" "config"
+        fi
+
+        eval "$1"
+        print_config $DEF_SETTINGS_FILE
+    elif [[ "$1" =~ ^[a-z_]+$ ]]; then
+        if [ -z "$(eval "echo \$$1")" ]; then
+            fatal "Unknown option \033[0;31m$1\033[0m" "config"
+        fi
+
+        echo -e "\033[0;32m$1\033[0m = \033[0;33m$(eval "echo \$$1")\033[0m"
+    else
+        hint "Invalid command line arguments" "config"
+	fi
+}
+
+
+################################################################################
+#    ENTRY CODE
+################################################################################
+
+evaluate_command "$@"
+shift
+
+mkdir -p $DEF_APP_DIR
+load_config
+
+case "$COMMAND" in
+    info)
+	print_info "$@"
+	;;
+	prepare)
+	debug_prepare "$@"
+	;;
+	analyze)
+	analyze_core "$@"
+	;;
+	config)
+	configure_script "$@"
+	;;
+    help)
+	usage "$1"
+	;;
+	*)
+	fatal "Internal error"
+	;;
+esac
+
+exit 0

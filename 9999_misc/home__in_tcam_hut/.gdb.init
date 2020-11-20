@@ -1,0 +1,5 @@
+target remote :12346
+b rmc_global.cpp:55
+set solib-absolute-prefix /home/uidv4956/tcam_root/tcam_src_root_03.19.16.01/release/fs/devel
+set solib-search-path
+c

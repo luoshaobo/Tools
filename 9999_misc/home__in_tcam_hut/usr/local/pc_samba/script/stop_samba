@@ -1,0 +1,7 @@
+#!/bin/sh
+
+killall -9 smbd
+
+rm -f ~/usr/local/pc_samba/var/locks/smbd.pid
+rm -f ~/usr/local/pc_samba/var/locks/smbd-smb.conf.pid
+
