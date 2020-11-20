@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<Configs>
+    <Config id="ClimateControl_1" version="123" target="eldtPmpStat,hvBattPmpPwrCns,sunDataAzi" collectCycle="5000" uploadCycle="10" condition="" triggerTimes="0" />
+    <Config id="ClimateControl_1_new" version="321" target="sunDataElevn,eldtPmpCmd" collectCycle="4000" uploadCycle="12" condition="" triggerTimes="0" />
+</Configs>

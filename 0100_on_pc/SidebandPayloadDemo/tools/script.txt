@@ -1,0 +1,3 @@
+D:\yyy>python generateBigData.py 3 > gen_ClimateControlPackageHandler_collectPort.h
+D:\yyy>python generateBigData.py 2 > gen_ClimateControlPayloadConfig_doInitailization.h
+D:\yyy>python generateBigData.py 1 > gen_ClimateControlPayloadConfig_enum.h

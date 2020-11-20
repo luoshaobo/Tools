@@ -1,0 +1,3 @@
+﻿  main.cpp
+d:\lsb\work_dir\tbox\tcam\mycode\pc\vs2017\serviceframework\include\timerqueue.h(33): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  TestServiceFramework006.vcxproj -> D:\lsb\work_dir\Tbox\TCam\MyCode\PC\vs2017\ServiceFramework\project\vs2015\ServiceFramework\x64\Debug\TestServiceFramework006.exe

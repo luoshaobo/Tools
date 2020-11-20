@@ -1,0 +1,3 @@
+﻿  stdafx.cpp
+  main.cpp
+..\..\..\project\vs2015\ServiceFramework\x64\Debug\ServiceFramework.dll : fatal error LNK1107: invalid or corrupt file: cannot read at 0x390
