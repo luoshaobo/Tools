@@ -109,6 +109,17 @@ namespace bsfwk {
         virtual const CyclicalRequestConfig &GetCyclicalRequestConfig() = 0;
 
         /**
+        * @brief                                  Function called by ServiceStateMachine for the job list to do for the current service.
+        *
+        * @param[out] jobList                     The job list to do for the current service.
+        *
+        * @return                                 Whether the job list is got or not.
+        *                                             true: got.
+        *                                             false: not got.
+        */
+        virtual bool GetJobsToDo(std::vector<uint32_t> &jobList) = 0;
+
+        /**
         * @brief                                  Function called to get the service name.
         *
         * @return                                 The service name.

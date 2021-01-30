@@ -24,6 +24,7 @@ namespace bsfwk {
         virtual void OnServiceCancelled() {}
         virtual const RetryConfig &GetRetryConfig() { return m_defaultRetryConfig; }
         virtual const CyclicalRequestConfig &GetCyclicalRequestConfig() { return m_defaultCyclicalRequestConfig; }
+        virtual bool GetJobsToDo(std::vector<uint32_t> &jobList) { return false; }
         virtual const std::string GetServiceName() { return m_serviceName; }
 
     protected:

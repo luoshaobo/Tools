@@ -139,6 +139,9 @@
     <ClCompile Include="..\test\src\test_app_0502.cc">
       <Filter>test\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\test\src\test_app_0301.cc">
+      <Filter>test\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\port\VolvoOnCall\include\signals\geely\gly_vds_rdl_signal.h">
@@ -283,6 +286,9 @@
       <Filter>test\include</Filter>
     </ClInclude>
     <ClInclude Include="..\test\include\test_app_0502.h">
+      <Filter>test\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\include\test_app_0301.h">
       <Filter>test\include</Filter>
     </ClInclude>
   </ItemGroup>

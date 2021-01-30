@@ -81,6 +81,7 @@ CC_OBJECTS += \
     test/src/test_app_0202.o \
     test/src/test_app_0203.o \
     test/src/test_app_0204.o \
+    test/src/test_app_0301.o \
     test/src/test_app_0401.o \
     test/src/test_app_0501.o \
     test/src/test_app_0502.o \

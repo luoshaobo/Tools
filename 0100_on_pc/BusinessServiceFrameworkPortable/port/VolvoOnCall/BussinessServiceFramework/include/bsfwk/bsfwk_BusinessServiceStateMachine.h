@@ -15,6 +15,7 @@ namespace bsfwk {
 
     private:
         const uint32_t INVALID_CURRENT_JOB_INDEX = static_cast<uint32_t>(-1);
+        const uint32_t INVALID_CURRENT_JOB_NO = static_cast<uint32_t>(-1);
 
         enum {
             SSMEI_START_STATE_MACHINE,
@@ -79,6 +80,8 @@ namespace bsfwk {
         bool IsServiceRunning() const;
         bool IsServiceStarted() const;
 
+        void GetJobsToDo();
+
     private:
         uint32_t GetMasterIndex() const;
         uint32_t GetStatemachineIndex() const;
@@ -117,6 +120,7 @@ namespace bsfwk {
         IEntityFactory *m_pEntityFactory;
         std::shared_ptr<IServiceEntity> m_pServiceEntity;
         std::vector<std::shared_ptr<BusinessJobStateMachine> > m_bsJobSMs;
+        std::vector<std::shared_ptr<BusinessJobStateMachine> > m_bsJobsToDo;  // m_nCurrentJobNo used as the cursor
         uint32_t m_nMasterIndex;
         uint32_t m_nStatemachineIndex;
         std::string m_stateMachineName;
@@ -124,7 +128,7 @@ namespace bsfwk {
         ServiceState m_serviceState;
         StateMachineState m_stateMachineState;
         std::queue<std::shared_ptr<ServiceRequestBase> > m_pendingRequests;
-        uint32_t m_nCurrentJobIndex;
+        uint32_t m_nCurrentJobNo;
         RetryConfig m_retryConfig;
         uint32_t m_nTimedoutCount;
         BSTimer m_timeoutRetryTimer;

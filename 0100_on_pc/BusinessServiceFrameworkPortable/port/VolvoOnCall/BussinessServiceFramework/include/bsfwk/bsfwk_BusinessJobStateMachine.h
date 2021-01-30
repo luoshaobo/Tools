@@ -52,6 +52,8 @@ namespace bsfwk {
         virtual void SetLogLevel(const LogLevel logLevel);
         // IJobStateMachine }}}
 
+        uint32_t GetJobIndex() const;
+
     private:
         virtual void PostSysEvent(const uint32_t nEventIndex, const std::shared_ptr<BSSysEventDataBase> data = 0);
         virtual BSTimer StartSysTimer(const TimeElapse::Difference timeoutMicroSeconds, const uint32_t nEventIndex, const std::shared_ptr<BSSysEventDataBase> data = 0);

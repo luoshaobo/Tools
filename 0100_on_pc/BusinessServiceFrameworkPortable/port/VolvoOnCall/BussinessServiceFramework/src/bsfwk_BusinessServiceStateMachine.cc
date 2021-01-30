@@ -38,12 +38,13 @@ namespace bsfwk {
         , m_pEntityFactory(pEntityFactory)
         , m_pServiceEntity(0)
         , m_bsJobSMs()
+        , m_bsJobsToDo()
         , m_nMasterIndex(nMasterIndex)
         , m_nStatemachineIndex(nStatemachineIndex)
         , m_stateMachineName(stateMachineName)
         , m_serviceState(ServiceState_Idle)
         , m_stateMachineState(StateMachineState_Stopped)
-        , m_nCurrentJobIndex(INVALID_CURRENT_JOB_INDEX)
+        , m_nCurrentJobNo(INVALID_CURRENT_JOB_NO)
         , m_retryConfig()
         , m_nTimedoutCount(0)
         , m_timeoutRetryTimer()
@@ -181,7 +182,7 @@ namespace bsfwk {
             m_stateMachineState = StateMachineState_Running;
 
             if (IsSharedPtrNotNull(m_lastRequest)) {
-                m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+                m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
                 m_serviceState = ServiceState_Began;
                 std::shared_ptr<BSSysEventDataBase> data = std::make_shared<BSSysEventData_HandleService>(false);
                 PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_SERVICE), data);
@@ -229,8 +230,8 @@ namespace bsfwk {
         BSFWK_SLOG_DEBUG("%s[%s]: begin: m_serviceState=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_serviceState);
 
         if (IsServiceStarted()) {
-            if (m_nCurrentJobIndex < static_cast<uint32_t>(m_bsJobSMs.size())) {
-                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobSMs[m_nCurrentJobIndex].get();
+            if (m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size())) {
+                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
                 if (IsPtrNotNull(pBusinessJobStateMachine)) {
                     BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->CancelCurrentJob()\n", BSFWK_FUNC, m_stateMachineName.c_str());
                     pBusinessJobStateMachine->CancelCurrentJob();
@@ -249,17 +250,17 @@ namespace bsfwk {
                     BSFWK_SLOG_ERROR("%s[%s]: m_pServiceEntity is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
                 }
             } else {
-                BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+                BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo);
             }
         } else {
-            BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+            BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo);
         }
 
         StopSysTimer(m_timeoutRetryTimer);
         StopSysTimer(m_failureRetryDelayTimer);
         StopSysTimer(m_retryDurationTimer);
 
-        m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+        m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
         m_serviceState = ServiceState_Cancelled;
         CheckNewRequest();
 
@@ -300,38 +301,118 @@ namespace bsfwk {
 
     const uint32_t BusinessServiceStateMachine::GetCurrentJobIndex()
     {
-        BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+        uint32_t nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
 
-        return m_nCurrentJobIndex;
+        if (m_nCurrentJobNo < m_bsJobsToDo.size()) {
+            BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
+            if (IsPtrNotNull(pBusinessJobStateMachine)) {
+                nCurrentJobIndex = pBusinessJobStateMachine->GetJobIndex();
+            }
+        }
+
+        BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%u, nCurrentJobIndex=%u\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo, nCurrentJobIndex);
+
+        return nCurrentJobIndex;
     }
 
     void BusinessServiceStateMachine::OnJobFinished(const uint32_t nJobIndex, const JobState &jobState)
     {
         BSFWK_SLOG_DEBUG("%s[%s]: nJobIndex=%d, jobState=%d, m_stateMachineState=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), nJobIndex, jobState, m_stateMachineState);
 
+        bool bIsCurrentJob = true;
+
         if (IsStateMachineRunning()) {
-            if ((nJobIndex < static_cast<uint32_t>(m_bsJobSMs.size())) && (m_nCurrentJobIndex == nJobIndex)) {
-                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobSMs[nJobIndex].get();
-                if (IsPtrNotNull(pBusinessJobStateMachine)) {
+            if ((m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size()))) {
+                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
+                if (IsPtrNotNull(pBusinessJobStateMachine)) {                   
+                    const uint32_t nCurrentJobIndex = pBusinessJobStateMachine->GetJobIndex();
+                    if (nCurrentJobIndex != nJobIndex) {
+                        bIsCurrentJob = false;
+                        BSFWK_SLOG_ERROR("%s[%s]: nCurrentJobIndex=%u, nJobIndex=%u\n", BSFWK_FUNC, m_stateMachineName.c_str(), nCurrentJobIndex, nJobIndex);
+                    }
+
+                    if (bIsCurrentJob) {
+                        switch (jobState) {
+                            case JobState_Completed:
+                                {
+                                    BSFWK_SLOG_DEBUG("%s[%s]: JobState_Completed\n", BSFWK_FUNC, m_stateMachineName.c_str());
+
+                                    BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->Stop()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                    pBusinessJobStateMachine->Stop();
+
+                                    m_nCurrentJobNo++;
+                                    PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_JOB_N));
+                                }
+                                break;
+                            case JobState_Failed:       // NOTE: go though
+                            case JobState_Timedout:
+                                {
+                                    BSFWK_SLOG_DEBUG("%s[%s]: JobState_Failed JobState_Timedout\n", BSFWK_FUNC, m_stateMachineName.c_str());
+
+                                    BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->Stop()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                    pBusinessJobStateMachine->Stop();
+                                }
+                                break;
+                            default:
+                                {
+                                    BSFWK_SLOG_WARN("%s[%s]: default\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                    // do nothing
+                                }
+                                break;
+                        } // switch (jobState) {
+                    } // if (bIsCurrentJob) {
+                } else {
+                    BSFWK_SLOG_ERROR("%s[%s]: pBusinessJobStateMachine is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                } // if (pBusinessJobStateMachine != 0) {
+
+                if (bIsCurrentJob) {
                     switch (jobState) {
                         case JobState_Completed:
                             {
                                 BSFWK_SLOG_DEBUG("%s[%s]: JobState_Completed\n", BSFWK_FUNC, m_stateMachineName.c_str());
-
-                                BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->Stop()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                pBusinessJobStateMachine->Stop();
-
-                                m_nCurrentJobIndex++;
-                                PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_JOB_N));
+                                // do nothing
                             }
                             break;
-                        case JobState_Failed:       // NOTE: go though
+                        case JobState_Failed:           // NOTE: go though
                         case JobState_Timedout:
                             {
                                 BSFWK_SLOG_DEBUG("%s[%s]: JobState_Failed JobState_Timedout\n", BSFWK_FUNC, m_stateMachineName.c_str());
 
-                                BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->Stop()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                pBusinessJobStateMachine->Stop();
+                                if (IsServiceStarted()) {
+                                    if (IsSharedPtrNotNull(m_pServiceEntity)) {
+
+                                        BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceFailed()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                        m_pServiceEntity->OnServiceFailed(nJobIndex, m_nFailedCount);
+                                        BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceEnd()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                        m_pServiceEntity->OnServiceEnd();
+                                    } else {
+                                        BSFWK_SLOG_ERROR("%s[%s]: m_pServiceEntity is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                    }
+                                }
+
+                                if (m_retryConfig.GetFailureRetryInfo().GetEnabled()
+                                    && ((m_nFailedCount < m_retryConfig.GetFailureRetryInfo().GetRetryCount()) || (m_retryConfig.GetFailureRetryInfo().GetRetryCount() == 0))) {
+                                    BSFWK_SLOG_DEBUG("%s[%s]: retry failure config\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                    m_failureRetryDelayTimer = StartSysTimer(static_cast<const TimeElapse::Difference>(m_retryConfig.GetFailureRetryInfo().GetDelayTime()), static_cast<uint32_t>(SSMEI_FAILURE_RETRY_DELAY_TIMER));
+
+                                    m_serviceState = ServiceState_FailureRetryDelaying;
+
+                                    m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
+                                    m_nFailedCount++;
+                                }
+                                else {
+                                    BSFWK_SLOG_DEBUG("%s[%s]: no retry failure config\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                                    StopSysTimer(m_timeoutRetryTimer);
+                                    StopSysTimer(m_failureRetryDelayTimer);
+                                    StopSysTimer(m_retryDurationTimer);
+
+                                    m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
+                                    m_nFailedCount++;
+
+                                    m_serviceState = ServiceState_Failed;
+                                    m_lastRequest.reset();
+                                    CheckNewRequest();
+                                }
                             }
                             break;
                         default:
@@ -341,70 +422,11 @@ namespace bsfwk {
                             }
                             break;
                     } // switch (jobState) {
-                } else {
-                    BSFWK_SLOG_ERROR("%s[%s]: pBusinessJobStateMachine is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                } // if (pBusinessJobStateMachine != 0) {
-
-                switch (jobState) {
-                    case JobState_Completed:
-                        {
-                            BSFWK_SLOG_DEBUG("%s[%s]: JobState_Completed\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                            // do nothing
-                        }
-                        break;
-                    case JobState_Failed:           // NOTE: go though
-                    case JobState_Timedout:
-                        {
-                            BSFWK_SLOG_DEBUG("%s[%s]: JobState_Failed JobState_Timedout\n", BSFWK_FUNC, m_stateMachineName.c_str());
-
-                            if (IsServiceStarted()) {
-                                if (IsSharedPtrNotNull(m_pServiceEntity)) {
-
-                                    BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceFailed()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                    m_pServiceEntity->OnServiceFailed(nJobIndex, m_nFailedCount);
-                                    BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceEnd()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                    m_pServiceEntity->OnServiceEnd();
-                                } else {
-                                    BSFWK_SLOG_ERROR("%s[%s]: m_pServiceEntity is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                }
-                            }
-
-                            if (m_retryConfig.GetFailureRetryInfo().GetEnabled()
-                                && ((m_nFailedCount < m_retryConfig.GetFailureRetryInfo().GetRetryCount()) || (m_retryConfig.GetFailureRetryInfo().GetRetryCount() == 0))) {
-                                BSFWK_SLOG_DEBUG("%s[%s]: retry failure config\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                m_failureRetryDelayTimer = StartSysTimer(static_cast<const TimeElapse::Difference>(m_retryConfig.GetFailureRetryInfo().GetDelayTime()), static_cast<uint32_t>(SSMEI_FAILURE_RETRY_DELAY_TIMER));
-
-                                m_serviceState = ServiceState_FailureRetryDelaying;
-
-                                m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
-                                m_nFailedCount++;
-                            }
-                            else {
-                                BSFWK_SLOG_DEBUG("%s[%s]: no retry failure config\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                                StopSysTimer(m_timeoutRetryTimer);
-                                StopSysTimer(m_failureRetryDelayTimer);
-                                StopSysTimer(m_retryDurationTimer);
-
-                                m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
-                                m_nFailedCount++;
-
-                                m_serviceState = ServiceState_Failed;
-                                m_lastRequest.reset();
-                                CheckNewRequest();
-                            }
-                        }
-                        break;
-                    default:
-                        {
-                            BSFWK_SLOG_WARN("%s[%s]: default\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                            // do nothing
-                        }
-                        break;
-                } // switch (jobState) {
+                } // if (bIsCurrentJob) {
             }
-            else { // if (nJobIndex < m_bsJobSMs.size() && m_nCurrentJobIndex == nJobIndex) {
-                BSFWK_SLOG_WARN("%s[%s]: nJobIndex=%d, m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), nJobIndex, m_nCurrentJobIndex);
-            } // if (nJobIndex < m_bsJobSMs.size() && m_nCurrentJobIndex == nJobIndex) {
+            else { // if ((m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size()))) {
+                BSFWK_SLOG_WARN("%s[%s]: nJobIndex=%d, m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), nJobIndex, m_nCurrentJobNo);
+            } // if ((m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size()))) {
         } // if (IsStateMachineRunning()) {
     }
 
@@ -544,6 +566,39 @@ namespace bsfwk {
         return bIsStarted;
     }
 
+    void BusinessServiceStateMachine::GetJobsToDo()
+    {
+        BSFWK_SLOG_DEBUG("%s[%s]\n", BSFWK_FUNC, m_stateMachineName.c_str());
+
+        bool bSuc = false;
+
+        m_bsJobsToDo.clear();
+
+        if (IsPtrNotNull(m_pServiceEntity)) {
+            std::vector<uint32_t> jobList;
+            BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->GetJobsToDo()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+            if (m_pServiceEntity->GetJobsToDo(jobList)) {
+                size_t i = 0;
+                for (; i < jobList.size(); ++i) {
+                    if (jobList[i] < m_bsJobSMs.size()) {
+                        m_bsJobsToDo.push_back(m_bsJobSMs[jobList[i]]);
+                    } else {
+                        break;
+                    }
+                }
+                if (i == jobList.size()) {
+                    BSFWK_SLOG_DEBUG("%s[%s] customized job list is used\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                    bSuc = true;
+                }
+            }
+        }
+
+        if (!bSuc) {
+            BSFWK_SLOG_DEBUG("%s[%s] default job list is used\n", BSFWK_FUNC, m_stateMachineName.c_str());
+            m_bsJobsToDo = m_bsJobSMs;
+        }
+    }
+
     void BusinessServiceStateMachine::SetJobs(const std::vector<std::shared_ptr<BusinessJobStateMachine> > &bsJobSMs)
     {
         BSFWK_SLOG_DEBUG("%s[%s]\n", BSFWK_FUNC, m_stateMachineName.c_str());
@@ -576,7 +631,7 @@ namespace bsfwk {
             m_lastRequest = m_pendingRequests.front();
             m_pendingRequests.pop();
 
-            m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+            m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
             m_serviceState = ServiceState_Began;
             std::shared_ptr<BSSysEventDataBase> data = std::make_shared<BSSysEventData_HandleService>(true);
             PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_SERVICE), data);
@@ -623,11 +678,13 @@ namespace bsfwk {
                     m_timeoutRetryTimer = StartSysTimer(static_cast<const TimeElapse::Difference>(m_retryConfig.GetTimeoutRetryInfo().GetTimeout()), static_cast<uint32_t>(SSMEI_TIMEOUT_TIMER));
                 }
 
-                m_nCurrentJobIndex = static_cast<uint32_t>(0);
+                m_nCurrentJobNo = static_cast<uint32_t>(0);
                 m_serviceState = ServiceState_Running;
                 BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceBegin()\n", BSFWK_FUNC, m_stateMachineName.c_str());
                 m_pServiceEntity->OnServiceBegin(m_lastRequest);
                 if (m_serviceState == ServiceState_Running) { // NOTE: the service might be cancelled.
+                    BSFWK_SLOG_DEBUG("%s[%s]: GetJobsToDo()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                    GetJobsToDo();
                     PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_JOB_N));
                 }
             }
@@ -641,28 +698,26 @@ namespace bsfwk {
         BSFWK_SLOG_DEBUG("%s[%s]\n", BSFWK_FUNC, m_stateMachineName.c_str());
 
         if (IsPtrNotNull(m_pEntityFactory)) {
-            if (m_nCurrentJobIndex < m_pEntityFactory->GetJobCount()) {
-                if (m_nCurrentJobIndex < static_cast<uint32_t>(m_bsJobSMs.size())) {
-                    BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobSMs[m_nCurrentJobIndex].get();
-                    if (IsPtrNotNull(pBusinessJobStateMachine)) {
-                        if (!pBusinessJobStateMachine->GetJobIgnored()) {
-                            BSFWK_SLOG_DEBUG("%s[%s]: ignore config\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                            BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->Start()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                            pBusinessJobStateMachine->Start();
-                            BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->StartNewJob()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                            pBusinessJobStateMachine->StartNewJob();
-                        } else {
-                            BSFWK_SLOG_DEBUG("%s[%s]: no ignore config\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                            m_nCurrentJobIndex++;
-                            m_serviceState = ServiceState_Running;
-                            PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_JOB_N));
-                        }
+            if (m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size())) {
+                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
+                if (IsPtrNotNull(pBusinessJobStateMachine)) {
+                    if (!pBusinessJobStateMachine->GetJobIgnored()) {
+                        BSFWK_SLOG_DEBUG("%s[%s]: ignore config\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                        BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->Start()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                        pBusinessJobStateMachine->Start();
+                        BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->StartNewJob()\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                        pBusinessJobStateMachine->StartNewJob();
                     } else {
-                        BSFWK_SLOG_ERROR("%s[%s]: pBusinessJobStateMachine is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                        BSFWK_SLOG_DEBUG("%s[%s]: no ignore config\n", BSFWK_FUNC, m_stateMachineName.c_str());
+                        m_nCurrentJobNo++;
+                        m_serviceState = ServiceState_Running;
+                        PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_JOB_N));
                     }
+                } else {
+                    BSFWK_SLOG_ERROR("%s[%s]: pBusinessJobStateMachine is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
                 }
             } else {
-                BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+                BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo);
                 m_serviceState = ServiceState_Running;
                 PostSysEvent(static_cast<uint32_t>(SSMEI_REQUEST_END));
             }
@@ -685,7 +740,7 @@ namespace bsfwk {
             StopSysTimer(m_failureRetryDelayTimer);
             StopSysTimer(m_retryDurationTimer);
 
-            m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+            m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
             m_serviceState = ServiceState_Completed;
             m_lastRequest.reset();
             CheckNewRequest();
@@ -705,8 +760,8 @@ namespace bsfwk {
             m_timeoutRetryTimer = StartSysTimer(static_cast<const TimeElapse::Difference>(m_retryConfig.GetTimeoutRetryInfo().GetTimeout()), static_cast<uint32_t>(SSMEI_TIMEOUT_TIMER));
 
             if (IsServiceStarted()) {
-                if (m_nCurrentJobIndex < static_cast<uint32_t>(m_bsJobSMs.size())) {
-                    BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobSMs[m_nCurrentJobIndex].get();
+                if (m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size())) {
+                    BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
                     if (IsPtrNotNull(pBusinessJobStateMachine)) {
                         BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->CancelCurrentJob()\n", BSFWK_FUNC, m_stateMachineName.c_str());
                         pBusinessJobStateMachine->CancelCurrentJob();
@@ -716,7 +771,7 @@ namespace bsfwk {
                         BSFWK_SLOG_ERROR("%s[%s]: pBusinessJobStateMachine is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
                     }
                 } else {
-                    BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+                    BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo);
                 }
 
                 if (IsSharedPtrNotNull(m_pServiceEntity)) {
@@ -730,7 +785,7 @@ namespace bsfwk {
             }
 
             if (m_serviceState != ServiceState_FailureRetryDelaying) {
-                m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+                m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
                 m_serviceState = ServiceState_Began;
                 std::shared_ptr<BSSysEventDataBase> data = std::make_shared<BSSysEventData_HandleService>(false);
                 PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_SERVICE), data);
@@ -740,8 +795,8 @@ namespace bsfwk {
         } else {
             BSFWK_SLOG_DEBUG("%s[%s]: no retry timeout config\n", BSFWK_FUNC, m_stateMachineName.c_str());
             if (IsServiceStarted()) {
-                if (m_nCurrentJobIndex < static_cast<uint32_t>(m_bsJobSMs.size())) {
-                    BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobSMs[m_nCurrentJobIndex].get();
+                if (m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size())) {
+                    BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
                     if (IsPtrNotNull(pBusinessJobStateMachine)) {
                         BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->CancelCurrentJob()\n", BSFWK_FUNC, m_stateMachineName.c_str());
                         pBusinessJobStateMachine->CancelCurrentJob();
@@ -751,7 +806,7 @@ namespace bsfwk {
                         BSFWK_SLOG_ERROR("%s[%s]: pBusinessJobStateMachine is NULL!\n", BSFWK_FUNC, m_stateMachineName.c_str());
                     }
                 } else {
-                    BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+                    BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo);
                 }
 
                 if (IsSharedPtrNotNull(m_pServiceEntity)) {
@@ -768,7 +823,7 @@ namespace bsfwk {
             StopSysTimer(m_failureRetryDelayTimer);
             StopSysTimer(m_retryDurationTimer);
 
-            m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+            m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
             m_serviceState = ServiceState_Timedout;
             m_lastRequest.reset();
             CheckNewRequest();
@@ -781,7 +836,7 @@ namespace bsfwk {
 
         StopSysTimer(m_failureRetryDelayTimer);
 
-        m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+        m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
         m_serviceState = ServiceState_Began;
         std::shared_ptr<BSSysEventDataBase> data = std::make_shared<BSSysEventData_HandleService>(false);
         PostSysEvent(static_cast<uint32_t>(SSMEI_HANDLE_SERVICE), data);
@@ -792,8 +847,8 @@ namespace bsfwk {
         BSFWK_SLOG_DEBUG("%s[%s]: %d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_serviceState);
 
         if (IsServiceStarted()) {
-            if (m_nCurrentJobIndex < static_cast<uint32_t>(m_bsJobSMs.size())) {
-                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobSMs[m_nCurrentJobIndex].get();
+            if (m_nCurrentJobNo < static_cast<uint32_t>(m_bsJobsToDo.size())) {
+                BusinessJobStateMachine *pBusinessJobStateMachine = m_bsJobsToDo[m_nCurrentJobNo].get();
                 if (IsPtrNotNull(pBusinessJobStateMachine)) {
                     BSFWK_SLOG_DEBUG("%s[%s]: pBusinessJobStateMachine->CancelCurrentJob()\n", BSFWK_FUNC, m_stateMachineName.c_str());
                     pBusinessJobStateMachine->CancelCurrentJob();
@@ -805,7 +860,7 @@ namespace bsfwk {
 
                 if (IsSharedPtrNotNull(m_pServiceEntity)) {
                     BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceFailed()\n", BSFWK_FUNC, m_stateMachineName.c_str());
-                    m_pServiceEntity->OnServiceFailed(m_nCurrentJobIndex, m_nFailedCount);
+                    m_pServiceEntity->OnServiceFailed(m_nCurrentJobNo, m_nFailedCount);
                     BSFWK_SLOG_DEBUG("%s[%s]: m_pServiceEntity->OnServiceEnd()\n", BSFWK_FUNC, m_stateMachineName.c_str());
                     m_pServiceEntity->OnServiceEnd();
                 } else {
@@ -813,14 +868,14 @@ namespace bsfwk {
                 }
             }
         } else {
-            BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobIndex);
+            BSFWK_SLOG_DEBUG("%s[%s]: m_nCurrentJobNo=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nCurrentJobNo);
         }
 
         StopSysTimer(m_timeoutRetryTimer);
         StopSysTimer(m_failureRetryDelayTimer);
         StopSysTimer(m_retryDurationTimer);
 
-        m_nCurrentJobIndex = INVALID_CURRENT_JOB_INDEX;
+        m_nCurrentJobNo = INVALID_CURRENT_JOB_NO;
         m_serviceState = ServiceState_Failed;
         m_lastRequest.reset();
         CheckNewRequest();

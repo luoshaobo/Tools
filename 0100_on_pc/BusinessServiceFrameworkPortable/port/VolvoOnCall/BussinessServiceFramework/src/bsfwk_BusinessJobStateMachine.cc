@@ -345,6 +345,13 @@ namespace bsfwk {
     // IServiceStateMachine }}}
     //////////////////////////////////////////////////////////////////////////////////////////
 
+    uint32_t BusinessJobStateMachine::GetJobIndex() const
+    {
+        BSFWK_SLOG_DEBUG("%s[%s]: m_nStatemachineIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), m_nStatemachineIndex);
+
+        return m_nStatemachineIndex;
+    }
+
     void BusinessJobStateMachine::PostSysEvent(const uint32_t nEventIndex, const std::shared_ptr<BSSysEventDataBase> data /*= 0*/)
     {
         BSFWK_SLOG_DEBUG("%s[%s]: nEventIndex=%d\n", BSFWK_FUNC, m_stateMachineName.c_str(), nEventIndex);

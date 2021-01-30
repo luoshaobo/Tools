@@ -21,6 +21,8 @@
 #include "test_app_0203.h"     // normal case: 1 sever, 1 service per server. service timeout retry, and service failure retry.
 #include "test_app_0204.h"     // normal case: 1 sever, 1 service per server. service timeout retry, and service failure retry, and service duration.
 
+#include "test_app_0301.h"     // normal case: 1 sever, 1 service per server. job list.
+
 #include "test_app_0401.h"     // service without job
 #include "test_app_0501.h"     // customized statemachine service
 #include "test_app_0502.h"     // customized statemachine job
@@ -61,6 +63,8 @@ namespace test_app_global {
         nRet = test_app_0202::test_main(argc, argv);
         nRet = test_app_0203::test_main(argc, argv);
         nRet = test_app_0204::test_main(argc, argv);
+
+        nRet = test_app_0301::test_main(argc, argv);
 
         nRet = test_app_0401::test_main(argc, argv);
 

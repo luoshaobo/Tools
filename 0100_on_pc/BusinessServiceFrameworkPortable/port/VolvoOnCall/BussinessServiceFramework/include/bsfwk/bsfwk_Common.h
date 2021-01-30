@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include <string>
+#include <vector>
 #include <memory>
 #include <functional>
 #include <future>

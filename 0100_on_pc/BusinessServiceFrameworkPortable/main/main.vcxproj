@@ -23,7 +23,7 @@
     <ProjectGuid>{B14797A5-B2D3-4BE9-81BE-DF34DBDC15D1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TestServiceFramework006</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>main</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -196,6 +196,7 @@
     <ClInclude Include="..\test\include\test_app_0202.h" />
     <ClInclude Include="..\test\include\test_app_0203.h" />
     <ClInclude Include="..\test\include\test_app_0204.h" />
+    <ClInclude Include="..\test\include\test_app_0301.h" />
     <ClInclude Include="..\test\include\test_app_0401.h" />
     <ClInclude Include="..\test\include\test_app_0501.h" />
     <ClInclude Include="..\test\include\test_app_0502.h" />
@@ -243,6 +244,7 @@
     <ClCompile Include="..\test\src\test_app_0202.cc" />
     <ClCompile Include="..\test\src\test_app_0203.cc" />
     <ClCompile Include="..\test\src\test_app_0204.cc" />
+    <ClCompile Include="..\test\src\test_app_0301.cc" />
     <ClCompile Include="..\test\src\test_app_0401.cc" />
     <ClCompile Include="..\test\src\test_app_0501.cc" />
     <ClCompile Include="..\test\src\test_app_0502.cc" />
