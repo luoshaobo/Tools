@@ -25,7 +25,7 @@ namespace bsfwk {
         virtual std::shared_ptr<IServiceEntity> CreateServiceEntity(IServiceStateMachine &rServiceStateMachine) { m_pServiceEntity = std::make_shared<ServiceEntityClass>(rServiceStateMachine, m_sServiceName); return m_pServiceEntity; }
         virtual std::shared_ptr<IJobEntity> CreateJobEntity(IServiceStateMachine &/*rServiceStateMachine*/, IJobStateMachine &/*rJobStateMachine*/, uint32_t /*nIndex*/) { return 0; }
         virtual const uint32_t GetJobCount() const { return static_cast<uint32_t>(0); }
-        virtual const std::string GetServiceStateMachineName() { return m_sServiceName + std::string("StateMachine"); }
+        virtual const std::string GetServiceStateMachineName() { return m_sServiceName + std::string("UnknownServiceStateMachine"); }
         virtual const std::string GetJobStateMachineName(const uint32_t /*nIndex*/) { return std::string("UnknownJobStateMachine"); }
 
         std::shared_ptr<ServiceEntityClass> GetServiceEntity() { return m_pServiceEntity; }

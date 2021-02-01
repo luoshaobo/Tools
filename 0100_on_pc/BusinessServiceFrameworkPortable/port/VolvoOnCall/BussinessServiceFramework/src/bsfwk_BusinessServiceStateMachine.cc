@@ -583,6 +583,7 @@ namespace bsfwk {
                     if (jobList[i] < m_bsJobSMs.size()) {
                         m_bsJobsToDo.push_back(m_bsJobSMs[jobList[i]]);
                     } else {
+                        BSFWK_SLOG_ERROR("%s[%s] a job index is too big!\n", BSFWK_FUNC, m_stateMachineName.c_str());
                         break;
                     }
                 }
