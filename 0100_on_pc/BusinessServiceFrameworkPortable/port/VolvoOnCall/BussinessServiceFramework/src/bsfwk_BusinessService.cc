@@ -19,15 +19,18 @@ namespace bsfwk {
         , m_BSJobSMs()
     {
         uint32_t nIndex;
+        int id;
 
         if (IsPtrNotNull(m_pEntityFactory)) {
+            id = getNewStatemachineId();
             m_pBSServiceSM = std::make_shared<BusinessServiceStateMachine>(pEntityFactory, m_nMasterIndex, SERVICE_STATEMACHINE_INDEX, m_pEntityFactory->GetServiceStateMachineName(), 
-                this, this, getNewStatemachineId(), 0);
+                this, this, id, id);
             startStatemachine(static_cast<IStatemachine *>(m_pBSServiceSM.get()), 0);
 
             for (nIndex = static_cast<uint32_t>(0); nIndex < m_pEntityFactory->GetJobCount(); nIndex++) {
+                id = getNewStatemachineId();
                 std::shared_ptr<BusinessJobStateMachine> pBSJobSM = std::make_shared<BusinessJobStateMachine>(pEntityFactory, m_pBSServiceSM.get(), m_nMasterIndex, nIndex, m_pEntityFactory->GetJobStateMachineName(nIndex), 
-                    this, this, getNewStatemachineId(), 0);
+                    this, this, id, id);
                 m_BSJobSMs.push_back(pBSJobSM);
                 startStatemachine(static_cast<IStatemachine *>(pBSJobSM.get()), 0);
             }
@@ -42,15 +45,17 @@ namespace bsfwk {
 
         Stop();
 
-        if (IsPtrNotNull(m_pBSServiceSM)) {
-            m_pBSServiceSM.reset();
-        }
-
         for (nIndex = static_cast<uint32_t>(0); nIndex < static_cast<uint32_t>(m_BSJobSMs.size()); nIndex++) {
             std::shared_ptr<BusinessJobStateMachine> &pBSJobSM = m_BSJobSMs[nIndex];
             if (IsPtrNotNull(pBSJobSM)) {
+                removeStatemachine(pBSJobSM->getStatemachineId(), false);
                 pBSJobSM.reset();
             }
+        }
+
+        if (IsPtrNotNull(m_pBSServiceSM)) {
+            removeStatemachine(m_pBSServiceSM->getStatemachineId(), false);
+            m_pBSServiceSM.reset();
         }
     }
 
